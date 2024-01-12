@@ -3,6 +3,7 @@ import { Card } from "@repo/ui/card";
 import { Code } from "@repo/ui/code";
 import styles from "./page.module.css";
 import { Button } from "@repo/ui/button";
+import { helloPacman } from "@repo/pacman-canvas";
 
 function Gradient({
   conic,
@@ -81,6 +82,10 @@ export default function Page(): JSX.Element {
       <Button appName="web" className={styles.button}>
         Click me!
       </Button>
+
+      <div>
+        {helloPacman()}
+      </div>
 
       <div className={styles.hero}>
         <div className={styles.heroContent}>
