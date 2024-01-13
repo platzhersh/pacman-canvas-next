@@ -2,6 +2,20 @@ import { PACMAN_RADIUS } from "../../figures/Pacman";
 import { Game, PILL_SIZE, POWERPILL_SIZE } from "../Game";
 import { MapColumn } from "../map/mapData";
 
+export const render = (game: Game) => {
+  const context = game.getCanvasContext2d();
+
+  if (!context) {
+    console.error("can't render, no context");
+    return;
+  }
+
+  clearCanvas(context);
+  game.buildWalls();
+  if (game.isGridVisible()) renderGrid(game, PACMAN_RADIUS, "red");
+  renderContent(game);
+};
+
 export const buildWall = (
   context: CanvasRenderingContext2D,
   gridX: number,
@@ -36,6 +50,10 @@ const drawPill = (
   context.moveTo(game.toPixelPos(column.col - 1), game.toPixelPos(dotPosY - 1));
 };
 
+export const clearCanvas = (context: CanvasRenderingContext2D) => {
+  context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+};
+
 export const renderContent = (
   game: Game
   // canvas_walls: HTMLCanvasElement
@@ -49,6 +67,8 @@ export const renderContent = (
     console.error("can't render, no context");
     return;
   }
+
+  // clear context
 
   // Pills
   context.beginPath();

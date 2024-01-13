@@ -28,10 +28,9 @@ export const PILL_SIZE = 3;
 export const POWERPILL_SIZE = 6;
 
 type GameInitMode = "NewGame" | "NewLevel";
-export type GameStateChangeListener = (
-  eventName: string,
-  payload: GameState
-) => any;
+
+export type GameStateChangeListener = (event: GameStateEvent) => any;
+
 export type GameState = {
   gameId: string;
   started: boolean;
@@ -40,6 +39,12 @@ export type GameState = {
   score: number;
   pillCount: number;
   level: number;
+};
+
+export type GameStateEvent = {
+  datetime: Date;
+  eventName: string;
+  payload: GameState;
 };
 export class Game {
   private gameId: string = generateUID();
@@ -197,6 +202,7 @@ export class Game {
 
     this.pause = false;
     this.gameOver = false;
+
     this.onGameStateChange("reset");
   };
 
@@ -326,7 +332,10 @@ export class Game {
   };
 
   public getScore = () => this.score.get();
-  public addScore = (score: number) => this.score.add(score);
+  public addScore = (score: number) => {
+    this.score.add(score);
+    this.onGameStateChange("addScore");
+  };
   public refreshScore = (selector: string) => this.score.refresh(selector);
   public showHighscoreForm = () => {
     const scoreIsValid = this.validateScoreWithLevel();
@@ -393,15 +402,14 @@ export class Game {
     }
   };
 
-  public getPillCount = () => this.gridMap.getTileTypeCount("pill");
+  public getPillCount = () => this.getGridMap().getTileTypeCount("pill");
   public decrementPillCount = () => this.pillCount--;
 
-  public init = async (state: GameInitMode) => {
+  public init = (state: GameInitMode) => {
     console.log("init game " + state);
 
     // get Level Map
-    this.gridMap = new GridMap();
-
+    this.gridMap.resetMapData();
     this.pillCount = this.getPillCount();
 
     // TODO: why are there 2 state checks?
@@ -418,11 +426,11 @@ export class Game {
     this.ghostMode = 0; // 0 = Scatter, 1 = Chase
     this.ghostModeTimer = 200; // decrements each animationLoop execution
 
+    this.onGameStateChange(`Init${state}`);
+
     // initalize Ghosts, avoid memory flooding
     this.resetGhosts();
     this.startGhosts();
-
-    this.onGameStateChange("InitGame");
   };
 
   public checkForLevelUp = () => {
@@ -467,7 +475,7 @@ export class Game {
     console.log("onGameStateChange", eventName);
     const payload = this.getGameStateSnapshot();
     this.gameStateChangeListeners.forEach((listenerFn) =>
-      listenerFn(eventName, payload)
+      listenerFn({ eventName, datetime: new Date(), payload })
     );
   };
 
@@ -486,6 +494,7 @@ export class Game {
   /* ------------ Start Pre-Build Walls  ------------ */
   /**
    * TODO: move to render?
+   * TODO: does not change in re-renderings, so it would be nice to only draw this once
    */
   public buildWalls = () => {
     console.log("build walls");

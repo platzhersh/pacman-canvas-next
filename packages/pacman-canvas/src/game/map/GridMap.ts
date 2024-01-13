@@ -1,7 +1,13 @@
 import { MapData, MapTileType, mapData } from "./mapData";
 
 export class GridMap {
-  private mapData: MapData = mapData;
+  private mapData: MapData;
+
+  constructor() {
+    this.mapData = structuredClone(mapData);
+  }
+
+  public resetMapData = () => (this.mapData = structuredClone(mapData));
 
   public getMapData = () => this.mapData;
 
@@ -17,7 +23,7 @@ export class GridMap {
     if (y < 0) y = maxY + y;
     if (y > maxY) y = y - maxY;
 
-    const mapTile = this.mapData.posY[y]?.posX[x];
+    const mapTile = this.getMapData().posY[y]?.posX[x];
 
     if (!mapTile) throw Error(`No tile found at ${x}, ${y}`);
 
@@ -25,7 +31,7 @@ export class GridMap {
   };
 
   public setTileType = (x: number, y: number, type: MapTileType): boolean => {
-    const row = this.mapData.posY[y];
+    const row = this.getMapData().posY[y];
     const col = row?.posX[x];
     if (col) {
       col.type = type;
@@ -36,7 +42,7 @@ export class GridMap {
 
   public getTileTypeCount = (type: MapTileType): number => {
     let count = 0;
-    this.mapData.posY.forEach((row) => {
+    this.getMapData().posY.forEach((row) => {
       row.posX.forEach((column) => {
         if (column.type === type) count++;
       });

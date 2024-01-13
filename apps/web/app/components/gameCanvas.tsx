@@ -17,8 +17,8 @@ import {
     up,
 } from "@repo/pacman-canvas/src/figures/directions";
 import {
-    GameState,
     GameStateChangeListener,
+    GameStateEvent,
 } from "@repo/pacman-canvas/src/game/Game";
 import { animationLoop } from "@repo/pacman-canvas/src/game/render/animationLoop";
 import { useEffect, useRef, useState } from "react";
@@ -26,10 +26,7 @@ import { getGameInstance } from "./game";
 import styles from "./gameCanvas.module.css";
 
 export default function GameCanvas() {
-  const [gameStateSnapshotEvent, setGameStateSnapshotEvent] = useState<{
-    eventName: string;
-    payload: GameState;
-  } | null>(null);
+  const [gameStateSnapshotEvent, setGameStateSnapshotEvent] = useState<GameStateEvent | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [canvasContext, setCanvasContext] =
     useState<CanvasRenderingContext2D | null>(null);
@@ -37,11 +34,10 @@ export default function GameCanvas() {
   const game: Game = getGameInstance();
 
   const onGameStateChange: GameStateChangeListener = (
-    eventName: string,
-    payload: any
+    event: GameStateEvent
   ) => {
-    console.log("onGameStateChange", eventName, payload);
-    setGameStateSnapshotEvent({ eventName, payload });
+    console.log("onGameStateChange", event.eventName, event.datetime, event.payload);
+    setGameStateSnapshotEvent(event);
   };
 
   game.registerGameStateChangeListener(onGameStateChange);
