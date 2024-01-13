@@ -1,39 +1,47 @@
 "use client";
 
-import styles from "./gameCanvas.module.css";
 import { Game, helloPacman, renderContent } from "@repo/pacman-canvas";
-import { inkyBase64Src, inkySVG } from "@repo/pacman-canvas/src/assets/img";
 import {
-  down,
-  left,
-  right,
-  up,
+    blinkySvgSrc,
+    clydeSvgSrc,
+    dazzled2SvgSrc,
+    dazzledSvgSrc,
+    deadSvgSrc,
+    inkySvgSrc,
+    pinkySvgSrc
+} from "@repo/pacman-canvas/src/assets/img";
+import {
+    down,
+    left,
+    right,
+    up,
 } from "@repo/pacman-canvas/src/figures/directions";
 import {
-  GameState,
-  GameStateChangeListener,
+    GameState,
+    GameStateChangeListener,
 } from "@repo/pacman-canvas/src/game/Game";
+import { animationLoop } from "@repo/pacman-canvas/src/game/render/animationLoop";
 import { useEffect, useRef, useState } from "react";
 import { getGameInstance } from "./game";
-import { animationLoop } from "@repo/pacman-canvas/src/game/render/animationLoop";
+import styles from "./gameCanvas.module.css";
 
 export default function GameCanvas() {
-  const [gameStateSnapshotEvent, setGameStateSnapshotEvent] = useState<{eventName: string, payload: GameState } | null>(
-    null
-  );
+  const [gameStateSnapshotEvent, setGameStateSnapshotEvent] = useState<{
+    eventName: string;
+    payload: GameState;
+  } | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [canvasContext, setCanvasContext] =
     useState<CanvasRenderingContext2D | null>(null);
 
   const game: Game = getGameInstance();
-  console.log("game", game);
 
   const onGameStateChange: GameStateChangeListener = (
     eventName: string,
     payload: any
   ) => {
     console.log("onGameStateChange", eventName, payload);
-    setGameStateSnapshotEvent({eventName, payload});
+    setGameStateSnapshotEvent({ eventName, payload });
   };
 
   game.registerGameStateChangeListener(onGameStateChange);
@@ -84,17 +92,19 @@ export default function GameCanvas() {
         <section>
           <span>
             show overlay:{" "}
-            {String(!gameStateSnapshotEvent || gameStateSnapshotEvent.payload.pause)}
+            {String(
+              !gameStateSnapshotEvent || gameStateSnapshotEvent.payload.pause
+            )}
           </span>
           &nbsp;
         </section>
         <section style={{ lineBreak: "auto" }}>
-            <textarea 
+          <textarea
             readOnly
             rows={4}
-            style={{ width: '100%', background: 'black', color: 'white'}}
-            value={JSON.stringify(gameStateSnapshotEvent)} />
-            
+            style={{ width: "100%", background: "black", color: "white" }}
+            value={JSON.stringify(gameStateSnapshotEvent)}
+          />
         </section>
         <section>
           {!gameStateSnapshotEvent && "no game events yet"}
@@ -106,22 +116,34 @@ export default function GameCanvas() {
               </span> */}
               &nbsp;
               {/* <span>refreshRate: {gameStateSnapshot.ref}</span>&nbsp; */}
-              <span>started: {String(gameStateSnapshotEvent.payload.started)}</span>&nbsp;
-              <span>paused: {String(gameStateSnapshotEvent.payload.pause)}</span>&nbsp;
-              <span>gameOver: {String(gameStateSnapshotEvent.payload.gameOver)}</span>&nbsp;
+              <span>
+                started: {String(gameStateSnapshotEvent.payload.started)}
+              </span>
+              &nbsp;
+              <span>
+                paused: {String(gameStateSnapshotEvent.payload.pause)}
+              </span>
+              &nbsp;
+              <span>
+                gameOver: {String(gameStateSnapshotEvent.payload.gameOver)}
+              </span>
+              &nbsp;
             </>
           )}
         </section>
         <section>
           {/* <img src={inkyBase64} alt="inkyBase64" /> */}
           {/* {inkyBase64} */}
-          <img src={inkySVG} alt="inkySvg" />
-          {/* <img src={inkyBase64} alt="inkyBase64" /> */}
-          <img src={inkyBase64Src} alt="base64" />
+          <img src={inkySvgSrc} alt="inkySvg" />
+          <img src={blinkySvgSrc} alt="blinkySvg" />
+          <img src={pinkySvgSrc} alt="pinkySvg" />
+          <img src={clydeSvgSrc} alt="clydeSvg" />
+          <img src={deadSvgSrc} alt="deadSvgSrc" />
+          <img src={dazzledSvgSrc} alt="dazzledSvgSrc" />
+          <img src={dazzled2SvgSrc} alt="dazzled2SvgSrc" />
 
-          {/* {inkySVG2} */}
-          {/* <inkySVG /> */}
         </section>
+      
         <section>
           <button onClick={() => game.pauseResume()}>Pause / Resume</button>
           <button
@@ -132,8 +154,9 @@ export default function GameCanvas() {
           </button>
           <button onClick={() => game.endGame()}>End Game</button>
           <button onClick={() => game.buildWalls()}>Build Walls</button>
-          <button onClick={() => animationLoop(game)()}>Next Animationloop</button>
-
+          <button onClick={() => animationLoop(game)()}>
+            Next Animationloop
+          </button>
         </section>
         <section>
           <div
@@ -143,7 +166,8 @@ export default function GameCanvas() {
             }}
           >
             {/* <button onClick={() => pacman.} */}
-            {(!gameStateSnapshotEvent || gameStateSnapshotEvent.payload.pause) && (
+            {(!gameStateSnapshotEvent ||
+              gameStateSnapshotEvent.payload.pause) && (
               <div id={styles["canvas-overlay-container"]}>
                 <div id={styles["canvas-overlay-content"]}>
                   <div id={styles["title"]}>Pacman Canvas</div>

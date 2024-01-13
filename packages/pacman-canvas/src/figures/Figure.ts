@@ -16,7 +16,7 @@ export const isInRange = (x: number, min: number, max: number) => {
 
 export class Figure {
   protected posX: number = 0;
-  protected posY: number;
+  protected posY: number = 0;
   protected speed: number = 0;
   protected angle1 = 0;
   protected angle2 = 0;

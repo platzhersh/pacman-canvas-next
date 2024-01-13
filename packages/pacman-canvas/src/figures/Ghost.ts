@@ -1,4 +1,4 @@
-import { dazzled2SVG, dazzledSVG, deadSVG } from "../assets/img";
+import { dazzled2SvgSrc, dazzledSvgSrc, deadSvgSrc } from "../assets/img";
 import { GHOST_POINTS, Game } from "../game/Game";
 import { MapTileType } from "../game/map/mapData";
 import { Figure, isInRange } from "./Figure";
@@ -77,11 +77,11 @@ export class Ghost extends Figure {
     this.image = new Image();
     this.image.src = imageSrc;
     this.dazzleImg = new Image();
-    this.dazzleImg.src = dazzledSVG; //"img/dazzled.svg";
+    this.dazzleImg.src = dazzledSvgSrc; //"img/dazzled.svg";
     this.dazzleImg2 = new Image();
-    this.dazzleImg2.src = dazzled2SVG; //"img/dazzled2.svg";
+    this.dazzleImg2.src = dazzled2SvgSrc; //"img/dazzled2.svg";
     this.deadImg = new Image();
-    this.deadImg.src = deadSVG; // "img/dead.svg";
+    this.deadImg.src = deadSvgSrc; // "img/dead.svg";
     this.direction = right;
     this.radius = PACMAN_RADIUS;
   }
