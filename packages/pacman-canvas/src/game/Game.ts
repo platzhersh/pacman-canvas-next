@@ -5,7 +5,12 @@ import {
   inkySvgSrc,
   pinkySvgSrc,
 } from "../assets/img";
-import { GHOSTS, Ghost, GhostMode, GhostRegistry } from "../figures/Ghost";
+import {
+  GHOSTS,
+  Ghost,
+  GhostMode,
+  GhostRegistry,
+} from "../figures/ghosts/Ghost";
 import { PACMAN_RADIUS, Pacman } from "../figures/Pacman";
 import { Direction } from "../figures/directions/Direction";
 import { generateUID } from "../utils/uuid";
@@ -21,6 +26,10 @@ import {
   renderContent,
   renderGrid,
 } from "./render/render";
+import { Inky } from "../figures/ghosts/Inky";
+import { Pinky } from "../figures/ghosts/PInky";
+import { Clyde } from "../figures/ghosts/Clyde";
+import { Blinky } from "../figures/ghosts/Blinky";
 
 // global constants
 const FINAL_LEVEL = 10;
@@ -111,10 +120,10 @@ export class Game {
   constructor(canvasContext2d?: CanvasRenderingContext2D) {
     if (canvasContext2d) this.canvasContext2d = canvasContext2d;
     this.ghosts = {
-      pinky: new Ghost(this, GHOSTS.PINKY, 7, 5, pinkySvgSrc, 2, 2),
-      inky: new Ghost(this, GHOSTS.INKY, 8, 5, inkySvgSrc, 13, 11),
-      clyde: new Ghost(this, GHOSTS.CLYDE, 10, 5, clydeSvgSrc, 2, 11),
-      blinky: new Ghost(this, GHOSTS.BLINKY, 9, 5, blinkySvgSrc, 13, 0),
+      pinky: new Pinky(this),
+      inky: new Inky(this),
+      clyde: new Clyde(this),
+      blinky: new Blinky(this),
     };
     this.init("NewGame");
     this.registerKeyListener();

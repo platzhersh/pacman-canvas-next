@@ -1,10 +1,10 @@
-import { dazzled2SvgSrc, dazzledSvgSrc, deadSvgSrc } from "../assets/img";
-import { GHOST_POINTS, Game } from "../game/Game";
-import { MapTileType } from "../game/map/mapData";
-import { Figure, isInRange } from "./Figure";
-import { PACMAN_RADIUS } from "./Pacman";
-import { down, left, right, up } from "./directions";
-import { Direction } from "./directions/Direction";
+import { dazzled2SvgSrc, dazzledSvgSrc, deadSvgSrc } from "../../assets/img";
+import { GHOST_POINTS, Game } from "../../game/Game";
+import { MapTileType } from "../../game/map/mapData";
+import { Figure, isInRange } from "../Figure";
+import { PACMAN_RADIUS, Pacman } from "../Pacman";
+import { down, left, right, up } from "../directions";
+import { Direction } from "../directions/Direction";
 
 export const GHOSTS = {
   INKY: "inky",
@@ -25,12 +25,12 @@ export enum GhostMode {
   Chase = 1,
 }
 
-export class Ghost extends Figure {
+export abstract class Ghost extends Figure {
   private name: string;
   private startPosX: number;
   private startPosY: number;
-  private gridBaseX: number;
-  private gridBaseY: number;
+  protected gridBaseX: number;
+  protected gridBaseY: number;
   private images: any;
   private image: HTMLImageElement;
 
@@ -249,6 +249,14 @@ export class Ghost extends Figure {
   };
 
   /**
+   * every ghost type has to implement their own target strategy for chase mode
+   */
+  protected abstract getChaseModeTarget: (
+    game: Game,
+    pacman: Pacman
+  ) => [targetX: number, targetY: number];
+
+  /**
    * This function clearly needs reactoring and testing.
    * @param game
    * @returns
@@ -257,76 +265,25 @@ export class Ghost extends Figure {
     const pacman = game.getPacman();
 
     // target
-    let tX: number = 0,
-      tY: number = 0;
+    let targetX: number = 0,
+      targetY: number = 0;
     // get next field
-    let pX = this.getGridPosX();
-    let pY = this.getGridPosY();
-    game.getMapContent(pX, pY);
+    let currentPosX = this.getGridPosX();
+    let currentPosY = this.getGridPosY();
+    game.getMapContent(currentPosX, currentPosY);
 
     // get target
     if (this.dead) {
       // go Home
-      tX = this.startPosX / 30;
-      tY = this.startPosY / 30;
+      targetX = this.startPosX / 30;
+      targetY = this.startPosY / 30;
     } else if (game.getGhostMode() === GhostMode.Scatter) {
       // Scatter Mode
-      tX = this.gridBaseX;
-      tY = this.gridBaseY;
+      targetX = this.gridBaseX;
+      targetY = this.gridBaseY;
     } else if (game.getGhostMode() === GhostMode.Chase) {
       // Chase Mode
-
-      switch (this.name) {
-        // target: 4 ahead and 4 left of pacman
-        case GHOSTS.PINKY:
-          var pacmanDirection = pacman.getDirection();
-          var pdirX =
-            pacmanDirection.getDirX() === 0
-              ? -pacmanDirection.getDirY()
-              : pacmanDirection.getDirX();
-          var pdirY =
-            pacmanDirection.getDirY() === 0
-              ? -pacmanDirection.getDirX()
-              : pacmanDirection.getDirY();
-
-          tX =
-            (pacman.getGridPosX() + pdirX * 4) %
-            (game.getCanvasWidth() / PACMAN_RADIUS + 1);
-          tY =
-            (pacman.getGridPosY() + pdirY * 4) %
-            (game.getCanvasHeight() / PACMAN_RADIUS + 1);
-          break;
-
-        // target: pacman
-        case GHOSTS.BLINKY:
-          tX = pacman.getGridPosX();
-          tY = pacman.getGridPosY();
-          break;
-
-        // target:
-        case GHOSTS.INKY:
-          tX = pacman.getGridPosX() + 2 * pacman.getDirection().getDirX();
-          tY = pacman.getGridPosY() + 2 * pacman.getDirection().getDirY();
-
-          const blinky = game.getGhosts().blinky;
-          let vX = tX - blinky.getGridPosX();
-          let vY = tY - blinky.getGridPosY();
-          tX = Math.abs(blinky.getGridPosX() + vX * 2);
-          tY = Math.abs(blinky.getGridPosY() + vY * 2);
-          break;
-
-        // target: pacman, until pacman is closer than 5 grid fields, then back to scatter
-        case GHOSTS.CLYDE:
-          tX = pacman.getGridPosX();
-          tY = pacman.getGridPosY();
-          let dist = Math.sqrt(Math.pow(pX - tX, 2) + Math.pow(pY - tY, 2));
-
-          if (dist < 5) {
-            tX = this.gridBaseX;
-            tY = this.gridBaseY;
-          }
-          break;
-      }
+      [targetX, targetY] = this.getChaseModeTarget(game, pacman);
     }
 
     type DirectionDistance = {
@@ -336,27 +293,39 @@ export class Ghost extends Figure {
     };
 
     const dir0: DirectionDistance = {
-      field: game.getMapContent(pX, pY - 1),
+      field: game.getMapContent(currentPosX, currentPosY - 1),
       dir: up,
-      distance: Math.sqrt(Math.pow(pX - tX, 2) + Math.pow(pY - 1 - tY, 2)),
+      distance: Math.sqrt(
+        Math.pow(currentPosX - targetX, 2) +
+          Math.pow(currentPosY - 1 - targetY, 2)
+      ),
     };
 
     const dir1: DirectionDistance = {
-      field: game.getMapContent(pX, pY + 1),
+      field: game.getMapContent(currentPosX, currentPosY + 1),
       dir: down,
-      distance: Math.sqrt(Math.pow(pX - tX, 2) + Math.pow(pY + 1 - tY, 2)),
+      distance: Math.sqrt(
+        Math.pow(currentPosX - targetX, 2) +
+          Math.pow(currentPosY + 1 - targetY, 2)
+      ),
     };
 
     const dir2: DirectionDistance = {
-      field: game.getMapContent(pX + 1, pY),
+      field: game.getMapContent(currentPosX + 1, currentPosY),
       dir: right,
-      distance: Math.sqrt(Math.pow(pX + 1 - tX, 2) + Math.pow(pY - tY, 2)),
+      distance: Math.sqrt(
+        Math.pow(currentPosX + 1 - targetX, 2) +
+          Math.pow(currentPosY - targetY, 2)
+      ),
     };
 
     const dir3: DirectionDistance = {
-      field: game.getMapContent(pX - 1, pY),
+      field: game.getMapContent(currentPosX - 1, currentPosY),
       dir: left,
-      distance: Math.sqrt(Math.pow(pX - 1 - tX, 2) + Math.pow(pY - tY, 2)),
+      distance: Math.sqrt(
+        Math.pow(currentPosX - 1 - targetX, 2) +
+          Math.pow(currentPosY - targetY, 2)
+      ),
     };
 
     const dirs: DirectionDistance[] = [dir0, dir1, dir2, dir3];
@@ -394,6 +363,7 @@ export class Ghost extends Figure {
     this.directionWatcher.set(nextDirection);
     return nextDirection;
   };
+
   public setRandomDirection = () => {
     const dir = Math.floor(Math.random() * 10 + 1) % 5;
 
@@ -416,6 +386,7 @@ export class Ghost extends Figure {
         break;
     }
   };
+
   public reverseDirection = () => {
     console.log(
       "reverseDirection: " +

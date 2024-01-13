@@ -14,7 +14,10 @@ export const isInRange = (x: number, min: number, max: number) => {
   return x >= min && x <= max;
 };
 
-export class Figure {
+/**
+ * Abstract parent class for Ghost and Pacman
+ */
+export abstract class Figure {
   protected posX: number = 0;
   protected posY: number = 0;
   protected speed: number = 0;
@@ -30,8 +33,8 @@ export class Figure {
   protected isStopped: boolean = true;
   protected directionWatcher: DirectionWatcher = new DirectionWatcher();
 
-  public getNextDirection = (game: Game) => {
-    console.log("Figure getNextDirection");
+  public getNextDirection: (game: Game) => void = (game: Game) => {
+    throw Error("not implemented");
   };
 
   /**
