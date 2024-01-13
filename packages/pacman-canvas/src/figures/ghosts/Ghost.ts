@@ -31,7 +31,7 @@ export abstract class Ghost extends Figure {
   private startPosY: number;
   protected gridBaseX: number;
   protected gridBaseY: number;
-  private images: any;
+  // private images: any;
   private image: HTMLImageElement;
 
   private ghostHouse: boolean = true;
@@ -60,20 +60,20 @@ export abstract class Ghost extends Figure {
     this.gridBaseX = gridBaseX;
     this.gridBaseY = gridBaseY;
     this.speed = game.getRegularGhostSpeed();
-    this.images = JSON.parse(
-      '{"normal" : {' +
-        `"${GHOSTS.INKY}" : "0",` +
-        `"${GHOSTS.PINKY}" : "1",` +
-        `"${GHOSTS.BLINKY}" : "2",` +
-        `"${GHOSTS.CLYDE}" : "3"` +
-        "}," +
-        '"frightened1" : {' +
-        '"left" : "", "up": "", "right" : "", "down": ""},' +
-        '"frightened2" : {' +
-        '"left" : "", "up": "", "right" : "", "down": ""},' +
-        '"dead" : {' +
-        '"left" : "", "up": "", "right" : "", "down": ""}}'
-    );
+    // this.images = JSON.parse(
+    //   '{"normal" : {' +
+    //     `"${GHOSTS.INKY}" : "0",` +
+    //     `"${GHOSTS.PINKY}" : "1",` +
+    //     `"${GHOSTS.BLINKY}" : "2",` +
+    //     `"${GHOSTS.CLYDE}" : "3"` +
+    //     "}," +
+    //     '"frightened1" : {' +
+    //     '"left" : "", "up": "", "right" : "", "down": ""},' +
+    //     '"frightened2" : {' +
+    //     '"left" : "", "up": "", "right" : "", "down": ""},' +
+    //     '"dead" : {' +
+    //     '"left" : "", "up": "", "right" : "", "down": ""}}'
+    // );
     this.image = new Image();
     this.image.src = imageSrc;
     this.dazzleImg = new Image();
@@ -196,7 +196,7 @@ export abstract class Ghost extends Figure {
         (this.getGridPosX() === 8 || this.getGridPosX() === 9) &&
         this.inGrid()
       ) {
-        console.log("ghosthouse -> false");
+        console.debug(`${this.name} leaving the ghosthouse`);
         this.ghostHouse = false;
       }
     }
@@ -388,7 +388,7 @@ export abstract class Ghost extends Figure {
   };
 
   public reverseDirection = () => {
-    console.log(
+    console.debug(
       "reverseDirection: " +
         this.direction.getName() +
         " to " +

@@ -1,4 +1,3 @@
-import $ from "jquery";
 import { down, left, right, up } from "../../figures/directions";
 import { Game } from "../Game";
 
@@ -27,20 +26,16 @@ export const onKeyDown = (game: Game) => (evt: KeyboardEvent) => {
       pacman.getDirectionWatcher().set(right);
       break;
     case 78: // N pressed
-      if (!$("#playerName").is(":focus")) {
-        game.setPause(true);
-        game.newGame();
-      }
+      game.setPause(true);
+      game.newGame();
       break;
     case 77: // M pressed
       game.toggleSound();
       break;
     case 8: // Backspace pressed -> show Game Content
     case 27: // ESC pressed -> show Game Content
-      if (!$("#playerName").is(":focus")) {
-        evt.preventDefault();
-        game.showContent("game-content");
-      }
+      evt.preventDefault();
+      game.showContent("game-content");
       break;
     case 32: // SPACE pressed -> pause / resume Game
       console.debug("SPACE pressed");

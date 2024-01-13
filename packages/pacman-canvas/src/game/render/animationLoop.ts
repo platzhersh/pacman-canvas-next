@@ -3,7 +3,7 @@ import { Game } from "../Game";
 export const animationLoop = (game: Game) => () => {
   if (game.isGameOver()) return;
 
-  console.log("animationLoop", game);
+  console.trace("animationLoop", game);
 
   // const context = canvas.getContext("2d")!;
   const pacman = game.getPacman();

@@ -47,13 +47,13 @@ export default function GameCanvas() {
     // game = new Game();
 
     if (canvasRef.current) {
-      console.log("canvasRef.current", canvasRef.current);
+      console.debug("canvasRef.current", canvasRef.current);
       const context = canvasRef.current.getContext("2d");
-      console.log("context", context);
+      console.debug("context", context);
       setCanvasContext(canvasRef.current.getContext("2d"));
     }
 
-    console.log("canvasContext", canvasContext);
+    console.debug("canvasContext", canvasContext);
   }, []);
 
   useEffect(() => {
@@ -64,7 +64,7 @@ export default function GameCanvas() {
   }, [canvasContext]);
 
   useEffect(() => {
-    console.log("gameStateSnapshot changed");
+    console.debug("gameStateSnapshot changed");
   }, [gameStateSnapshotEvent]);
 
   //   const pacman = game.getPacman();

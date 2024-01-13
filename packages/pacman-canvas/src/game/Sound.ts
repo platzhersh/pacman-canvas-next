@@ -6,7 +6,7 @@ export const Sound = {
       let audio = document.getElementById(sound);
       audio !== null
         ? (audio as any).play()
-        : console.log(sound + " not found");
+        : console.warn(sound + " not found");
     }
   },
 };

@@ -130,7 +130,7 @@ export class Game {
     Object.values(this.ghosts).forEach((g) => g.move(this));
 
   public startGhostFrightened = () => {
-    console.log("ghost frigthened");
+    console.debug("ghost frigthened");
     this.ghostFrightened = true;
     this.ghostFrightenedTimer = 240;
     this.dazzleGhosts();
@@ -209,7 +209,7 @@ export class Game {
   public getRefreshRate = () => this.refreshRate;
 
   public setCanvasContext2d = (canvasContext2d: CanvasRenderingContext2D) => {
-    console.log("set canvas context");
+    console.debug("set canvas context");
     this.canvasContext2d = canvasContext2d;
     this.render();
   };
@@ -227,12 +227,12 @@ export class Game {
   public nextLevel = () => {
     console.debug("nextLevel: current, final", this.level, FINAL_LEVEL);
     if (this.level === FINAL_LEVEL) {
-      console.log("next level, " + FINAL_LEVEL + ", end game");
+      console.debug("next level, " + FINAL_LEVEL + ", end game");
       this.endGame(true);
       //   this.showHighscoreForm();
     } else {
       this.level++;
-      console.log("Level " + this.level);
+      console.debug("Level " + this.level);
       this.pauseAndShowMessage(
         "Level " + this.level,
         this.getLevelTitle() + "<br/>(Click to continue!)"
@@ -298,7 +298,7 @@ export class Game {
       maxLevelPointsPills + maxLevelPointsPowerpills + maxLevelPointsGhosts;
 
     const scoreIsValid = this.score.get() / this.level <= maxLevelPoints;
-    console.log(
+    console.debug(
       "validate score. score: " + this.score.get() + ", level: " + this.level,
       scoreIsValid
     );
@@ -344,7 +344,7 @@ export class Game {
 
   public pauseResume = () => {
     if (this.gameOver) {
-      console.log("Cannot pause / resume. GameOver set to true.");
+      console.warn("Cannot pause / resume. GameOver set to true.");
       return;
     }
     if (!this.started) {
@@ -360,7 +360,7 @@ export class Game {
   public decrementPillCount = () => this.pillCount--;
 
   public init = (state: GameInitMode) => {
-    console.log("init game " + state);
+    console.debug("init game " + state);
 
     // get Level Map
     this.gridMap.resetMapData();
@@ -394,7 +394,7 @@ export class Game {
   };
 
   public endGame = (allLevelsCompleted = false) => {
-    console.log("Game Over by " + (allLevelsCompleted ? "WIN" : "LOSS"));
+    console.info("Game Over by " + (allLevelsCompleted ? "WIN" : "LOSS"));
     this.pause = true;
     this.gameOver = true;
     this.onGameStateChange("EndGame");
@@ -467,7 +467,7 @@ export class Game {
    * TODO: does not change in re-renderings, so it would be nice to only draw this once
    */
   public buildWalls = () => {
-    console.log("build walls");
+    console.debug("build walls");
     if (this.ghostMode === GhostMode.Scatter) this.wallColor = "Blue";
     else this.wallColor = "Red";
 

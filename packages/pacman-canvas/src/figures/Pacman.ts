@@ -189,7 +189,7 @@ export class Pacman extends Figure {
         this.beastModeTimer--;
         //console.log("Beast Mode: "+this.beastModeTimer);
       }
-      if (this.beastModeTimer === 0 && !this.beastMode)
+      if (this.beastModeTimer === 0 && this.beastMode)
         this.disableBeastMode(game);
 
       this.posX += this.speed * this.dirX;
@@ -270,7 +270,7 @@ export class Pacman extends Figure {
     this.reset();
     game.resetGhosts();
     this.decrementLives();
-    console.log("pacman died, " + this.lives + " lives left");
+    console.log("pacman died, lives remaining:", this.lives);
     if (this.lives <= 0) {
       game.endGame();
       //   game.showHighscoreForm();

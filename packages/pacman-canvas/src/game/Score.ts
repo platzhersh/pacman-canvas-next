@@ -10,7 +10,4 @@ export class Score {
   public add = (i: number) => {
     this.score += i;
   };
-  public refresh = (h: string) => {
-    $(h).html("Score: " + this.score);
-  };
 }
