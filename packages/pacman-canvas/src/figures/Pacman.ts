@@ -174,12 +174,12 @@ export class Pacman extends Figure {
   public enableBeastMode = (game: Game) => {
     this.beastMode = true;
     this.beastModeTimer = 240;
-    console.debug("Beast Mode activated!");
+    console.debug("Beast Mode activated! 💊🦍");
     game.dazzleGhosts();
   };
   public disableBeastMode = (game: Game) => {
     this.beastMode = false;
-    console.debug("Beast Mode is over!");
+    console.debug("Beast Mode is over! 🐹");
     game.undazzleGhosts();
   };
 

@@ -130,7 +130,7 @@ export class Game {
     Object.values(this.ghosts).forEach((g) => g.move(this));
 
   public startGhostFrightened = () => {
-    console.debug("ghost frigthened");
+    console.debug("ghost frigthened 👻");
     this.ghostFrightened = true;
     this.ghostFrightenedTimer = 240;
     this.dazzleGhosts();
@@ -225,14 +225,18 @@ export class Game {
   };
 
   public nextLevel = () => {
-    console.debug("nextLevel: current, final", this.level, FINAL_LEVEL);
+    console.debug(
+      `nextLevel: ${this.level + 1} current: ${
+        this.level
+      }, final: ${FINAL_LEVEL}`
+    );
     if (this.level === FINAL_LEVEL) {
       console.debug("next level, " + FINAL_LEVEL + ", end game");
       this.endGame(true);
       //   this.showHighscoreForm();
     } else {
       this.level++;
-      console.debug("Level " + this.level);
+      console.debug("🏁 Level " + this.level);
       this.pauseAndShowMessage(
         "Level " + this.level,
         this.getLevelTitle() + "<br/>(Click to continue!)"
@@ -316,12 +320,14 @@ export class Game {
   /**
    *
    */
-  public forceStartAnimationLoop = () => {
+  public startGame = () => {
     // start timer
     this.timer.start();
 
     this.pause = false;
     this.started = true;
+    console.log("🚀 Game started!");
+    console.debug("🏁 Level " + this.level);
     this.onGameStateChange("forceStartAnimationLoop");
 
     animationLoop(this)();
@@ -348,7 +354,7 @@ export class Game {
       return;
     }
     if (!this.started) {
-      this.forceStartAnimationLoop();
+      this.startGame();
     } else if (this.pause) {
       this.forceResume();
     } else {
@@ -394,7 +400,9 @@ export class Game {
   };
 
   public endGame = (allLevelsCompleted = false) => {
-    console.info("Game Over by " + (allLevelsCompleted ? "WIN" : "LOSS"));
+    console.info(
+      "❌ Game Over by " + (allLevelsCompleted ? "WIN 🏆" : "LOSS 💀")
+    );
     this.pause = true;
     this.gameOver = true;
     this.onGameStateChange("EndGame");
@@ -467,7 +475,6 @@ export class Game {
    * TODO: does not change in re-renderings, so it would be nice to only draw this once
    */
   public buildWalls = () => {
-    console.debug("build walls");
     if (this.ghostMode === GhostMode.Scatter) this.wallColor = "Blue";
     else this.wallColor = "Red";
 

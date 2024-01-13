@@ -122,13 +122,13 @@ export default function GameCanvas() {
         <section>
           {/* <img src={inkyBase64} alt="inkyBase64" /> */}
           {/* {inkyBase64} */}
-          <img src={inkySvgSrc} alt="inkySvg" />
-          <img src={blinkySvgSrc} alt="blinkySvg" />
-          <img src={pinkySvgSrc} alt="pinkySvg" />
-          <img src={clydeSvgSrc} alt="clydeSvg" />
-          <img src={deadSvgSrc} alt="deadSvgSrc" />
-          <img src={dazzledSvgSrc} alt="dazzledSvgSrc" />
-          <img src={dazzled2SvgSrc} alt="dazzled2SvgSrc" />
+          <img src={inkySvgSrc} title="Inky" alt="inkySvg" />
+          <img src={blinkySvgSrc} title="Blinky" alt="blinkySvg" />
+          <img src={pinkySvgSrc} title="Pinky" alt="pinkySvg" />
+          <img src={clydeSvgSrc} title="Clyde" alt="clydeSvg" />
+          <img src={deadSvgSrc} title="Dead" alt="deadSvgSrc" />
+          <img src={dazzledSvgSrc} title="Dazzled" alt="dazzledSvgSrc" />
+          <img src={dazzled2SvgSrc} title="Dazzled2" alt="dazzled2SvgSrc" />
 
         </section>
       

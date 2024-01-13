@@ -196,7 +196,7 @@ export abstract class Ghost extends Figure {
         (this.getGridPosX() === 8 || this.getGridPosX() === 9) &&
         this.inGrid()
       ) {
-        console.debug(`${this.name} leaving the ghosthouse`);
+        console.debug(`🏰 ${this.name} leaving the ghosthouse`);
         this.ghostHouse = false;
       }
     }
@@ -336,30 +336,22 @@ export abstract class Ghost extends Figure {
       if (a.distance > b.distance) return 1;
       return 0;
     }
-    const dirs2 = dirs.toSorted(compare);
+    const dirsOrderedByDistance = dirs.toSorted(compare);
 
     let nextDirection: Direction = right;
 
-    if (this.dead) {
-      for (let i = dirs2.length - 1; i >= 0; i--) {
-        if (
-          dirs2[i].field !== "wall" &&
-          !dirs2[i].dir.equals(this.getOppositeDirection())
-        ) {
-          nextDirection = dirs2[i].dir;
-        }
-      }
-    } else {
-      for (let i = dirs2.length - 1; i >= 0; i--) {
-        if (
-          dirs2[i].field !== "wall" &&
-          dirs2[i].field !== "door" &&
-          !dirs2[i].dir.equals(this.getOppositeDirection())
-        ) {
-          nextDirection = dirs2[i].dir;
-        }
+    // dead ghost should be allowed to move through door
+    const blockedTileTypes = this.dead ? ["wall"] : ["wall", "door"];
+
+    for (let i = dirsOrderedByDistance.length - 1; i >= 0; i--) {
+      if (
+        !blockedTileTypes.includes(dirsOrderedByDistance[i].field) &&
+        !dirsOrderedByDistance[i].dir.equals(this.getOppositeDirection())
+      ) {
+        nextDirection = dirsOrderedByDistance[i].dir;
       }
     }
+
     this.directionWatcher.set(nextDirection);
     return nextDirection;
   };
