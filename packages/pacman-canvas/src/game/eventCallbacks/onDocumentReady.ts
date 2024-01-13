@@ -34,7 +34,7 @@ export const onDocumentReady = (game: Game, pacman: Pacman) => () => {
   // --------------- Controls
 
   // Keyboard
-  window.addEventListener("keydown", onKeyDown(pacman, game), true);
+  window.addEventListener("keydown", onKeyDown(game), true);
 
   // pause / resume game on canvas click
   $("#canvas-container").click(function () {
