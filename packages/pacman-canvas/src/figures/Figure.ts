@@ -34,14 +34,12 @@ export class Figure {
     console.log("Figure getNextDirection");
   };
 
-  public inGrid = () => {
-    if (
-      this.posX % (2 * this.radius) === 0 &&
-      this.posY % (2 * this.radius) === 0
-    )
-      return true;
-    return false;
-  };
+  /**
+   *
+   * @returns true if current position is aligned with grid
+   */
+  public inGrid = () =>
+    this.posX % (2 * this.radius) === 0 && this.posY % (2 * this.radius) === 0;
 
   public checkDirectionChange = (game: Game) => {
     const currentDirection = this.directionWatcher.get();

@@ -59,7 +59,7 @@ export const renderContent = (
   // canvas_walls: HTMLCanvasElement
 ) => {
   const context = game.getCanvasContext2d();
-  console.log("renderContent", context, game);
+  console.trace("renderContent", context, game);
   // Refresh Score
   game.refreshScore(".score");
 
@@ -143,8 +143,6 @@ export const renderGrid = (
 
   const height = context.canvas.height;
   const width = context.canvas.width;
-
-  console.log("renderGrid", context, height, width);
 
   // horizontal grid lines
   for (let i = 0; i <= height; i = i + gridPixelSize) {

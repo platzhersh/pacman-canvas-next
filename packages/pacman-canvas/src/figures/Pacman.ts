@@ -46,7 +46,7 @@ export class Pacman extends Figure {
   };
 
   public checkCollisions = (game: Game) => {
-    if (this.stuckX == 0 && this.stuckY == 0 && !this.frozen) {
+    if (this.stuckX === 0 && this.stuckY === 0 && !this.frozen) {
       // Get the Grid Position of Pac
       let gridX = this.getGridPosX();
       let gridY = this.getGridPosY();
@@ -56,33 +56,33 @@ export class Pacman extends Figure {
       let field = game.getMapContent(gridX, gridY);
 
       // get the field 1 ahead to check wall collisions
-      if (this.dirX == 1 && gridAheadX < 17) gridAheadX += 1;
-      if (this.dirY == 1 && gridAheadY < 12) gridAheadY += 1;
+      if (this.dirX === 1 && gridAheadX < 17) gridAheadX += 1;
+      if (this.dirY === 1 && gridAheadY < 12) gridAheadY += 1;
       let fieldAhead = game.getMapContent(gridAheadX, gridAheadY);
 
       /*	Check Pill Collision			*/
       if (field === "pill" || field === "powerpill") {
         //console.log("Pill found at ("+gridX+"/"+gridY+"). Pacman at ("+this.posX+"/"+this.posY+")");
         if (
-          (this.dirX == 1 &&
+          (this.dirX === 1 &&
             isInRange(
               this.posX,
               game.toPixelPos(gridX) + this.radius - this.speed,
               game.toPixelPos(gridX + 1)
             )) ||
-          (this.dirX == -1 &&
+          (this.dirX === -1 &&
             isInRange(
               this.posX,
               game.toPixelPos(gridX),
               game.toPixelPos(gridX) + this.speed
             )) ||
-          (this.dirY == 1 &&
+          (this.dirY === 1 &&
             isInRange(
               this.posY,
               game.toPixelPos(gridY) + this.radius - this.speed,
               game.toPixelPos(gridY + 1)
             )) ||
-          (this.dirY == -1 &&
+          (this.dirY === -1 &&
             isInRange(
               this.posY,
               game.toPixelPos(gridY),
@@ -112,12 +112,12 @@ export class Pacman extends Figure {
         this.stuckY = this.dirY;
         this.stop();
         // get out of the wall
-        if (this.stuckX == 1 && (this.posX % 2) * this.radius != 0)
+        if (this.stuckX === 1 && (this.posX % 2) * this.radius !== 0)
           this.posX -= this.speed;
-        if (this.stuckY == 1 && (this.posY % 2) * this.radius != 0)
+        if (this.stuckY === 1 && (this.posY % 2) * this.radius !== 0)
           this.posY -= this.speed;
-        if (this.stuckX == -1) this.posX += this.speed;
-        if (this.stuckY == -1) this.posY += this.speed;
+        if (this.stuckX === -1) this.posX += this.speed;
+        if (this.stuckY === -1) this.posY += this.speed;
       }
     }
   };
@@ -129,7 +129,7 @@ export class Pacman extends Figure {
     const nextDirection = this.directionWatcher.get();
     if (nextDirection !== null) {
       console.groupCollapsed("checkDirectionChange");
-      //console.log("next Direction: "+directionWatcher.get().name);
+      console.debug(`next Direction: ${nextDirection.getName()}`);
 
       if (this.stuckX == 1 && nextDirection == right)
         this.directionWatcher.set(null);

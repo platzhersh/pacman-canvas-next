@@ -39,6 +39,7 @@ export type GameState = {
   score: number;
   pillCount: number;
   level: number;
+  lives: number;
 };
 
 export type GameStateEvent = {
@@ -72,8 +73,6 @@ export class Game {
     0
   ) as HTMLCanvasElement;
   private wallColor = "Blue";
-  private width = this.canvas?.width;
-  private height = this.canvas?.height;
 
   // global pill states
   private pillSize = PILL_SIZE;
@@ -174,9 +173,16 @@ export class Game {
     }
   };
 
-  public getCanvasWidth = () => this.width;
-  public getCanvasHeight = () => this.height;
-
+  public getCanvasWidth = (): number => {
+    const width = this.canvasContext2d?.canvas.width;
+    if (!width) throw Error("No canvas width");
+    return width;
+  };
+  public getCanvasHeight = (): number => {
+    const height = this.canvasContext2d?.canvas.height;
+    if (!height) throw Error("No canvas height");
+    return height;
+  };
   public getGridMap = () => this.gridMap;
   public getMapContent = (x: number, y: number) => {
     return this.gridMap.getTileType(x, y);
@@ -468,6 +474,7 @@ export class Game {
       score: this.score.get(),
       pillCount: this.pillCount,
       level: this.level,
+      lives: this.pacman.getLives(),
     };
   };
 
