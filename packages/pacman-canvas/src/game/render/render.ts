@@ -9,7 +9,6 @@ export const buildWall = (
   width: number,
   height: number
 ) => {
-  console.log("BuildWall");
   width = width * 2 - 1;
   height = height * 2 - 1;
   context.fillRect(
@@ -38,12 +37,18 @@ const drawPill = (
 };
 
 export const renderContent = (
-  game: Game,
-  context: CanvasRenderingContext2D
+  game: Game
   // canvas_walls: HTMLCanvasElement
 ) => {
+  const context = game.getCanvasContext2d();
+  console.log("renderContent", context, game);
   // Refresh Score
   game.refreshScore(".score");
+
+  if (!context) {
+    console.error("can't render, no context");
+    return;
+  }
 
   // Pills
   context.beginPath();

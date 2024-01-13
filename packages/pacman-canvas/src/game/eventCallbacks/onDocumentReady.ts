@@ -16,23 +16,8 @@ export const onDocumentReady = (game: Game, pacman: Pacman) => () => {
     logger.disableLogger();
   }
 
-  $.ajaxSetup({
-    mimeType: "application/json",
-  });
-
-  $.ajaxSetup({
-    beforeSend: function (xhr) {
-      if (xhr.overrideMimeType) {
-        xhr.overrideMimeType("application/json");
-      }
-    },
-  });
-
   // Hide address bar
   hideAdressbar();
-
-  // TODO: Check this whole appcache thing
-  // if (window.applicationCache != null) checkAppCache();
 
   /* -------------------- EVENT LISTENERS -------------------------- */
 
@@ -57,7 +42,7 @@ export const onDocumentReady = (game: Game, pacman: Pacman) => () => {
   });
 
   // Menu
-  $(document).on("click", ".button#newGame", function (event) {
+  $(document).on("click", ".button#newGame", (event) => {
     game.newGame();
   });
   $(document).on("click", ".button#instructions", function (event) {
@@ -84,7 +69,8 @@ export const onDocumentReady = (game: Game, pacman: Pacman) => () => {
     
     -------------------------------------------------------------------------- */
 
+  console.log("context", context);
   game.init("NewGame");
 
-  renderContent(game, context!);
+  renderContent(game);
 };

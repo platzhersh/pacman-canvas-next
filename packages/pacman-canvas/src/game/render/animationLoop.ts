@@ -1,18 +1,21 @@
 import { Game } from "../Game";
 import { renderContent } from "./render";
 
-export const animationLoop = (game: Game, canvas: HTMLCanvasElement) => {
-  // if (gameOver) return;
+export const animationLoop = (game: Game) => () => {
+  if (game.isGameOver()) return;
 
-  const context = canvas.getContext("2d")!;
+  console.log("animationLoop", game);
+
+  // const context = canvas.getContext("2d")!;
   const pacman = game.getPacman();
 
   // enable next line to show grid
   // renderGrid(pacman.radius, "red");
-  renderContent(game, context);
+  renderContent(game);
 
   // if (game.dieAnimation == 1) pacman.dieAnimation(game);
   if (!game.isPaused()) {
+    console.log("move");
     // Make changes before next loop
     pacman.move(game);
     pacman.eat();
@@ -28,5 +31,5 @@ export const animationLoop = (game: Game, canvas: HTMLCanvasElement) => {
   }
 
   //requestAnimationFrame(animationLoop);
-  setTimeout(animationLoop, game.getRefreshRate());
+  setTimeout(animationLoop(game), game.getRefreshRate());
 };

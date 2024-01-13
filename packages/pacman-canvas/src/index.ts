@@ -10,10 +10,14 @@
 	
 -------------------------------------------------------------------*/
 
+import { Game } from "./game/Game";
 import { runPacman } from "./game/main";
+import { renderContent } from "./game/render/render";
 
 export const helloPacman = () => {
   return "Hello Pacman";
 };
+
+export { renderContent, Game, runPacman };
 
 export default runPacman;

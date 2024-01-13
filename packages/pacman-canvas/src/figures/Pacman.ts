@@ -9,14 +9,10 @@ export const PACMAN_RADIUS = 15;
 const PACMAN_INITIAL_LIVES = 3;
 
 export class Pacman extends Figure {
-  protected posX = 0;
-  protected posY = 6 * 2 * this.radius;
   protected speed = 5;
   protected angle1 = 0.25;
   protected angle2 = 1.75;
   protected mouth = 1; /* Switches between 1 and -1, depending on mouth closing / opening */
-  protected dirX = right.getDirX();
-  protected dirY = right.getDirY();
   protected lives = PACMAN_INITIAL_LIVES;
   protected stuckX = 0;
   protected stuckY = 0;
@@ -27,6 +23,14 @@ export class Pacman extends Figure {
 
   protected beastMode = false;
   protected beastModeTimer = 0;
+
+  constructor() {
+    super();
+    this.radius = PACMAN_RADIUS;
+    this.posY = 6 * 2 * this.radius;
+    this.dirX = right.getDirX();
+    this.dirY = right.getDirY();
+  }
 
   public freeze = () => {
     this.frozen = true;

@@ -1,12 +1,16 @@
+import $ from "jquery";
+import { blinkySVG, clydeSVG, inkyBase64Src, pinkySVG } from "../assets/img";
+import { GHOSTS, Ghost, GhostMode, GhostRegistry } from "../figures/Ghost";
+import { PACMAN_RADIUS, Pacman } from "../figures/Pacman";
 import { Score } from "./Score";
 import { Timer } from "./Timer";
 import { GridMap } from "./map/GridMap";
-import $ from "jquery";
-import { buildWall } from "./render/render";
 import { MapTileType } from "./map/mapData";
 import { animationLoop } from "./render/animationLoop";
-import { GHOSTS, Ghost, GhostMode, GhostRegistry } from "../figures/Ghost";
-import { PACMAN_RADIUS, Pacman } from "../figures/Pacman";
+import { buildWall } from "./render/render";
+import { Direction } from "../figures/directions/Direction";
+import { generateUID } from "../utils/uuid";
+import { onKeyDown } from "./eventCallbacks/onKeyDown";
 
 // global constants
 const FINAL_LEVEL = 10;
@@ -19,8 +23,23 @@ export const PILL_SIZE = 3;
 export const POWERPILL_SIZE = 6;
 
 type GameInitMode = "NewGame" | "NewLevel";
-
+export type GameStateChangeListener = (
+  eventName: string,
+  payload: GameState
+) => any;
+export type GameState = {
+  gameId: string;
+  started: boolean;
+  pause: boolean;
+  gameOver: boolean;
+  score: number;
+  pillCount: number;
+  level: number;
+};
 export class Game {
+  private gameId: string = generateUID();
+  public getId = () => this.gameId;
+
   private timer = new Timer(); // TODO: implememnt properly, and submit with highscore
   private refreshRate = 33; // speed of the game, will increase in higher levels
 
@@ -37,6 +56,7 @@ export class Game {
   public refreshLevel = (h: string) => {
     $(h).html("Lvl: " + this.level);
   };
+  private canvasContext2d: CanvasRenderingContext2D | null = null;
   private canvas: HTMLCanvasElement = $("#myCanvas").get(
     0
   ) as HTMLCanvasElement;
@@ -64,7 +84,6 @@ export class Game {
 
   // pacman
   private pacman = new Pacman();
-
   public getPacman = () => this.pacman;
 
   // global ghost states
@@ -74,13 +93,16 @@ export class Game {
   private ghostMode: GhostMode = GhostMode.Scatter; // 0 = Scatter, 1 = Chase
   private ghostModeTimer = 200; // decrements each animationLoop execution
 
-  constructor() {
+  constructor(canvasContext2d?: CanvasRenderingContext2D) {
+    if (canvasContext2d) this.canvasContext2d = canvasContext2d;
     this.ghosts = {
-      pinky: new Ghost(this, GHOSTS.PINKY, 7, 5, "img/pinky.svg", 2, 2),
-      inky: new Ghost(this, GHOSTS.INKY, 8, 5, "img/inky.svg", 13, 11),
-      blinky: new Ghost(this, GHOSTS.BLINKY, 9, 5, "img/blinky.svg", 13, 0),
-      clyde: new Ghost(this, GHOSTS.CLYDE, 10, 5, "img/clyde.svg", 2, 11),
+      pinky: new Ghost(this, GHOSTS.PINKY, 7, 5, inkyBase64Src, 2, 2),
+      inky: new Ghost(this, GHOSTS.INKY, 8, 5, inkyBase64Src, 13, 11),
+      clyde: new Ghost(this, GHOSTS.CLYDE, 10, 5, inkyBase64Src, 2, 11),
+      blinky: new Ghost(this, GHOSTS.BLINKY, 9, 5, inkyBase64Src, 13, 0),
     };
+    this.init("NewGame");
+    this.registerKeyListener();
   }
 
   /* Game Functions */
@@ -166,9 +188,17 @@ export class Game {
 
     this.pause = false;
     this.gameOver = false;
+    this.onGameStateChange("reset");
   };
 
   public getRefreshRate = () => this.refreshRate;
+
+  public setCanvasContext2d = (canvasContext2d: CanvasRenderingContext2D) => {
+    console.log("set canvas context");
+    this.canvasContext2d = canvasContext2d;
+    this.buildWalls();
+  };
+  public getCanvasContext2d = () => this.canvasContext2d;
 
   public newGame = () => {
     const r = confirm("Are you sure you want to restart?");
@@ -248,23 +278,27 @@ export class Game {
 
   public showMessage = (title: string, text: string) => {
     $("#canvas-overlay-container").fadeIn(200);
-    if ($(".controls").css("display") != "none")
-      $(".controls").slideToggle(200);
+    // if ($(".controls").css("display") != "none")
+    //   $(".controls").slideToggle(200);
     $("#canvas-overlay-content #title").text(title);
     $("#canvas-overlay-content #text").html(text);
   };
 
-  public setPause = (val: boolean) => (this.pause = val);
+  public setPause = (val: boolean) => {
+    this.pause = val;
+    this.onGameStateChange("setPause");
+  };
 
   public pauseAndShowMessage = (title: string, text: string) => {
     this.timer.stop();
     this.pause = true;
     this.showMessage(title, text);
+    this.onGameStateChange("PauseAndShowMessage");
   };
 
   public closeMessage = () => {
     $("#canvas-overlay-container").fadeOut(200);
-    $(".controls").slideToggle(200);
+    // $(".controls").slideToggle(200);
   };
 
   public validateScoreWithLevel = () => {
@@ -304,15 +338,20 @@ export class Game {
 
   /* game controls */
 
+  /**
+   *
+   */
   public forceStartAnimationLoop = () => {
     // start timer
     this.timer.start();
 
     this.pause = false;
     this.started = true;
+    this.onGameStateChange("forceStartAnimationLoop");
+
     this.closeMessage();
 
-    animationLoop(this, this.canvas);
+    animationLoop(this)();
   };
 
   public isStarted = () => this.started;
@@ -328,6 +367,7 @@ export class Game {
     this.closeMessage();
     this.pause = false;
     this.timer.start();
+    this.onGameStateChange("ForceResume");
   };
 
   public pauseResume = () => {
@@ -372,6 +412,8 @@ export class Game {
     // initalize Ghosts, avoid memory flooding
     this.resetGhosts();
     this.startGhosts();
+
+    this.onGameStateChange("InitGame");
   };
 
   public checkForLevelUp = () => {
@@ -384,6 +426,7 @@ export class Game {
     console.log("Game Over by " + (allLevelsCompleted ? "WIN" : "LOSS"));
     this.pause = true;
     this.gameOver = true;
+    this.onGameStateChange("EndGame");
   };
 
   public toPixelPos = (gridPos: number) => {
@@ -394,17 +437,57 @@ export class Game {
     return (pixelPos % 30) / 30;
   };
 
+  // Player Control API
+  public setPacmanDirection = (direction: Direction) => {
+    this.pacman.getDirectionWatcher().set(direction);
+  };
+
+  public getGameStateSnapshot = (): GameState => {
+    return {
+      gameId: this.gameId,
+      started: this.started,
+      pause: this.pause,
+      gameOver: this.gameOver,
+      score: this.score.get(),
+      pillCount: this.pillCount,
+      level: this.level,
+    };
+  };
+
+  public onGameStateChange = (eventName: string) => {
+    console.log("onGameStateChange", eventName);
+    const payload = this.getGameStateSnapshot();
+    this.gameStateChangeListeners.forEach((listenerFn) =>
+      listenerFn(eventName, payload)
+    );
+  };
+
+  private gameStateChangeListeners: GameStateChangeListener[] = [];
+
+  public registerGameStateChangeListener = (
+    listenerFn: GameStateChangeListener
+  ) => {
+    this.gameStateChangeListeners.push(listenerFn);
+  };
+
+  public registerKeyListener = () => {
+    window.addEventListener("keydown", onKeyDown(this), true);
+  };
+
   /* ------------ Start Pre-Build Walls  ------------ */
+  /**
+   * TODO: move to render?
+   */
   public buildWalls = () => {
+    console.log("build walls");
     if (this.ghostMode === 0) this.wallColor = "Blue";
     else this.wallColor = "Red";
 
-    const canvas_walls = document.createElement("canvas");
-    canvas_walls.width = this.canvas.width;
-    canvas_walls.height = this.canvas.height;
-    let context_walls = canvas_walls.getContext("2d");
+    if (!this.canvasContext2d) {
+      throw Error("No context found to draw on");
+    }
 
-    if (!context_walls) throw Error("Error getting 2d context");
+    const context_walls = this.canvasContext2d;
 
     context_walls.fillStyle = this.wallColor;
     context_walls.strokeStyle = this.wallColor;
