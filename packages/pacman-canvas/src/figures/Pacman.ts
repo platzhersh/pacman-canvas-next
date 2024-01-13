@@ -131,7 +131,7 @@ export class Pacman extends Figure {
       console.groupCollapsed("checkDirectionChange");
       console.debug(`next Direction: ${nextDirection.getName()}`);
 
-      if (this.stuckX == 1 && nextDirection == right)
+      if (this.stuckX === 1 && nextDirection == right)
         this.directionWatcher.set(null);
       else {
         // reset stuck events
@@ -189,7 +189,7 @@ export class Pacman extends Figure {
         this.beastModeTimer--;
         //console.log("Beast Mode: "+this.beastModeTimer);
       }
-      if (this.beastModeTimer == 0 && this.beastMode == true)
+      if (this.beastModeTimer === 0 && !this.beastMode)
         this.disableBeastMode(game);
 
       this.posX += this.speed * this.dirX;

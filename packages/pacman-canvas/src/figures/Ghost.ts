@@ -175,25 +175,25 @@ export class Ghost extends Figure {
     // leave Ghost House
     if (this.ghostHouse === true) {
       // Clyde does not start chasing before 2/3 of all pills are eaten and if level is < 4
-      if (this.name == GHOSTS.CLYDE) {
+      if (this.name === GHOSTS.CLYDE) {
         if (game.getLevel() < 4 || game.getPillCount() > 104 / 3) this.stop();
         else this.start();
       }
       // Inky starts after 30 pills and only from the third level on
-      if (this.name == GHOSTS.INKY) {
+      if (this.name === GHOSTS.INKY) {
         if (game.getLevel() < 3 || game.getPillCount() > 104 - 30) this.stop();
         else this.start();
       }
 
-      if (this.getGridPosY() == 5 && this.inGrid()) {
-        if (this.getGridPosX() == 7) this.setDirection(right);
-        if (this.getGridPosX() == 8 || this.getGridPosX() == 9)
+      if (this.getGridPosY() === 5 && this.inGrid()) {
+        if (this.getGridPosX() === 7) this.setDirection(right);
+        if (this.getGridPosX() === 8 || this.getGridPosX() === 9)
           this.setDirection(up);
-        if (this.getGridPosX() == 10) this.setDirection(left);
+        if (this.getGridPosX() === 10) this.setDirection(left);
       }
       if (
-        this.getGridPosY() == 4 &&
-        (this.getGridPosX() == 8 || this.getGridPosX() == 9) &&
+        this.getGridPosY() === 4 &&
+        (this.getGridPosX() === 8 || this.getGridPosX() === 9) &&
         this.inGrid()
       ) {
         console.log("ghosthouse -> false");
@@ -201,7 +201,7 @@ export class Ghost extends Figure {
       }
     }
 
-    if (!this.stop) {
+    if (!this.isStopped) {
       // Move
       this.posX += this.speed * this.dirX;
       this.posY += this.speed * this.dirY;
@@ -223,8 +223,8 @@ export class Ghost extends Figure {
     /* Check Back to Home */
     if (
       this.dead &&
-      this.getGridPosX() == this.startPosX / 30 &&
-      this.getGridPosY() == this.startPosY / 30
+      this.getGridPosX() === this.startPosX / 30 &&
+      this.getGridPosY() === this.startPosY / 30
     )
       this.reset(game);
     else if (
@@ -269,11 +269,11 @@ export class Ghost extends Figure {
       // go Home
       tX = this.startPosX / 30;
       tY = this.startPosY / 30;
-    } else if (game.getGhostMode() === 0) {
+    } else if (game.getGhostMode() === GhostMode.Scatter) {
       // Scatter Mode
       tX = this.gridBaseX;
       tY = this.gridBaseY;
-    } else if (game.getGhostMode() === 1) {
+    } else if (game.getGhostMode() === GhostMode.Chase) {
       // Chase Mode
 
       switch (this.name) {
@@ -281,11 +281,11 @@ export class Ghost extends Figure {
         case GHOSTS.PINKY:
           var pacmanDirection = pacman.getDirection();
           var pdirX =
-            pacmanDirection.getDirX() == 0
+            pacmanDirection.getDirX() === 0
               ? -pacmanDirection.getDirY()
               : pacmanDirection.getDirX();
           var pdirY =
-            pacmanDirection.getDirY() == 0
+            pacmanDirection.getDirY() === 0
               ? -pacmanDirection.getDirX()
               : pacmanDirection.getDirY();
 

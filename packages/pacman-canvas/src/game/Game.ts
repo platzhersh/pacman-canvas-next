@@ -15,7 +15,12 @@ import { onKeyDown } from "./eventCallbacks/onKeyDown";
 import { GridMap } from "./map/GridMap";
 import { MapTileType } from "./map/mapData";
 import { animationLoop } from "./render/animationLoop";
-import { buildWall } from "./render/render";
+import {
+  buildWall,
+  clearCanvas,
+  renderContent,
+  renderGrid,
+} from "./render/render";
 
 // global constants
 const FINAL_LEVEL = 10;
@@ -167,8 +172,6 @@ export class Game {
       this.ghostModeTimer = 200 + this.ghostMode * 450;
       console.log("ghostMode=" + this.ghostMode);
 
-      this.buildWalls();
-
       Object.values(this.getGhosts()).forEach((g) => g.reverseDirection());
     }
   };
@@ -217,7 +220,7 @@ export class Game {
   public setCanvasContext2d = (canvasContext2d: CanvasRenderingContext2D) => {
     console.log("set canvas context");
     this.canvasContext2d = canvasContext2d;
-    this.buildWalls();
+    this.render();
   };
   public getCanvasContext2d = () => this.canvasContext2d;
 
@@ -429,7 +432,7 @@ export class Game {
 
     this.ghostFrightened = false;
     this.ghostFrightenedTimer = 240;
-    this.ghostMode = 0; // 0 = Scatter, 1 = Chase
+    this.ghostMode = GhostMode.Scatter; // 0 = Scatter, 1 = Chase
     this.ghostModeTimer = 200; // decrements each animationLoop execution
 
     this.onGameStateChange(`Init${state}`);
@@ -498,6 +501,20 @@ export class Game {
     window.addEventListener("keydown", onKeyDown(this), true);
   };
 
+  public render = () => {
+    const context = this.getCanvasContext2d();
+
+    if (!context) {
+      console.error("can't render, no context");
+      return;
+    }
+
+    clearCanvas(context);
+    this.buildWalls();
+    if (this.isGridVisible()) renderGrid(this, PACMAN_RADIUS, "red");
+    renderContent(this);
+  };
+
   /* ------------ Start Pre-Build Walls  ------------ */
   /**
    * TODO: move to render?
@@ -505,7 +522,7 @@ export class Game {
    */
   public buildWalls = () => {
     console.log("build walls");
-    if (this.ghostMode === 0) this.wallColor = "Blue";
+    if (this.ghostMode === GhostMode.Scatter) this.wallColor = "Blue";
     else this.wallColor = "Red";
 
     if (!this.canvasContext2d) {

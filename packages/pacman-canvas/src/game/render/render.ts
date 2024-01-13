@@ -2,20 +2,6 @@ import { PACMAN_RADIUS } from "../../figures/Pacman";
 import { Game, PILL_SIZE, POWERPILL_SIZE } from "../Game";
 import { MapColumn } from "../map/mapData";
 
-export const render = (game: Game) => {
-  const context = game.getCanvasContext2d();
-
-  if (!context) {
-    console.error("can't render, no context");
-    return;
-  }
-
-  clearCanvas(context);
-  game.buildWalls();
-  if (game.isGridVisible()) renderGrid(game, PACMAN_RADIUS, "red");
-  renderContent(game);
-};
-
 export const buildWall = (
   context: CanvasRenderingContext2D,
   gridX: number,

@@ -67,7 +67,7 @@ export default function GameCanvas() {
   useEffect(() => {
     if (game && canvasContext) {
       game.setCanvasContext2d(canvasContext);
-      renderContent(game);
+    //   renderContent(game);
     }
   }, [canvasContext]);
 

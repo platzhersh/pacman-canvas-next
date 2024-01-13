@@ -1,5 +1,4 @@
 import { Game } from "../Game";
-import { render } from "./render";
 
 export const animationLoop = (game: Game) => () => {
   if (game.isGameOver()) return;
@@ -10,11 +9,10 @@ export const animationLoop = (game: Game) => () => {
   const pacman = game.getPacman();
 
   // render on Canvas
-  render(game);
+  game.render();
 
   // if (game.dieAnimation == 1) pacman.dieAnimation(game);
   if (!game.isPaused()) {
-    console.log("move");
     // Make changes before next loop
     pacman.move(game);
     pacman.eat();
@@ -22,7 +20,6 @@ export const animationLoop = (game: Game) => () => {
     pacman.checkCollisions(game); // has to be the LAST method called on pacman
 
     game.moveGhosts();
-
     game.checkGhostMode();
 
     // All dots collected?

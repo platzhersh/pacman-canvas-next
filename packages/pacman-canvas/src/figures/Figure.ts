@@ -59,7 +59,7 @@ export class Figure {
   };
 
   public move = (game: any) => {
-    if (!this.stop) {
+    if (!this.isStopped) {
       this.posX += this.speed * this.dirX;
       this.posY += this.speed * this.dirY;
 
