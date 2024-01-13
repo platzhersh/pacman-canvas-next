@@ -1,18 +1,11 @@
 import $ from "jquery";
-import {
-  blinkySvgSrc,
-  clydeSvgSrc,
-  inkySvgSrc,
-  pinkySvgSrc,
-} from "../assets/img";
-import {
-  GHOSTS,
-  Ghost,
-  GhostMode,
-  GhostRegistry,
-} from "../figures/ghosts/Ghost";
 import { PACMAN_RADIUS, Pacman } from "../figures/Pacman";
 import { Direction } from "../figures/directions/Direction";
+import { Blinky } from "../figures/ghosts/Blinky";
+import { Clyde } from "../figures/ghosts/Clyde";
+import { GhostMode, GhostRegistry } from "../figures/ghosts/Ghost";
+import { Inky } from "../figures/ghosts/Inky";
+import { Pinky } from "../figures/ghosts/PInky";
 import { generateUID } from "../utils/uuid";
 import { Score } from "./Score";
 import { Timer } from "./Timer";
@@ -26,10 +19,6 @@ import {
   renderContent,
   renderGrid,
 } from "./render/render";
-import { Inky } from "../figures/ghosts/Inky";
-import { Pinky } from "../figures/ghosts/PInky";
-import { Clyde } from "../figures/ghosts/Clyde";
-import { Blinky } from "../figures/ghosts/Blinky";
 
 // global constants
 const FINAL_LEVEL = 10;
@@ -54,6 +43,7 @@ export type GameState = {
   pillCount: number;
   level: number;
   lives: number;
+  ghostMode: GhostMode;
 };
 
 export type GameStateEvent = {
@@ -179,7 +169,8 @@ export class Game {
     if (this.ghostModeTimer === 0 && this.level > 1) {
       this.ghostMode ^= 1;
       this.ghostModeTimer = 200 + this.ghostMode * 450;
-      console.log("ghostMode=" + this.ghostMode);
+
+      this.onGameStateChange("ghostModeChanged");
 
       Object.values(this.getGhosts()).forEach((g) => g.reverseDirection());
     }
@@ -487,6 +478,7 @@ export class Game {
       pillCount: this.pillCount,
       level: this.level,
       lives: this.pacman.getLives(),
+      ghostMode: this.ghostMode,
     };
   };
 

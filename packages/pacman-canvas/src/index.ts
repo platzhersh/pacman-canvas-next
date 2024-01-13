@@ -11,13 +11,12 @@
 -------------------------------------------------------------------*/
 
 import { Game } from "./game/Game";
-import { runPacman } from "./game/main";
-import { renderContent } from "./game/render/render";
+import { getGameInstance } from "./game/main";
 
 export const helloPacman = () => {
   return "Hello Pacman";
 };
 
-export { renderContent, Game, runPacman };
+export { Game, getGameInstance };
 
-export default runPacman;
+export default getGameInstance;

@@ -1,16 +1,12 @@
 import { Game } from "./Game";
-import { onDocumentReady } from "./eventCallbacks/onDocumentReady";
-import $ from "jquery";
 
-export const registerDocumentReadyCallback = (game: Game) => {
-  $(document).ready(onDocumentReady(game, game.getPacman()));
-  game.buildWalls();
+let game: Game | null = null;
+
+export const getGameInstance = () => {
+  if (!game) {
+    game = new Game();
+  }
+  return game;
 };
 
-export const runPacman = () => {
-  const game = new Game();
-
-  game.buildWalls();
-
-  $(document).ready(onDocumentReady(game, game.getPacman()));
-};
+export { Game };

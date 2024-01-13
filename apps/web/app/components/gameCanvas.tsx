@@ -1,6 +1,6 @@
 "use client";
 
-import { Game, helloPacman, renderContent } from "@repo/pacman-canvas";
+import getGameInstance, { Game, helloPacman } from "@repo/pacman-canvas";
 import {
     blinkySvgSrc,
     clydeSvgSrc,
@@ -22,7 +22,6 @@ import {
 } from "@repo/pacman-canvas/src/game/Game";
 import { animationLoop } from "@repo/pacman-canvas/src/game/render/animationLoop";
 import { useEffect, useRef, useState } from "react";
-import { getGameInstance } from "./game";
 import styles from "./gameCanvas.module.css";
 
 export default function GameCanvas() {
@@ -55,19 +54,12 @@ export default function GameCanvas() {
     }
 
     console.log("canvasContext", canvasContext);
-    // game.buildWalls();
-    // registerDocumentReadyCallback(game);
-    // TODO: register key event handler
-
-    // if (canvasContext) {
-    //   renderContent(game, canvasContext);
-    // }
   }, []);
 
   useEffect(() => {
     if (game && canvasContext) {
       game.setCanvasContext2d(canvasContext);
-    //   renderContent(game);
+    
     }
   }, [canvasContext]);
 
