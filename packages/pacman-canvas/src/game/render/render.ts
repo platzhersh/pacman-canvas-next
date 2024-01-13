@@ -106,29 +106,40 @@ export const renderContent = (
 
 // TODO: only for debugging
 export const renderGrid = (
-  canvas: HTMLCanvasElement,
-  context: CanvasRenderingContext2D,
+  game: Game,
   gridPixelSize: number,
   color: string
 ) => {
+  const context = game.getCanvasContext2d();
+
+  if (!context) {
+    console.error("can't render, no context");
+    return;
+  }
+
   context.save();
   context.lineWidth = 0.5;
   context.strokeStyle = color;
 
+  const height = context.canvas.height;
+  const width = context.canvas.width;
+
+  console.log("renderGrid", context, height, width);
+
   // horizontal grid lines
-  for (let i = 0; i <= canvas.height; i = i + gridPixelSize) {
+  for (let i = 0; i <= height; i = i + gridPixelSize) {
     context.beginPath();
     context.moveTo(0, i);
-    context.lineTo(canvas.width, i);
+    context.lineTo(width, i);
     context.closePath();
     context.stroke();
   }
 
   // vertical grid lines
-  for (let i = 0; i <= canvas.width; i = i + gridPixelSize) {
+  for (let i = 0; i <= width; i = i + gridPixelSize) {
     context.beginPath();
     context.moveTo(i, 0);
-    context.lineTo(i, canvas.height);
+    context.lineTo(i, height);
     context.closePath();
     context.stroke();
   }

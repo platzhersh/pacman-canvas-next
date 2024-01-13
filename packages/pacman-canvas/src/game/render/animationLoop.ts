@@ -1,5 +1,5 @@
 import { Game } from "../Game";
-import { renderContent } from "./render";
+import { renderContent, renderGrid } from "./render";
 
 export const animationLoop = (game: Game) => () => {
   if (game.isGameOver()) return;
@@ -10,7 +10,7 @@ export const animationLoop = (game: Game) => () => {
   const pacman = game.getPacman();
 
   // enable next line to show grid
-  // renderGrid(pacman.radius, "red");
+  if (game.isGridVisible()) renderGrid(game, pacman.getRadius(), "red");
   renderContent(game);
 
   // if (game.dieAnimation == 1) pacman.dieAnimation(game);

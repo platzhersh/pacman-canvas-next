@@ -54,6 +54,7 @@ export class Game {
 
   private score = new Score();
   private soundfx: boolean = false;
+  private showGrid: boolean = false;
   private gridMap: GridMap = new GridMap();
   private pillCount: number = 0; // number of pills
 
@@ -111,6 +112,9 @@ export class Game {
   }
 
   /* Game Functions */
+  public toggleGridVisibility = () => (this.showGrid = !this.showGrid);
+  public isGridVisible = () => this.showGrid;
+
   public getGhosts = () => this.ghosts;
   public resetGhosts = () =>
     Object.values(this.ghosts).forEach((g) => g.reset(this));

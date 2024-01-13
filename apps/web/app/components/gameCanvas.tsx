@@ -154,6 +154,9 @@ export default function GameCanvas() {
           </button>
           <button onClick={() => game.endGame()}>End Game</button>
           <button onClick={() => game.buildWalls()}>Build Walls</button>
+          <button onClick={() => game.toggleGridVisibility()}>
+            Toggle Grid
+          </button>
           <button onClick={() => animationLoop(game)()}>
             Next Animationloop
           </button>
