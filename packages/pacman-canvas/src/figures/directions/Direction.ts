@@ -22,6 +22,12 @@ export class Direction {
     this.dirY = dirY;
   }
 
+  public getName = () => this.name;
+  public getDirX = () => this.dirX;
+  public getDirY = () => this.dirY;
+  public getAngle1 = () => this.angle1;
+  public getAngle2 = () => this.angle2;
+
   public equals = (dir: Direction) => {
     return JSON.stringify(this) == JSON.stringify(dir);
   };
