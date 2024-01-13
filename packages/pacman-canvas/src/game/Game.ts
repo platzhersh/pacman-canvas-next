@@ -1,4 +1,3 @@
-import $ from "jquery";
 import { PACMAN_RADIUS, Pacman } from "../figures/Pacman";
 import { Direction } from "../figures/directions/Direction";
 import { Blinky } from "../figures/ghosts/Blinky";
@@ -69,13 +68,8 @@ export class Game {
   private pillCount: number = 0; // number of pills
 
   private level = 1;
-  public refreshLevel = (h: string) => {
-    $(h).html("Lvl: " + this.level);
-  };
+
   private canvasContext2d: CanvasRenderingContext2D | null = null;
-  private canvas: HTMLCanvasElement = $("#myCanvas").get(
-    0
-  ) as HTMLCanvasElement;
   private wallColor = "Blue";
 
   // global pill states
@@ -198,16 +192,13 @@ export class Game {
   public isSoundEnabled = () => this.soundfx;
   public toggleSound = () => {
     this.soundfx = !this.soundfx;
-    $("#mute").toggle();
   };
 
   // TODO: test
   public reset = () => {
     this.score.set(0);
-    this.score.refresh(".score");
     this.pacman.resetLives();
     this.level = 1;
-    this.refreshLevel(".level");
 
     this.pause = false;
     this.gameOver = false;
@@ -238,7 +229,7 @@ export class Game {
     if (this.level === FINAL_LEVEL) {
       console.log("next level, " + FINAL_LEVEL + ", end game");
       this.endGame(true);
-      this.showHighscoreForm();
+      //   this.showHighscoreForm();
     } else {
       this.level++;
       console.log("Level " + this.level);
@@ -246,24 +237,11 @@ export class Game {
         "Level " + this.level,
         this.getLevelTitle() + "<br/>(Click to continue!)"
       );
-      this.refreshLevel(".level");
       this.init("NewLevel");
     }
   };
 
-  /* UI functions */
-  public drawHearts = (count: number) => {
-    let html = "";
-    for (var i = 0; i < count; i++) {
-      html += " <img src='img/heart.png'>";
-    }
-    $(".lives").html("Lives: " + html);
-  };
-
-  public showContent = (id: string) => {
-    $(".content").hide();
-    $("#" + id).show();
-  };
+  public showContent = (id: string) => {};
 
   public getLevel = () => this.level;
   public getLevelTitle = () => {
@@ -300,14 +278,6 @@ export class Game {
     }
   };
 
-  public showMessage = (title: string, text: string) => {
-    $("#canvas-overlay-container").fadeIn(200);
-    // if ($(".controls").css("display") != "none")
-    //   $(".controls").slideToggle(200);
-    $("#canvas-overlay-content #title").text(title);
-    $("#canvas-overlay-content #text").html(text);
-  };
-
   public setPause = (val: boolean) => {
     this.pause = val;
     this.onGameStateChange("setPause");
@@ -316,13 +286,8 @@ export class Game {
   public pauseAndShowMessage = (title: string, text: string) => {
     this.timer.stop();
     this.pause = true;
-    this.showMessage(title, text);
+    // this.showMessage(title, text);
     this.onGameStateChange("PauseAndShowMessage");
-  };
-
-  public closeMessage = () => {
-    $("#canvas-overlay-container").fadeOut(200);
-    // $(".controls").slideToggle(200);
   };
 
   public validateScoreWithLevel = () => {
@@ -345,23 +310,6 @@ export class Game {
     this.score.add(score);
     this.onGameStateChange("addScore");
   };
-  public refreshScore = (selector: string) => this.score.refresh(selector);
-  public showHighscoreForm = () => {
-    const scoreIsValid = this.validateScoreWithLevel();
-
-    const inputHTML = scoreIsValid
-      ? `<div id='highscore-form'>
-					<span id='form-validator'></span>
-					<input type='text' id='playerName'/>
-					<span class='button' id='score-submit'>save</span>
-				</div>`
-      : `<div id='invalid-score'>Your score looks fake, the highscore list is only for honest players ;)</div>`;
-    this.pauseAndShowMessage(
-      "Game over",
-      "Total Score: " + this.score.get() + (HIGHSCORE_ENABLED ? inputHTML : "")
-    );
-    $("#playerName").focus();
-  };
 
   /* game controls */
 
@@ -376,8 +324,6 @@ export class Game {
     this.started = true;
     this.onGameStateChange("forceStartAnimationLoop");
 
-    this.closeMessage();
-
     animationLoop(this)();
   };
 
@@ -391,7 +337,6 @@ export class Game {
   };
 
   public forceResume = () => {
-    this.closeMessage();
     this.pause = false;
     this.timer.start();
     this.onGameStateChange("ForceResume");
@@ -428,7 +373,7 @@ export class Game {
     }
     this.pacman.reset();
 
-    this.drawHearts(this.pacman.getLives());
+    // this.drawHearts(this.pacman.getLives());
 
     this.ghostFrightened = false;
     this.ghostFrightenedTimer = 240;

@@ -273,8 +273,8 @@ export class Pacman extends Figure {
     console.log("pacman died, " + this.lives + " lives left");
     if (this.lives <= 0) {
       game.endGame();
-      game.showHighscoreForm();
+      //   game.showHighscoreForm();
     }
-    game.drawHearts(this.lives);
+    // game.drawHearts(this.lives);
   };
 }

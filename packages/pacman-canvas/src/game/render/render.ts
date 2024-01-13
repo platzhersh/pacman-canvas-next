@@ -46,8 +46,6 @@ export const renderContent = (
 ) => {
   const context = game.getCanvasContext2d();
   console.trace("renderContent", context, game);
-  // Refresh Score
-  game.refreshScore(".score");
 
   if (!context) {
     console.error("can't render, no context");
