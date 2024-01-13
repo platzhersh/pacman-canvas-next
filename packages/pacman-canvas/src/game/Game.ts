@@ -5,7 +5,7 @@ import $ from "jquery";
 import { buildWall } from "./render/render";
 import { MapTileType } from "./map/mapData";
 import { animationLoop } from "./render/animationLoop";
-import { GHOSTS, Ghost, GhostMode } from "../figures/Ghost";
+import { GHOSTS, Ghost, GhostMode, GhostRegistry } from "../figures/Ghost";
 import { PACMAN_RADIUS, Pacman } from "../figures/Pacman";
 
 // global constants
@@ -68,16 +68,20 @@ export class Game {
   public getPacman = () => this.pacman;
 
   // global ghost states
-  private ghosts = {
-    pinky: new Ghost(this, GHOSTS.PINKY, 7, 5, "img/pinky.svg", 2, 2),
-    inky: new Ghost(this, GHOSTS.INKY, 8, 5, "img/inky.svg", 13, 11),
-    blinky: new Ghost(this, GHOSTS.BLINKY, 9, 5, "img/blinky.svg", 13, 0),
-    clyde: new Ghost(this, GHOSTS.CLYDE, 10, 5, "img/clyde.svg", 2, 11),
-  };
+  private ghosts: GhostRegistry;
   private ghostFrightened = false;
   private ghostFrightenedTimer = 240;
   private ghostMode: GhostMode = GhostMode.Scatter; // 0 = Scatter, 1 = Chase
   private ghostModeTimer = 200; // decrements each animationLoop execution
+
+  constructor() {
+    this.ghosts = {
+      pinky: new Ghost(this, GHOSTS.PINKY, 7, 5, "img/pinky.svg", 2, 2),
+      inky: new Ghost(this, GHOSTS.INKY, 8, 5, "img/inky.svg", 13, 11),
+      blinky: new Ghost(this, GHOSTS.BLINKY, 9, 5, "img/blinky.svg", 13, 0),
+      clyde: new Ghost(this, GHOSTS.CLYDE, 10, 5, "img/clyde.svg", 2, 11),
+    };
+  }
 
   /* Game Functions */
   public getGhosts = () => this.ghosts;

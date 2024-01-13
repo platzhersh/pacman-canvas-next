@@ -1,3 +1,5 @@
+import $ from "jquery";
+
 export class Score {
   private score = 0;
   public set = (i: number) => {

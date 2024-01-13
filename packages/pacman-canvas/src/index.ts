@@ -10,6 +10,10 @@
 	
 -------------------------------------------------------------------*/
 
+import { runPacman } from "./game/main";
+
 export const helloPacman = () => {
   return "Hello Pacman";
 };
+
+export default runPacman;

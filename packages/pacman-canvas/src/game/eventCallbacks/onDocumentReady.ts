@@ -3,6 +3,7 @@ import { logger } from "../../logger";
 import { Game } from "../Game";
 import { renderContent } from "../render/render";
 import { onKeyDown } from "./onKeyDown";
+import $ from "jquery";
 
 const hideAdressbar = () => {
   console.log("hide adressbar");

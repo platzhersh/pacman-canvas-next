@@ -12,6 +12,13 @@ export const GHOSTS = {
   CLYDE: "clyde",
 };
 
+export type GhostRegistry = {
+  pinky: Ghost;
+  inky: Ghost;
+  blinky: Ghost;
+  clyde: Ghost;
+};
+
 export enum GhostMode {
   Scatter = 0,
   Chase = 1,
