@@ -1,6 +1,8 @@
 import {
   FRUIT_POINTS,
+  GRID_SIZE,
   Game,
+  PACMAN_RADIUS,
   PILL_POINTS,
   POWERPILL_POINTS,
 } from "../game/Game";
@@ -11,7 +13,6 @@ import { right } from "./directions";
 import { Direction } from "./directions/Direction";
 import { DirectionWatcher } from "./directions/DirectionWatcher";
 
-export const PACMAN_RADIUS = 15;
 const PACMAN_INITIAL_LIVES = 3;
 
 export class Pacman extends Figure {
@@ -21,8 +22,6 @@ export class Pacman extends Figure {
   protected angle2 = 1.75;
   protected mouth = 1; /* Switches between 1 and -1, depending on mouth closing / opening */
   protected lives = PACMAN_INITIAL_LIVES;
-  protected stuckX = 0;
-  protected stuckY = 0;
   protected frozen = false; // used to play die Animation
 
   protected directionWatcher = new DirectionWatcher();
@@ -117,12 +116,10 @@ export class Pacman extends Figure {
   public checkCollisions = (game: Game) => {
     if (this.stuckX === 0 && this.stuckY === 0 && !this.frozen) {
       // Get the Grid Position of Pac
-      let gridX = this.getGridPosX();
-      let gridY = this.getGridPosY();
+      const gridX = this.getGridPosX();
+      const gridY = this.getGridPosY();
       let gridAheadX = gridX;
       let gridAheadY = gridY;
-
-      let field = game.getMapContent(gridX, gridY);
 
       // get the field 1 ahead to check wall collisions
       if (this.dirX === 1 && gridAheadX < 17) gridAheadX += 1;
@@ -130,28 +127,11 @@ export class Pacman extends Figure {
       let fieldAhead = game.getMapContent(gridAheadX, gridAheadY);
 
       /*	Check Pill Collision			*/
+      let field = game.getMapContent(gridX, gridY);
       this.checkPillCollisions(game, field, fieldAhead);
 
       /*	Check Wall Collision			*/
-      if (fieldAhead === "🟦" || fieldAhead === "door") {
-        this.stuckX = this.dirX;
-        this.stuckY = this.dirY;
-        this.stop();
-        // get out of the wall
-        if (this.stuckX === 1 && (this.posX % 2) * this.radius !== 0) {
-          this.posX -= this.speed;
-        }
-        if (this.stuckY === 1 && (this.posY % 2) * this.radius !== 0) {
-          this.posY -= this.speed;
-        }
-
-        if (this.stuckX === -1) {
-          this.posX += this.speed;
-        }
-        if (this.stuckY === -1) {
-          this.posY += this.speed;
-        }
-      }
+      this.checkWallCollision(fieldAhead, true, ["🟦", "door"]);
     }
   };
 
@@ -168,8 +148,7 @@ export class Pacman extends Figure {
         this.directionWatcher.set(null);
       else {
         // reset stuck events
-        this.stuckX = 0;
-        this.stuckY = 0;
+        this.resetIsStuck();
 
         // only allow direction changes inside the grid
         if (this.inGrid()) {
@@ -199,6 +178,8 @@ export class Pacman extends Figure {
   };
 
   public move = (game: Game) => {
+    this.validatePosition();
+
     if (!this.frozen) {
       if (this.beastModeTimer > 0) {
         this.beastModeTimer--;
@@ -207,19 +188,14 @@ export class Pacman extends Figure {
       if (this.beastModeTimer === 0 && this.beastMode)
         this.disableBeastMode(game);
 
-      this.posX += this.speed * this.dirX;
-      this.posY += this.speed * this.dirY;
+      // move
+      this.advancePosition();
 
       // Check if out of canvas
-      if (this.posX >= game.getCanvasWidth() - this.radius)
-        this.posX = 5 - this.radius;
-      if (this.posX <= 0 - this.radius)
-        this.posX = game.getCanvasWidth() - 5 - this.radius;
-      if (this.posY >= game.getCanvasHeight() - this.radius)
-        this.posY = 5 - this.radius;
-      if (this.posY <= 0 - this.radius)
-        this.posY = game.getCanvasHeight() - 5 - this.radius;
-    } else this.dieAnimation(game);
+      this.checkAndAdjustOutOfCanvas(game);
+    } else {
+      this.dieAnimation(game);
+    }
   };
 
   public eat = () => {
@@ -255,8 +231,7 @@ export class Pacman extends Figure {
     this.posY = 6 * 2 * this.radius;
     this.setDirection(right);
     this.stop();
-    this.stuckX = 0;
-    this.stuckY = 0;
+    this.resetIsStuck();
     //console.log("reset pacman");
   };
 

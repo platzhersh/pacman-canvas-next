@@ -1,4 +1,4 @@
-import { PACMAN_RADIUS, Pacman } from "../figures/Pacman";
+import { Pacman } from "../figures/Pacman";
 import { Direction } from "../figures/directions/Direction";
 import { Blinky } from "../figures/ghosts/Blinky";
 import { Clyde } from "../figures/ghosts/Clyde";
@@ -16,6 +16,8 @@ import { buildWall, clearCanvas, renderGrid } from "./render/render";
 import { renderContent } from "./render/render";
 
 // global constants
+export const GRID_SIZE = 30;
+export const PACMAN_RADIUS = GRID_SIZE / 2;
 const FINAL_LEVEL = 10;
 export const PILL_POINTS = 10;
 export const POWERPILL_POINTS = 50;
@@ -411,11 +413,17 @@ export class Game {
   };
 
   public toPixelPos = (gridPos: number) => {
-    return gridPos * 30;
+    return gridPos * GRID_SIZE;
   };
 
+  /**
+   * TODO: describe calculation
+   * TODO: test
+   * @param pixelPos
+   * @returns
+   */
   public toGridPos = (pixelPos: number) => {
-    return (pixelPos % 30) / 30;
+    return (pixelPos % GRID_SIZE) / GRID_SIZE;
   };
 
   // Player Control API
@@ -466,8 +474,10 @@ export class Game {
     }
 
     clearCanvas(context);
+    if (this.isGridVisible()) {
+      renderGrid(this, GRID_SIZE, "grey");
+    }
     this.buildWalls();
-    if (this.isGridVisible()) renderGrid(this, PACMAN_RADIUS, "red");
     renderContent(this);
   };
 

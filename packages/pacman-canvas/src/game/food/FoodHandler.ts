@@ -1,6 +1,6 @@
 import { inkySvgSrc } from "../../assets/img";
 import { cherriesSvgSrc } from "../../assets/img/gastronomy";
-import { PACMAN_RADIUS } from "../../figures/Pacman";
+import { GRID_SIZE } from "../Game";
 
 export type FoodConfig = {
   name: string;
@@ -28,10 +28,10 @@ export class FoodHandler {
     cherriesImg.src = inkySvgSrc;
     context.drawImage(
       cherriesImg,
-      posX * 30,
-      posY * 30,
-      2 * PACMAN_RADIUS,
-      2 * PACMAN_RADIUS
+      posX * GRID_SIZE,
+      posY * GRID_SIZE,
+      GRID_SIZE,
+      GRID_SIZE
     );
   };
 }
@@ -46,9 +46,9 @@ export const drawCherries = (
   //   cherriesImg.src = inkySvgSrc;
   context.drawImage(
     img,
-    posX * 30,
-    posY * 30,
-    2 * PACMAN_RADIUS,
-    2 * PACMAN_RADIUS
+    posX * GRID_SIZE,
+    posY * GRID_SIZE,
+    GRID_SIZE,
+    GRID_SIZE
   );
 };
