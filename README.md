@@ -1,6 +1,6 @@
 # Pacman Canvas Next
 
-Next generatio of https://github.com/platzhersh/pacman-canvas.
+Next generation of https://github.com/platzhersh/pacman-canvas.
 
 Fruit SVGs from https://www.svgrepo.com/collection/gastronomy-set/
 
