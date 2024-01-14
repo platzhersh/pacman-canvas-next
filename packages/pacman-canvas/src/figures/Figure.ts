@@ -34,7 +34,10 @@ export abstract class Figure {
   protected isStopped: boolean = true;
   protected directionWatcher: DirectionWatcher = new DirectionWatcher();
 
-  protected getFieldAhead = (game: Game): DirectionFieldAhead => {
+  protected getFieldAhead = (
+    game: Game,
+    useDirectionWatcher?: boolean
+  ): DirectionFieldAhead => {
     let gridX = this.getGridPosX();
     let gridY = this.getGridPosY();
     // const gridAheadX = gridX + this.dirX;
@@ -42,20 +45,27 @@ export abstract class Figure {
     let gridAheadX = gridX;
     let gridAheadY = gridY;
 
+    const nextDirection = this.directionWatcher.get();
+    const [dirX, dirY] =
+      nextDirection && useDirectionWatcher
+        ? [nextDirection.getDirX(), nextDirection.getDirY()]
+        : [this.dirX, this.dirY];
+
     // get the field 1 ahead to check wall collisions
-    if (this.dirX === 1 && gridAheadX < 17) gridAheadX += 1;
-    if (this.dirY === 1 && gridAheadY < 12) gridAheadY += 1;
+    if (dirX === 1 && gridAheadX < 17) gridAheadX += 1;
+    if (dirY === 1 && gridAheadY < 12) gridAheadY += 1;
     const fieldAhead = game.getMapContent(gridAheadX, gridAheadY);
 
     return {
       field: fieldAhead,
-      dirX: this.dirX,
-      dirY: this.dirY,
+      dirX: dirX,
+      dirY: dirY,
       posX: gridAheadX,
       posY: gridAheadY,
     };
   };
 
+  // TODO: difference to getFieldAhead is unclear
   protected getNextTile = (game: Game, nextDirection: Direction) => {
     //console.log("changeDirection to "+directionWatcher.get().name);
 

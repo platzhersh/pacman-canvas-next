@@ -150,16 +150,28 @@ export abstract class Ghost extends Figure {
 
     if (this.visualizeDirectionOptions) {
       const directionOptions = this.getValidDirectionOptions(game, 0, 0);
+      // higight all direction options
       highlightGridFields(context, directionOptions);
+      // higight gridPos
       highlightGridField(
         context,
         this.getGridPosX(),
         this.getGridPosY(),
         "magenta"
       );
+      // chase mode target
       const [tX, tY] = this.getChaseModeTarget(game, game.getPacman());
       highlightGridField(context, tX, tY, "red");
+      // scatter mode target
       highlightGridField(context, this.gridBaseX, this.gridBaseY, "blue");
+      // next tile
+      const fieldAhead = this.getFieldAhead(game, true);
+      highlightGridField(
+        context,
+        fieldAhead.posX,
+        fieldAhead.posY,
+        "limegreen"
+      );
     }
   };
   public getCenterX = () => {
