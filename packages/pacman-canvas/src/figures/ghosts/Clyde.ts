@@ -1,11 +1,13 @@
 import { clydeSvgSrc } from "../../assets/img";
 import { Game } from "../../game/Game";
 import { Pacman } from "../Pacman";
+import { left } from "../directions";
 import { GHOSTS, Ghost } from "./Ghost";
 
 export class Clyde extends Ghost {
   constructor(game: Game) {
     super(game, GHOSTS.CLYDE, 10, 5, clydeSvgSrc, 2, 11);
+    this.setDirection(left);
   }
 
   /**

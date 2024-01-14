@@ -2,30 +2,31 @@
 
 import getGameInstance, { Game, helloPacman } from "@repo/pacman-canvas";
 import {
-    blinkySvgSrc,
-    clydeSvgSrc,
-    dazzled2SvgSrc,
-    dazzledSvgSrc,
-    deadSvgSrc,
-    inkySvgSrc,
-    pinkySvgSrc
+  blinkySvgSrc,
+  clydeSvgSrc,
+  dazzled2SvgSrc,
+  dazzledSvgSrc,
+  deadSvgSrc,
+  inkySvgSrc,
+  pinkySvgSrc,
 } from "@repo/pacman-canvas/src/assets/img";
 import {
-    down,
-    left,
-    right,
-    up,
+  down,
+  left,
+  right,
+  up,
 } from "@repo/pacman-canvas/src/figures/directions";
 import {
-    GameStateChangeListener,
-    GameStateEvent,
+  GameStateChangeListener,
+  GameStateEvent,
 } from "@repo/pacman-canvas/src/game/Game";
 import { animationLoop } from "@repo/pacman-canvas/src/game/render/animationLoop";
 import { useEffect, useRef, useState } from "react";
 import styles from "./gameCanvas.module.css";
 
 export default function GameCanvas() {
-  const [gameStateSnapshotEvent, setGameStateSnapshotEvent] = useState<GameStateEvent | null>(null);
+  const [gameStateSnapshotEvent, setGameStateSnapshotEvent] =
+    useState<GameStateEvent | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [canvasContext, setCanvasContext] =
     useState<CanvasRenderingContext2D | null>(null);
@@ -35,7 +36,12 @@ export default function GameCanvas() {
   const onGameStateChange: GameStateChangeListener = (
     event: GameStateEvent
   ) => {
-    console.log("onGameStateChange", event.eventName, event.datetime, event.payload);
+    console.log(
+      "onGameStateChange",
+      event.eventName,
+      event.datetime,
+      event.payload
+    );
     setGameStateSnapshotEvent(event);
   };
 
@@ -59,7 +65,6 @@ export default function GameCanvas() {
   useEffect(() => {
     if (game && canvasContext) {
       game.setCanvasContext2d(canvasContext);
-    
     }
   }, [canvasContext]);
 
@@ -122,17 +127,30 @@ export default function GameCanvas() {
         <section>
           {/* <img src={inkyBase64} alt="inkyBase64" /> */}
           {/* {inkyBase64} */}
-          <img src={inkySvgSrc} title="Inky" alt="inkySvg" />
-          <img src={blinkySvgSrc} title="Blinky" alt="blinkySvg" />
-          <img src={pinkySvgSrc} title="Pinky" alt="pinkySvg" />
-          <img src={clydeSvgSrc} title="Clyde" alt="clydeSvg" />
+          <img
+            onClick={() =>
+              game.getGhosts().inky.toggleDirectionOptionsVisualizations()
+            }
+            src={inkySvgSrc}
+            title="Inky"
+            alt="inkySvg"
+          />
+          <img onClick={() =>
+              game.getGhosts().blinky.toggleDirectionOptionsVisualizations()
+            } src={blinkySvgSrc} title="Blinky" alt="blinkySvg" />
+          <img onClick={() =>
+              game.getGhosts().pinky.toggleDirectionOptionsVisualizations()
+            } src={pinkySvgSrc} title="Pinky" alt="pinkySvg" />
+          <img onClick={() =>
+              game.getGhosts().clyde.toggleDirectionOptionsVisualizations()
+            } src={clydeSvgSrc} title="Clyde" alt="clydeSvg" />
           <img src={deadSvgSrc} title="Dead" alt="deadSvgSrc" />
           <img src={dazzledSvgSrc} title="Dazzled" alt="dazzledSvgSrc" />
           <img src={dazzled2SvgSrc} title="Dazzled2" alt="dazzled2SvgSrc" />
-
         </section>
-      
+
         <section>
+          {/* Game controls */}
           <button onClick={() => game.pauseResume()}>Pause / Resume</button>
           <button
             onClick={() => game.newGame()}
@@ -141,9 +159,15 @@ export default function GameCanvas() {
             Restart Game
           </button>
           <button onClick={() => game.endGame()}>End Game</button>
+        </section>
+        <section>
+          {/* Rendering options */}
           <button onClick={() => game.buildWalls()}>Build Walls</button>
           <button onClick={() => game.toggleGridVisibility()}>
             Toggle Grid
+          </button>
+          <button onClick={() => game.toggleTargetVisualisations()}>
+            Toggle Target Viz
           </button>
           <button onClick={() => animationLoop(game)()}>
             Next Animationloop

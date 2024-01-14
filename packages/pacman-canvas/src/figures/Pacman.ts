@@ -1,5 +1,6 @@
 import { Game, PILL_POINTS, POWERPILL_POINTS } from "../game/Game";
 import { Sound } from "../game/Sound";
+import { MapTileType } from "../game/map/mapData";
 import { Figure, isInRange } from "./Figure";
 import { right } from "./directions";
 import { Direction } from "./directions/Direction";
@@ -9,6 +10,7 @@ export const PACMAN_RADIUS = 15;
 const PACMAN_INITIAL_LIVES = 3;
 
 export class Pacman extends Figure {
+  protected name = "pacman";
   protected speed = 5;
   protected angle1 = 0.25;
   protected angle2 = 1.75;
@@ -45,6 +47,60 @@ export class Pacman extends Figure {
     return this.posY + this.radius;
   };
 
+  private checkPillCollisions = (
+    game: Game,
+    field: MapTileType,
+    fieldAhead: MapTileType
+  ) => {
+    let gridX = this.getGridPosX();
+    let gridY = this.getGridPosY();
+
+    if (field === "⚪️" || field === "💊") {
+      //console.log("Pill found at ("+gridX+"/"+gridY+"). Pacman at ("+this.posX+"/"+this.posY+")");
+      if (
+        (this.dirX === 1 &&
+          isInRange(
+            this.posX,
+            game.toPixelPos(gridX) + this.radius - this.speed,
+            game.toPixelPos(gridX + 1)
+          )) ||
+        (this.dirX === -1 &&
+          isInRange(
+            this.posX,
+            game.toPixelPos(gridX),
+            game.toPixelPos(gridX) + this.speed
+          )) ||
+        (this.dirY === 1 &&
+          isInRange(
+            this.posY,
+            game.toPixelPos(gridY) + this.radius - this.speed,
+            game.toPixelPos(gridY + 1)
+          )) ||
+        (this.dirY === -1 &&
+          isInRange(
+            this.posY,
+            game.toPixelPos(gridY),
+            game.toPixelPos(gridY) + this.speed
+          )) ||
+        fieldAhead === "🟦"
+      ) {
+        let s;
+        if (field === "💊") {
+          Sound.play(game, "powerpill");
+          s = POWERPILL_POINTS;
+          this.enableBeastMode(game);
+          game.startGhostFrightened();
+        } else {
+          Sound.play(game, "waka");
+          s = PILL_POINTS;
+          game.decrementPillCount();
+        }
+        game.getGridMap().setTileType(gridX, gridY, "null");
+        game.addScore(s);
+      }
+    }
+  };
+
   public checkCollisions = (game: Game) => {
     if (this.stuckX === 0 && this.stuckY === 0 && !this.frozen) {
       // Get the Grid Position of Pac
@@ -61,63 +117,27 @@ export class Pacman extends Figure {
       let fieldAhead = game.getMapContent(gridAheadX, gridAheadY);
 
       /*	Check Pill Collision			*/
-      if (field === "pill" || field === "powerpill") {
-        //console.log("Pill found at ("+gridX+"/"+gridY+"). Pacman at ("+this.posX+"/"+this.posY+")");
-        if (
-          (this.dirX === 1 &&
-            isInRange(
-              this.posX,
-              game.toPixelPos(gridX) + this.radius - this.speed,
-              game.toPixelPos(gridX + 1)
-            )) ||
-          (this.dirX === -1 &&
-            isInRange(
-              this.posX,
-              game.toPixelPos(gridX),
-              game.toPixelPos(gridX) + this.speed
-            )) ||
-          (this.dirY === 1 &&
-            isInRange(
-              this.posY,
-              game.toPixelPos(gridY) + this.radius - this.speed,
-              game.toPixelPos(gridY + 1)
-            )) ||
-          (this.dirY === -1 &&
-            isInRange(
-              this.posY,
-              game.toPixelPos(gridY),
-              game.toPixelPos(gridY) + this.speed
-            )) ||
-          fieldAhead === "wall"
-        ) {
-          let s;
-          if (field === "powerpill") {
-            Sound.play(game, "powerpill");
-            s = POWERPILL_POINTS;
-            this.enableBeastMode(game);
-            game.startGhostFrightened();
-          } else {
-            Sound.play(game, "waka");
-            s = PILL_POINTS;
-            game.decrementPillCount();
-          }
-          game.getGridMap().setTileType(gridX, gridY, "null");
-          game.addScore(s);
-        }
-      }
+      this.checkPillCollisions(game, field, fieldAhead);
 
       /*	Check Wall Collision			*/
-      if (fieldAhead === "wall" || fieldAhead === "door") {
+      if (fieldAhead === "🟦" || fieldAhead === "door") {
         this.stuckX = this.dirX;
         this.stuckY = this.dirY;
         this.stop();
         // get out of the wall
-        if (this.stuckX === 1 && (this.posX % 2) * this.radius !== 0)
+        if (this.stuckX === 1 && (this.posX % 2) * this.radius !== 0) {
           this.posX -= this.speed;
-        if (this.stuckY === 1 && (this.posY % 2) * this.radius !== 0)
+        }
+        if (this.stuckY === 1 && (this.posY % 2) * this.radius !== 0) {
           this.posY -= this.speed;
-        if (this.stuckX === -1) this.posX += this.speed;
-        if (this.stuckY === -1) this.posY += this.speed;
+        }
+
+        if (this.stuckX === -1) {
+          this.posX += this.speed;
+        }
+        if (this.stuckY === -1) {
+          this.posY += this.speed;
+        }
       }
     }
   };
@@ -131,7 +151,7 @@ export class Pacman extends Figure {
       console.groupCollapsed("checkDirectionChange");
       console.debug(`next Direction: ${nextDirection.getName()}`);
 
-      if (this.stuckX === 1 && nextDirection == right)
+      if (this.stuckX === 1 && nextDirection === right)
         this.directionWatcher.set(null);
       else {
         // reset stuck events
@@ -140,28 +160,10 @@ export class Pacman extends Figure {
 
         // only allow direction changes inside the grid
         if (this.inGrid()) {
-          //console.log("changeDirection to "+directionWatcher.get().name);
-
-          // check if possible to change direction without getting stuck
-          console.debug(
-            "x: " + this.getGridPosX() + " + " + nextDirection.getDirX()
-          );
-          console.debug(
-            "y: " + this.getGridPosY() + " + " + nextDirection.getDirY()
-          );
-          let x = this.getGridPosX() + (nextDirection.getDirX() ?? 0);
-          let y = this.getGridPosY() + (nextDirection.getDirY() ?? 0);
-          if (x <= -1) x = game.getCanvasWidth() / (this.radius * 2) - 1;
-          if (x >= game.getCanvasWidth() / (this.radius * 2)) x = 0;
-          if (y <= -1) x = game.getCanvasHeight() / (this.radius * 2) - 1;
-          if (y >= game.getCanvasHeight() / (this.radius * 2)) y = 0;
-
-          console.debug("x: " + x);
-          console.debug("y: " + y);
-          const nextTile = game.getGridMap().getTileType(x, y);
+          const nextTile = this.getNextTile(game, nextDirection);
           console.debug("checkNextTile: " + nextTile);
 
-          if (nextTile != "wall") {
+          if (nextTile !== "🟦") {
             this.setDirection(nextDirection);
             this.directionWatcher.set(null);
           }

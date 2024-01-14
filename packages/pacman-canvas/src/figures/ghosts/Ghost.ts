@@ -1,10 +1,14 @@
 import { dazzled2SvgSrc, dazzledSvgSrc, deadSvgSrc } from "../../assets/img";
 import { GHOST_POINTS, Game } from "../../game/Game";
 import { MapTileType } from "../../game/map/mapData";
+import {
+  highlightGridField,
+  highlightGridFields,
+} from "../../game/render/render";
 import { Figure, isInRange } from "../Figure";
 import { PACMAN_RADIUS, Pacman } from "../Pacman";
 import { down, left, right, up } from "../directions";
-import { Direction } from "../directions/Direction";
+import { Direction, DirectionDistance } from "../directions/Direction";
 
 export const GHOSTS = {
   INKY: "inky",
@@ -26,12 +30,11 @@ export enum GhostMode {
 }
 
 export abstract class Ghost extends Figure {
-  private name: string;
+  protected name: string;
   private startPosX: number;
   private startPosY: number;
   protected gridBaseX: number;
   protected gridBaseY: number;
-  // private images: any;
   private image: HTMLImageElement;
 
   private ghostHouse: boolean = true;
@@ -41,6 +44,8 @@ export abstract class Ghost extends Figure {
   private dazzleImg: HTMLImageElement;
   private dazzleImg2: HTMLImageElement;
   private deadImg: HTMLImageElement;
+
+  protected visualizeDirectionOptions: boolean = false;
 
   constructor(
     game: Game,
@@ -85,6 +90,9 @@ export abstract class Ghost extends Figure {
     this.direction = right;
     this.radius = PACMAN_RADIUS;
   }
+
+  public toggleDirectionOptionsVisualizations = () =>
+    (this.visualizeDirectionOptions = !this.visualizeDirectionOptions);
 
   public dazzle = (game: Game) => {
     this.changeSpeed(game.getDazzledGhostSpeed());
@@ -137,6 +145,23 @@ export abstract class Ghost extends Figure {
         2 * this.radius,
         2 * this.radius
       );
+
+    if (this.visualizeDirectionOptions) {
+      const directionOptions = this.getValidDirectionOptions(game, 0, 0);
+      highlightGridFields(game, directionOptions);
+      highlightGridField(
+        game,
+        { posX: this.getGridPosX(), posY: this.getGridPosY() },
+        "magenta"
+      );
+      const [tX, tY] = this.getChaseModeTarget(game, game.getPacman());
+      highlightGridField(game, { posX: tX, posY: tY }, "red");
+      highlightGridField(
+        game,
+        { posX: this.gridBaseX, posY: this.gridBaseY },
+        "blue"
+      );
+    }
   };
   public getCenterX = () => {
     return this.posX + this.radius;
@@ -168,28 +193,58 @@ export abstract class Ghost extends Figure {
     this.speed = s;
   };
 
-  public move = (game: Game) => {
-    this.checkDirectionChange(game);
-    this.checkCollision(game);
+  public checkDirectionChange = (game: Game) => {
+    // if (this.isStopped) return;
+    this.checkGhostHouse(game);
+    if (!this.ghostHouse) this.setNextDirection(game);
 
+    let nextDirection = this.directionWatcher.get();
+    // if (!nextDirection) {
+    //   this.setNextDirection(game);
+    //   nextDirection = this.directionWatcher.get();
+    // }
+    console.log(`${this.name} next direction ${nextDirection?.getName()}`);
+    if (nextDirection !== null && this.inGrid()) {
+      const nextTile = this.getNextTile(game, nextDirection);
+      console.debug("checkNextTile: " + nextTile);
+
+      if (nextTile !== "🟦") {
+        this.setDirection(nextDirection);
+        this.directionWatcher.set(null);
+      }
+    }
+  };
+
+  private checkGhostHouse = (game: Game) => {
     // leave Ghost House
     if (this.ghostHouse === true) {
       // Clyde does not start chasing before 2/3 of all pills are eaten and if level is < 4
       if (this.name === GHOSTS.CLYDE) {
-        if (game.getLevel() < 4 || game.getPillCount() > 104 / 3) this.stop();
-        else this.start();
+        if (game.getLevel() < 4 || game.getPillCount() > 104 / 3) {
+          this.stop();
+        } else {
+          this.start();
+        }
       }
       // Inky starts after 30 pills and only from the third level on
       if (this.name === GHOSTS.INKY) {
-        if (game.getLevel() < 3 || game.getPillCount() > 104 - 30) this.stop();
-        else this.start();
+        if (game.getLevel() < 3 || game.getPillCount() > 104 - 30) {
+          this.stop();
+        } else {
+          this.start();
+        }
       }
 
       if (this.getGridPosY() === 5 && this.inGrid()) {
-        if (this.getGridPosX() === 7) this.setDirection(right);
-        if (this.getGridPosX() === 8 || this.getGridPosX() === 9)
-          this.setDirection(up);
-        if (this.getGridPosX() === 10) this.setDirection(left);
+        if (this.getGridPosX() === 7) {
+          this.directionWatcher.set(right);
+        }
+        if (this.getGridPosX() === 8 || this.getGridPosX() === 9) {
+          this.directionWatcher.set(up);
+        }
+        if (this.getGridPosX() === 10) {
+          this.directionWatcher.set(left);
+        }
       }
       if (
         this.getGridPosY() === 4 &&
@@ -199,6 +254,19 @@ export abstract class Ghost extends Figure {
         console.debug(`🏰 ${this.name} leaving the ghosthouse`);
         this.ghostHouse = false;
       }
+    }
+  };
+
+  public move = (game: Game) => {
+    this.checkDirectionChange(game);
+    this.checkCollision(game);
+
+    // check wall collision
+    const fieldAhead = this.getFieldAhead(game);
+    if (fieldAhead.field === "🟦") {
+      console.warn(`${this.name}: fieldAhead ${JSON.stringify(fieldAhead)}`);
+      this.directionWatcher.set(null);
+      // this.stop();
     }
 
     if (!this.isStopped) {
@@ -257,11 +325,63 @@ export abstract class Ghost extends Figure {
   ) => [targetX: number, targetY: number];
 
   /**
-   * This function clearly needs reactoring and testing.
+   * Get all the relevant information about the field in relativeDirection to the ghosts current position.
+   * @param game
+   * @param relativeDirection
+   * @param targetX
+   * @param targetY
+   * @returns
+   */
+  private getDirectionDistance = (
+    game: Game,
+    relativeDirection: Direction,
+    targetX: number,
+    targetY: number
+  ): DirectionDistance => {
+    const posX = this.getGridPosX() + relativeDirection.getDirX();
+    const posY = this.getGridPosY() + relativeDirection.getDirY();
+
+    return {
+      field: game.getMapContent(posX, posY),
+      posX,
+      posY,
+      relativeDirection,
+      distance: Math.sqrt(
+        Math.pow(posX - targetX, 2) + Math.pow(posY - targetY, 2)
+      ),
+    };
+  };
+
+  private getDirectionOptions = (
+    game: Game,
+    targetX: number,
+    targetY: number
+  ) => [
+    this.getDirectionDistance(game, up, targetX, targetY),
+    this.getDirectionDistance(game, down, targetX, targetY),
+    this.getDirectionDistance(game, right, targetX, targetY),
+    this.getDirectionDistance(game, left, targetX, targetY),
+  ];
+
+  private getValidDirectionOptions = (
+    game: Game,
+    targetX: number,
+    targetY: number
+  ) => {
+    return this.getDirectionOptions(game, targetX, targetY).filter(
+      (dirOptiom) =>
+        dirOptiom.field !== "🟦" &&
+        !dirOptiom.relativeDirection.equals(this.getOppositeDirection())
+    );
+  };
+  /**
+   * Pathfinding
+   * This function clearly needs reactoring documentation and testing.
+   * Sets next direction in direction Watcher.
    * @param game
    * @returns
    */
-  public getNextDirection = (game: Game) => {
+  public setNextDirection = (game: Game): void => {
     const pacman = game.getPacman();
 
     // target
@@ -286,74 +406,37 @@ export abstract class Ghost extends Figure {
       [targetX, targetY] = this.getChaseModeTarget(game, pacman);
     }
 
-    type DirectionDistance = {
-      field: MapTileType;
-      dir: Direction;
-      distance: number;
-    };
-
-    const dir0: DirectionDistance = {
-      field: game.getMapContent(currentPosX, currentPosY - 1),
-      dir: up,
-      distance: Math.sqrt(
-        Math.pow(currentPosX - targetX, 2) +
-          Math.pow(currentPosY - 1 - targetY, 2)
-      ),
-    };
-
-    const dir1: DirectionDistance = {
-      field: game.getMapContent(currentPosX, currentPosY + 1),
-      dir: down,
-      distance: Math.sqrt(
-        Math.pow(currentPosX - targetX, 2) +
-          Math.pow(currentPosY + 1 - targetY, 2)
-      ),
-    };
-
-    const dir2: DirectionDistance = {
-      field: game.getMapContent(currentPosX + 1, currentPosY),
-      dir: right,
-      distance: Math.sqrt(
-        Math.pow(currentPosX + 1 - targetX, 2) +
-          Math.pow(currentPosY - targetY, 2)
-      ),
-    };
-
-    const dir3: DirectionDistance = {
-      field: game.getMapContent(currentPosX - 1, currentPosY),
-      dir: left,
-      distance: Math.sqrt(
-        Math.pow(currentPosX - 1 - targetX, 2) +
-          Math.pow(currentPosY - targetY, 2)
-      ),
-    };
-
-    const dirs: DirectionDistance[] = [dir0, dir1, dir2, dir3];
+    const validDirectionOptions = this.getValidDirectionOptions(
+      game,
+      targetX,
+      targetY
+    );
 
     // Sort possible directions by distance
-    function compare(a: DirectionDistance, b: DirectionDistance) {
+    const compare = (a: DirectionDistance, b: DirectionDistance) => {
       if (a.distance < b.distance) return -1;
       if (a.distance > b.distance) return 1;
       return 0;
-    }
-    const dirsOrderedByDistance = dirs.toSorted(compare);
+    };
+    const orderedDirectionOptions = validDirectionOptions.toSorted(compare);
 
     let nextDirection: Direction = right;
 
     // dead ghost should be allowed to move through door
-    const blockedTileTypes = this.dead ? ["wall"] : ["wall", "door"];
+    const blockedTileTypes: MapTileType[] = this.dead ? ["🟦"] : ["🟦", "door"];
 
-    for (let i = dirsOrderedByDistance.length - 1; i >= 0; i--) {
+    for (let i = orderedDirectionOptions.length - 1; i >= 0; i--) {
       if (
-        !blockedTileTypes.includes(dirsOrderedByDistance[i].field) &&
-        !dirsOrderedByDistance[i].dir.equals(this.getOppositeDirection())
+        !blockedTileTypes.includes(orderedDirectionOptions[i].field) &&
+        !orderedDirectionOptions[i].relativeDirection.equals(
+          this.getOppositeDirection()
+        )
       ) {
-        nextDirection = dirsOrderedByDistance[i].dir;
+        nextDirection = orderedDirectionOptions[i].relativeDirection;
       }
     }
 
     this.directionWatcher.set(nextDirection);
-    return nextDirection;
   };
 
   public setRandomDirection = () => {

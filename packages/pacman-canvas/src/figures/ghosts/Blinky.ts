@@ -1,11 +1,13 @@
 import { blinkySvgSrc } from "../../assets/img";
 import { Game } from "../../game/Game";
 import { Pacman } from "../Pacman";
+import { left, up } from "../directions";
 import { GHOSTS, Ghost } from "./Ghost";
 
 export class Blinky extends Ghost {
   constructor(game: Game) {
-    super(game, GHOSTS.BLINKY, 9, 5, blinkySvgSrc, 13, 0);
+    super(game, GHOSTS.BLINKY, 9, 5, blinkySvgSrc, 15, 2);
+    this.setDirection(up);
   }
 
   // target: go straight for pacman

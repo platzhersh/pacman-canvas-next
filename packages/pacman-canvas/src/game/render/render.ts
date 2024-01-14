@@ -1,4 +1,5 @@
 import { PACMAN_RADIUS } from "../../figures/Pacman";
+import { DirectionDistance } from "../../figures/directions/Direction";
 import { Game, PILL_SIZE, POWERPILL_SIZE } from "../Game";
 import { MapColumn } from "../map/mapData";
 
@@ -66,10 +67,10 @@ export const renderContent = (
     .posY.forEach((row) => {
       dotPosY = row.row;
       row.posX.forEach((column) => {
-        if (column.type === "pill") {
+        if (column.type === "⚪️") {
           drawPill(game, context, column, dotPosY, PILL_SIZE);
         }
-        if (column.type === "powerpill") {
+        if (column.type === "💊") {
           drawPill(game, context, column, dotPosY, POWERPILL_SIZE);
         }
       });
@@ -105,6 +106,36 @@ export const renderContent = (
     );
     context.stroke();
     context.fill();
+  }
+};
+
+export const highlightGridFields = (
+  game: Game,
+  fields: {posX: number, posY: number}[],
+  color?: string
+) => {
+  fields.forEach((f) => highlightGridField(game, f, color));
+};
+
+export const highlightGridField = (
+  game: Game,
+  field: {posX: number, posY: number},
+  color?: string
+) => {
+  const context = game.getCanvasContext2d();
+  if (context) {
+    context.save();
+    context.lineWidth = 2;
+    context.strokeStyle = color ?? "Yellow";
+
+    context.beginPath();
+    context.moveTo(field.posX * 30, field.posY * 30);
+    context.lineTo(field.posX * 30 + 30, field.posY * 30);
+    context.lineTo(field.posX * 30 + 30, field.posY * 30 + 30);
+    context.lineTo(field.posX * 30, field.posY * 30 + 30);
+    context.lineTo(field.posX * 30, field.posY * 30);
+    context.closePath();
+    context.stroke();
   }
 };
 

@@ -14,18 +14,18 @@ export class GridMap {
   public getWidth = () => this.mapData.posY[0]?.posX.length ?? 0;
   public getHeight = () => this.mapData.posY.length;
 
-  public getTileType = (x: number, y: number): MapTileType => {
+  public getTileType = (posX: number, posY: number): MapTileType => {
     let maxX = this.getWidth() - 1;
     let maxY = this.getHeight() - 1;
 
-    if (x < 0) x = maxX + x;
-    if (x > maxX) x = x - maxX;
-    if (y < 0) y = maxY + y;
-    if (y > maxY) y = y - maxY;
+    if (posX < 0) posX = maxX + posX;
+    if (posX > maxX) posX = posX - maxX;
+    if (posY < 0) posY = maxY + posY;
+    if (posY > maxY) posY = posY - maxY;
 
-    const mapTile = this.getMapData().posY[y]?.posX[x];
+    const mapTile = this.getMapData().posY[posY]?.posX[posX];
 
-    if (!mapTile) throw Error(`No tile found at ${x}, ${y}`);
+    if (!mapTile) throw Error(`No tile found at ${posX}, ${posY}`);
 
     return mapTile.type;
   };

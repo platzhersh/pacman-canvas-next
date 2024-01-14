@@ -1,11 +1,13 @@
 import { pinkySvgSrc } from "../../assets/img";
 import { Game } from "../../game/Game";
 import { PACMAN_RADIUS, Pacman } from "../Pacman";
+import { right } from "../directions";
 import { GHOSTS, Ghost } from "./Ghost";
 
 export class Pinky extends Ghost {
   constructor(game: Game) {
     super(game, GHOSTS.PINKY, 7, 5, pinkySvgSrc, 2, 2);
+    this.setDirection(right);
   }
 
   /**

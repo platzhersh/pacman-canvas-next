@@ -1,5 +1,22 @@
+import { MapTileType } from "../../game/map/mapData";
+
 export type DirectionName = "up" | "right" | "down" | "left";
 export type DirectionVelocity = -1 | 0 | 1;
+
+export type DirectionFieldAhead = {
+  field: MapTileType;
+  dirX: number;
+  dirY: number;
+  posX: number;
+  posY: number;
+};
+export type DirectionDistance = {
+  field: MapTileType;
+  posX: number;
+  posY: number;
+  relativeDirection: Direction;
+  distance: number;
+};
 
 export class Direction {
   private name: DirectionName;

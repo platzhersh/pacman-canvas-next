@@ -1,6 +1,6 @@
 import { Game } from "../game/Game";
 import { down, left, right, up } from "./directions";
-import { Direction } from "./directions/Direction";
+import { Direction, DirectionFieldAhead } from "./directions/Direction";
 import { DirectionWatcher } from "./directions/DirectionWatcher";
 
 /**
@@ -18,6 +18,7 @@ export const isInRange = (x: number, min: number, max: number) => {
  * Abstract parent class for Ghost and Pacman
  */
 export abstract class Figure {
+  protected name: string = "figure";
   protected posX: number = 0;
   protected posY: number = 0;
   protected speed: number = 0;
@@ -33,7 +34,49 @@ export abstract class Figure {
   protected isStopped: boolean = true;
   protected directionWatcher: DirectionWatcher = new DirectionWatcher();
 
-  public getNextDirection: (game: Game) => void = (game: Game) => {
+  protected getFieldAhead = (game: Game): DirectionFieldAhead => {
+    let gridX = this.getGridPosX();
+    let gridY = this.getGridPosY();
+    // const gridAheadX = gridX + this.dirX;
+    // const gridAheadY = gridY + this.dirY;
+    let gridAheadX = gridX;
+    let gridAheadY = gridY;
+
+    // get the field 1 ahead to check wall collisions
+    if (this.dirX === 1 && gridAheadX < 17) gridAheadX += 1;
+    if (this.dirY === 1 && gridAheadY < 12) gridAheadY += 1;
+    const fieldAhead = game.getMapContent(gridAheadX, gridAheadY);
+
+    return {
+      field: fieldAhead,
+      dirX: this.dirX,
+      dirY: this.dirY,
+      posX: gridAheadX,
+      posY: gridAheadY,
+    };
+  };
+
+  protected getNextTile = (game: Game, nextDirection: Direction) => {
+    //console.log("changeDirection to "+directionWatcher.get().name);
+
+    // check if possible to change direction without getting stuck
+    console.debug("x: " + this.getGridPosX() + " + " + nextDirection.getDirX());
+    console.debug("y: " + this.getGridPosY() + " + " + nextDirection.getDirY());
+    let x = this.getGridPosX() + (nextDirection.getDirX() ?? 0);
+    let y = this.getGridPosY() + (nextDirection.getDirY() ?? 0);
+    if (x <= -1) x = game.getCanvasWidth() / (this.radius * 2) - 1;
+    if (x >= game.getCanvasWidth() / (this.radius * 2)) x = 0;
+    if (y <= -1) x = game.getCanvasHeight() / (this.radius * 2) - 1;
+    if (y >= game.getCanvasHeight() / (this.radius * 2)) y = 0;
+
+    console.debug("x: " + x);
+    console.debug("y: " + y);
+
+    return game.getGridMap().getTileType(x, y);
+  };
+
+  public abstract checkDirectionChange: (game: Game) => void;
+  public setNextDirection: (game: Game) => void = (game: Game) => {
     throw Error("not implemented");
   };
 
@@ -43,15 +86,6 @@ export abstract class Figure {
    */
   public inGrid = () =>
     this.posX % (2 * this.radius) === 0 && this.posY % (2 * this.radius) === 0;
-
-  public checkDirectionChange = (game: Game) => {
-    const currentDirection = this.directionWatcher.get();
-    if (this.inGrid() && currentDirection === null) this.getNextDirection(game);
-    if (currentDirection !== null && this.inGrid()) {
-      this.setDirection(currentDirection);
-      this.directionWatcher.set(null);
-    }
-  };
 
   public getOppositeDirection = (): Direction => {
     if (this.direction.equals(up)) return down;
@@ -79,6 +113,11 @@ export abstract class Figure {
   };
 
   public stop = () => {
+    console.log(
+      `${this.name} stopped at ${this.posX}, ${
+        this.posY
+      } / ${this.getGridPosX()}, ${this.getGridPosY()} (inGrid: ${this.inGrid()}, direction: ${this.direction.getName()})`
+    );
     this.isStopped = true;
   };
 

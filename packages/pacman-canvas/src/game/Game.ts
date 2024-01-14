@@ -146,6 +146,11 @@ export class Game {
 
   public getGhostMode = () => this.ghostMode;
 
+  public toggleTargetVisualisations = () =>
+    Object.values(this.getGhosts()).forEach((ghost) =>
+      ghost.toggleDirectionOptionsVisualizations()
+    );
+
   public checkGhostMode = (): void => {
     if (this.ghostFrightened) {
       this.ghostFrightenedTimer--;
@@ -362,7 +367,7 @@ export class Game {
     }
   };
 
-  public getPillCount = () => this.getGridMap().getTileTypeCount("pill");
+  public getPillCount = () => this.getGridMap().getTileTypeCount("⚪️");
   public decrementPillCount = () => this.pillCount--;
 
   public init = (state: GameInitMode) => {
