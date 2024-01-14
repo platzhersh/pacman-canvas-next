@@ -1,0 +1,13 @@
+{
+  "name": "@repo/pacman-canvas",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "dependencies": {
+    "jquery": "^3.7.1",
+    "react": "^18.2.0",
+    "typescript": "latest"
+  },
+  "devDependencies": {
+    "@types/jquery": "^3.5.29"
+  }
+}

@@ -1,0 +1,30 @@
+#canvas-container { 
+    position: relative;
+    cursor: pointer;
+}
+
+#canvas-overlay-container {
+	position: absolute;
+	background: rgba(0,0,0,0.7);
+	height: 100%; 
+	width: 540px;
+	max-width: 100%;
+	padding: 1em;
+	box-sizing: border-box;
+}
+#canvas-overlay-content { 
+	position: absolute; 
+	top: 33%; 	
+	left: 0; 
+	margin-top: 0;
+	max-width: 100%; 
+	text-align: center;
+	width: 540px;
+	max-width: 100%;
+	padding: 1em;
+	box-sizing: border-box;
+	}
+#canvas-overlay-content #title {
+	text-transform: uppercase;
+	font-size: 150%;
+}
