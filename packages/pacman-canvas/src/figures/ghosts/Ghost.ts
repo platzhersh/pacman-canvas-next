@@ -175,6 +175,9 @@ export abstract class Ghost extends Figure {
     this.posX = this.startPosX;
     this.posY = this.startPosY;
     this.ghostHouse = true;
+    this.dirX = 0;
+    this.dirY = 0;
+    this.directionWatcher.set(null);
     this.undazzle(game);
   };
 
@@ -259,7 +262,7 @@ export abstract class Ghost extends Figure {
 
   public move = (game: Game) => {
     this.checkDirectionChange(game);
-    this.checkCollision(game);
+    this.checkCollisions(game);
 
     // check wall collision
     const fieldAhead = this.getFieldAhead(game);
@@ -286,16 +289,10 @@ export abstract class Ghost extends Figure {
     }
   };
 
-  public checkCollision = (game: Game) => {
+  private checkPacmanCollision = (game: Game) => {
     const pacman = game.getPacman();
-    /* Check Back to Home */
+
     if (
-      this.dead &&
-      this.getGridPosX() === this.startPosX / 30 &&
-      this.getGridPosY() === this.startPosY / 30
-    )
-      this.reset(game);
-    else if (
       /* Check Ghost / Pacman Collision			*/
       isInRange(
         pacman.getCenterX(),
@@ -314,6 +311,25 @@ export abstract class Ghost extends Figure {
         this.die(game);
       }
     }
+  };
+
+  private checkGhostHouseCollision = (game: Game) => {
+    // if (this.gridBaseY === 5 && this.gridBaseX >= 7 && this.gridBaseX <= 10) {
+    //   console.log(`${}`);
+    // }
+    /* Check Back to Home */
+    if (
+      this.dead &&
+      this.getGridPosX() === this.startPosX / 30 &&
+      this.getGridPosY() === this.startPosY / 30
+    ) {
+      this.reset(game);
+    }
+  };
+
+  public checkCollisions = (game: Game) => {
+    this.checkPacmanCollision(game);
+    this.checkGhostHouseCollision(game);
   };
 
   /**
@@ -368,9 +384,11 @@ export abstract class Ghost extends Figure {
     targetX: number,
     targetY: number
   ) => {
+    const blockedTileTypes: MapTileType[] = this.dead ? ["🟦"] : ["🟦", "door"];
+
     return this.getDirectionOptions(game, targetX, targetY).filter(
       (dirOptiom) =>
-        dirOptiom.field !== "🟦" &&
+        !blockedTileTypes.includes(dirOptiom.field) &&
         !dirOptiom.relativeDirection.equals(this.getOppositeDirection())
     );
   };
@@ -420,20 +438,15 @@ export abstract class Ghost extends Figure {
     };
     const orderedDirectionOptions = validDirectionOptions.toSorted(compare);
 
-    let nextDirection: Direction = right;
+    let nextDirection = orderedDirectionOptions[0]?.relativeDirection;
 
-    // dead ghost should be allowed to move through door
-    const blockedTileTypes: MapTileType[] = this.dead ? ["🟦"] : ["🟦", "door"];
-
-    for (let i = orderedDirectionOptions.length - 1; i >= 0; i--) {
-      if (
-        !blockedTileTypes.includes(orderedDirectionOptions[i].field) &&
-        !orderedDirectionOptions[i].relativeDirection.equals(
-          this.getOppositeDirection()
-        )
-      ) {
-        nextDirection = orderedDirectionOptions[i].relativeDirection;
-      }
+    if (!nextDirection) {
+      console.warn(
+        "No valid direction option! (possibly back at ghosthouse)",
+        this.ghostHouse
+      );
+      this.directionWatcher.set(null);
+      return;
     }
 
     this.directionWatcher.set(nextDirection);
