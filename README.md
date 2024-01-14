@@ -2,6 +2,8 @@
 
 Next generatio of https://github.com/platzhersh/pacman-canvas.
 
+Fruit SVGs from https://www.svgrepo.com/collection/gastronomy-set/
+
 ## Get started
 
 ### install pnpm
