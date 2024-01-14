@@ -1,4 +1,9 @@
-import { Game, PILL_POINTS, POWERPILL_POINTS } from "../game/Game";
+import {
+  FRUIT_POINTS,
+  Game,
+  PILL_POINTS,
+  POWERPILL_POINTS,
+} from "../game/Game";
 import { Sound } from "../game/Sound";
 import { MapTileType } from "../game/map/mapData";
 import { Figure, isInRange } from "./Figure";
@@ -55,7 +60,7 @@ export class Pacman extends Figure {
     let gridX = this.getGridPosX();
     let gridY = this.getGridPosY();
 
-    if (field === "⚪️" || field === "💊") {
+    if (field === "⚪️" || field === "💊" || field === "🍒") {
       //console.log("Pill found at ("+gridX+"/"+gridY+"). Pacman at ("+this.posX+"/"+this.posY+")");
       if (
         (this.dirX === 1 &&
@@ -84,19 +89,27 @@ export class Pacman extends Figure {
           )) ||
         fieldAhead === "🟦"
       ) {
-        let s;
-        if (field === "💊") {
-          Sound.play(game, "powerpill");
-          s = POWERPILL_POINTS;
-          this.enableBeastMode(game);
-          game.startGhostFrightened();
-        } else {
-          Sound.play(game, "waka");
-          s = PILL_POINTS;
-          game.decrementPillCount();
+        let newPoints;
+        switch (field) {
+          case "💊":
+            Sound.play(game, "powerpill");
+            newPoints = POWERPILL_POINTS;
+            this.enableBeastMode(game);
+            game.startGhostFrightened();
+            break;
+          case "⚪️":
+            Sound.play(game, "waka");
+            newPoints = PILL_POINTS;
+            game.decrementPillCount();
+            break;
+          case "🍒":
+            Sound.play(game, "waka");
+            newPoints = FRUIT_POINTS;
+            break;
         }
+
         game.getGridMap().setTileType(gridX, gridY, "null");
-        game.addScore(s);
+        game.addScore(newPoints);
       }
     }
   };

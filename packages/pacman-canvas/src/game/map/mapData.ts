@@ -14,7 +14,14 @@ export type MapColumn = {
   type: MapTileType;
 };
 
-export type MapTileType = "🟦" | "⚪️" | "💊" | "door" | "null" | "ghosthouse";
+export type MapTileType =
+  | "🟦"
+  | "⚪️"
+  | "💊"
+  | "🍒"
+  | "door"
+  | "null"
+  | "ghosthouse";
 
 type GridMapCoordinate = {
   posY: number;

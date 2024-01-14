@@ -111,6 +111,7 @@ export abstract class Ghost extends Figure {
   };
   public draw = (game: Game, context: CanvasRenderingContext2D) => {
     const beastModeTimer = game.getPacman().getBeastModeTimer();
+
     if (this.dead) {
       context.drawImage(
         this.deadImg,
@@ -149,19 +150,16 @@ export abstract class Ghost extends Figure {
 
     if (this.visualizeDirectionOptions) {
       const directionOptions = this.getValidDirectionOptions(game, 0, 0);
-      highlightGridFields(game, directionOptions);
+      highlightGridFields(context, directionOptions);
       highlightGridField(
-        game,
-        { posX: this.getGridPosX(), posY: this.getGridPosY() },
+        context,
+        this.getGridPosX(),
+        this.getGridPosY(),
         "magenta"
       );
       const [tX, tY] = this.getChaseModeTarget(game, game.getPacman());
-      highlightGridField(game, { posX: tX, posY: tY }, "red");
-      highlightGridField(
-        game,
-        { posX: this.gridBaseX, posY: this.gridBaseY },
-        "blue"
-      );
+      highlightGridField(context, tX, tY, "red");
+      highlightGridField(context, this.gridBaseX, this.gridBaseY, "blue");
     }
   };
   public getCenterX = () => {

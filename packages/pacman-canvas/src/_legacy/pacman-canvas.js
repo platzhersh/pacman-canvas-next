@@ -24,6 +24,7 @@ const GHOSTS = {
 const FINAL_LEVEL = 10;
 const PILL_POINTS = 10;
 const POWERPILL_POINTS = 50;
+const FRUIT_POINTS = 200;
 const GHOST_POINTS = 100;
 const HIGHSCORE_ENABLED = true;
 

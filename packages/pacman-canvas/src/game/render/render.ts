@@ -1,10 +1,7 @@
-import { inkySvgSrc } from "../../assets/img";
 import { cherriesSvgSrc } from "../../assets/img/gastronomy";
 import { PACMAN_RADIUS } from "../../figures/Pacman";
-import { DirectionDistance } from "../../figures/directions/Direction";
 import { Game, PILL_SIZE, POWERPILL_SIZE } from "../Game";
 import { Food } from "../food/Food";
-import { FoodHandler, drawCherries } from "../food/FoodHandler";
 import { MapColumn } from "../map/mapData";
 
 export const buildWall = (
@@ -75,6 +72,31 @@ export const renderContent = (
         if (column.type === "💊") {
           drawPill(game, context, column, dotPosY, POWERPILL_SIZE);
         }
+        if (column.type === "🍒") {
+          // TODO: this doesn't work as supposed yet
+          context.fill();
+          context.closePath();
+          context.beginPath();
+          context.fillStyle = "red";
+          context.strokeStyle = "red";
+          drawPill(game, context, column, dotPosY, POWERPILL_SIZE);
+
+          context.closePath();
+          context.fill();
+
+          const cherry = new Food(
+            "cherries",
+            300,
+            cherriesSvgSrc,
+            column.col - 1,
+            dotPosY - 1
+          );
+          cherry.draw(context);
+
+          context.beginPath();
+          context.fillStyle = "White";
+          context.strokeStyle = "White";
+        }
       });
     });
 
@@ -90,53 +112,38 @@ export const renderContent = (
       ghost.draw(game, context)
     );
 
-    // fruit
-    const foodHandler = new FoodHandler();
-    foodHandler.magic(context, 0, 0);
-    foodHandler.magic(context, 5, 5);
-
-    // fruit
-    const cherriesImg = new Image();
-    cherriesImg.src = inkySvgSrc;
-
-    drawCherries(context, 10, 10, cherriesImg);
-
-    const cherries = new Food("cherries", 300, cherriesSvgSrc, 1, 1);
-    cherries.draw(context);
-
     // Pac Man
     game.getPacman().draw(context);
   }
 };
 
 export const highlightGridFields = (
-  game: Game,
+  context: CanvasRenderingContext2D,
   fields: { posX: number; posY: number }[],
   color?: string
 ) => {
-  fields.forEach((f) => highlightGridField(game, f, color));
+  fields.forEach((f) => highlightGridField(context, f.posX, f.posY, color));
 };
 
 export const highlightGridField = (
-  game: Game,
-  field: { posX: number; posY: number },
+  context: CanvasRenderingContext2D,
+  gridPosX: number,
+  gridPosY: number,
+
   color?: string
 ) => {
-  const context = game.getCanvasContext2d();
-  if (context) {
-    context.save();
-    context.lineWidth = 2;
-    context.strokeStyle = color ?? "Yellow";
+  context.save();
+  context.lineWidth = 2;
+  context.strokeStyle = color ?? "Yellow";
 
-    context.beginPath();
-    context.moveTo(field.posX * 30, field.posY * 30);
-    context.lineTo(field.posX * 30 + 30, field.posY * 30);
-    context.lineTo(field.posX * 30 + 30, field.posY * 30 + 30);
-    context.lineTo(field.posX * 30, field.posY * 30 + 30);
-    context.lineTo(field.posX * 30, field.posY * 30);
-    context.closePath();
-    context.stroke();
-  }
+  context.beginPath();
+  context.moveTo(gridPosX * 30, gridPosY * 30);
+  context.lineTo(gridPosX * 30 + 30, gridPosY * 30);
+  context.lineTo(gridPosX * 30 + 30, gridPosY * 30 + 30);
+  context.lineTo(gridPosX * 30, gridPosY * 30 + 30);
+  context.lineTo(gridPosX * 30, gridPosY * 30);
+  context.closePath();
+  context.stroke();
 };
 
 // TODO: only for debugging

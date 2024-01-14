@@ -20,6 +20,7 @@ const FINAL_LEVEL = 10;
 export const PILL_POINTS = 10;
 export const POWERPILL_POINTS = 50;
 export const GHOST_POINTS = 100;
+export const FRUIT_POINTS = 200;
 const HIGHSCORE_ENABLED = true;
 
 export const PILL_SIZE = 3;
