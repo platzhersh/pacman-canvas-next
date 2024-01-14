@@ -40,7 +40,7 @@ export const onKeyDown = (game: Game) => (evt: KeyboardEvent) => {
     case 32: // SPACE pressed -> pause / resume Game
       console.debug("SPACE pressed");
       evt.preventDefault();
-      if (!game.isGameOver) game.pauseResume();
+      game.pauseResume();
       break;
   }
 };
