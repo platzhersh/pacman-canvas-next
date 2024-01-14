@@ -23,6 +23,8 @@ import {
 import { animationLoop } from "@repo/pacman-canvas/src/game/render/animationLoop";
 import { useEffect, useRef, useState } from "react";
 import styles from "./gameCanvas.module.css";
+import { cherriesSvgSrc } from "@repo/pacman-canvas/src/assets/img/gastronomy";
+import { FoodHandler } from "@repo/pacman-canvas/src/game/food/FoodHandler";
 
 export default function GameCanvas() {
   const [gameStateSnapshotEvent, setGameStateSnapshotEvent] =
@@ -147,6 +149,14 @@ export default function GameCanvas() {
           <img src={deadSvgSrc} title="Dead" alt="deadSvgSrc" />
           <img src={dazzledSvgSrc} title="Dazzled" alt="dazzledSvgSrc" />
           <img src={dazzled2SvgSrc} title="Dazzled2" alt="dazzled2SvgSrc" />
+          <img onClick={() => {
+                const foodHandler = new FoodHandler();
+                if (canvasContext) {
+                    foodHandler.magic(canvasContext, 200, 200);
+                }
+                
+          }} src={cherriesSvgSrc} title="cherries" alt="cherries" width="60" height="60"/>
+
         </section>
 
         <section>

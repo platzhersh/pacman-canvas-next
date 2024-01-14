@@ -279,4 +279,20 @@ export class Pacman extends Figure {
     }
     // game.drawHearts(this.lives);
   };
+
+  public draw = (context: CanvasRenderingContext2D) => {
+    context.beginPath();
+    context.fillStyle = "Yellow";
+    context.strokeStyle = "Yellow";
+    context.arc(
+      this.getPosX() + PACMAN_RADIUS,
+      this.getPosY() + PACMAN_RADIUS,
+      this.radius,
+      this.getAngle1() * Math.PI,
+      this.getAngle2() * Math.PI
+    );
+    context.lineTo(this.getPosX() + this.radius, this.getPosY() + this.radius);
+    context.stroke();
+    context.fill();
+  };
 }

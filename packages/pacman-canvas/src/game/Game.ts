@@ -12,12 +12,8 @@ import { onKeyDown } from "./eventCallbacks/onKeyDown";
 import { GridMap } from "./map/GridMap";
 import { MapTileType } from "./map/mapData";
 import { animationLoop } from "./render/animationLoop";
-import {
-  buildWall,
-  clearCanvas,
-  renderContent,
-  renderGrid,
-} from "./render/render";
+import { buildWall, clearCanvas, renderGrid } from "./render/render";
+import { renderContent } from "./render/render";
 
 // global constants
 const FINAL_LEVEL = 10;

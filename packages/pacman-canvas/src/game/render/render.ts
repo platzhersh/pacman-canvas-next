@@ -1,6 +1,10 @@
+import { inkySvgSrc } from "../../assets/img";
+import { cherriesSvgSrc } from "../../assets/img/gastronomy";
 import { PACMAN_RADIUS } from "../../figures/Pacman";
 import { DirectionDistance } from "../../figures/directions/Direction";
 import { Game, PILL_SIZE, POWERPILL_SIZE } from "../Game";
+import { Food } from "../food/Food";
+import { FoodHandler, drawCherries } from "../food/FoodHandler";
 import { MapColumn } from "../map/mapData";
 
 export const buildWall = (
@@ -53,8 +57,6 @@ export const renderContent = (
     return;
   }
 
-  // clear context
-
   // Pills
   context.beginPath();
   context.fillStyle = "White";
@@ -88,30 +90,28 @@ export const renderContent = (
       ghost.draw(game, context)
     );
 
+    // fruit
+    const foodHandler = new FoodHandler();
+    foodHandler.magic(context, 0, 0);
+    foodHandler.magic(context, 5, 5);
+
+    // fruit
+    const cherriesImg = new Image();
+    cherriesImg.src = inkySvgSrc;
+
+    drawCherries(context, 10, 10, cherriesImg);
+
+    const cherries = new Food("cherries", 300, cherriesSvgSrc, 1, 1);
+    cherries.draw(context);
+
     // Pac Man
-    context.beginPath();
-    const pacman = game.getPacman();
-    context.fillStyle = "Yellow";
-    context.strokeStyle = "Yellow";
-    context.arc(
-      pacman.getPosX() + PACMAN_RADIUS,
-      pacman.getPosY() + PACMAN_RADIUS,
-      PACMAN_RADIUS,
-      pacman.getAngle1() * Math.PI,
-      pacman.getAngle2() * Math.PI
-    );
-    context.lineTo(
-      pacman.getPosX() + PACMAN_RADIUS,
-      pacman.getPosY() + PACMAN_RADIUS
-    );
-    context.stroke();
-    context.fill();
+    game.getPacman().draw(context);
   }
 };
 
 export const highlightGridFields = (
   game: Game,
-  fields: {posX: number, posY: number}[],
+  fields: { posX: number; posY: number }[],
   color?: string
 ) => {
   fields.forEach((f) => highlightGridField(game, f, color));
@@ -119,7 +119,7 @@ export const highlightGridFields = (
 
 export const highlightGridField = (
   game: Game,
-  field: {posX: number, posY: number},
+  field: { posX: number; posY: number },
   color?: string
 ) => {
   const context = game.getCanvasContext2d();

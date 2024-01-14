@@ -137,7 +137,7 @@ export abstract class Ghost extends Figure {
           2 * this.radius
         );
       }
-    } else
+    } else {
       context.drawImage(
         this.image,
         this.posX,
@@ -145,6 +145,7 @@ export abstract class Ghost extends Figure {
         2 * this.radius,
         2 * this.radius
       );
+    }
 
     if (this.visualizeDirectionOptions) {
       const directionOptions = this.getValidDirectionOptions(game, 0, 0);
