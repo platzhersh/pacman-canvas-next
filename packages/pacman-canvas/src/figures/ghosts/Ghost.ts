@@ -1,12 +1,12 @@
 import { dazzled2SvgSrc, dazzledSvgSrc, deadSvgSrc } from "../../assets/img";
-import { GHOST_POINTS, Game } from "../../game/Game";
+import { GHOST_POINTS, GRID_SIZE, Game, PACMAN_RADIUS } from "../../game/Game";
 import { MapTileType } from "../../game/map/mapData";
 import {
   highlightGridField,
   highlightGridFields,
 } from "../../game/render/render";
 import { Figure, isInRange } from "../Figure";
-import { PACMAN_RADIUS, Pacman } from "../Pacman";
+import { Pacman } from "../Pacman";
 import { down, left, right, up } from "../directions";
 import { Direction, DirectionDistance } from "../directions/Direction";
 
@@ -58,10 +58,10 @@ export abstract class Ghost extends Figure {
   ) {
     super();
     this.name = name;
-    this.posX = gridPosX * 30;
-    this.posY = gridPosY * 30;
-    this.startPosX = gridPosX * 30;
-    this.startPosY = gridPosY * 30;
+    this.posX = gridPosX * GRID_SIZE;
+    this.posY = gridPosY * GRID_SIZE;
+    this.startPosX = gridPosX * GRID_SIZE;
+    this.startPosY = gridPosY * GRID_SIZE;
     this.gridBaseX = gridBaseX;
     this.gridBaseY = gridBaseY;
     this.speed = game.getRegularGhostSpeed();
@@ -272,32 +272,20 @@ export abstract class Ghost extends Figure {
   };
 
   public move = (game: Game) => {
+    this.validatePosition();
     this.checkDirectionChange(game);
-    this.checkCollisions(game);
 
-    // check wall collision
-    const fieldAhead = this.getFieldAhead(game);
-    if (fieldAhead.field === "🟦") {
-      console.warn(`${this.name}: fieldAhead ${JSON.stringify(fieldAhead)}`);
-      this.directionWatcher.set(null);
-      // this.stop();
-    }
+    // validate position
 
     if (!this.isStopped) {
       // Move
-      this.posX += this.speed * this.dirX;
-      this.posY += this.speed * this.dirY;
+      this.advancePosition();
 
       // Check if out of canvas
-      if (this.posX >= game.getCanvasWidth() - this.radius)
-        this.posX = this.speed - this.radius;
-      if (this.posX <= 0 - this.radius)
-        this.posX = game.getCanvasWidth() - this.speed - this.radius;
-      if (this.posY >= game.getCanvasHeight() - this.radius)
-        this.posY = this.speed - this.radius;
-      if (this.posY <= 0 - this.radius)
-        this.posY = game.getCanvasHeight() - this.speed - this.radius;
+      this.checkAndAdjustOutOfCanvas(game);
     }
+    // check collisions
+    this.checkCollisions(game);
   };
 
   private checkPacmanCollision = (game: Game) => {
@@ -331,8 +319,8 @@ export abstract class Ghost extends Figure {
     /* Check Back to Home */
     if (
       this.dead &&
-      this.getGridPosX() === this.startPosX / 30 &&
-      this.getGridPosY() === this.startPosY / 30
+      this.getGridPosX() === this.startPosX / GRID_SIZE &&
+      this.getGridPosY() === this.startPosY / GRID_SIZE
     ) {
       this.reset(game);
     }
@@ -341,6 +329,16 @@ export abstract class Ghost extends Figure {
   public checkCollisions = (game: Game) => {
     this.checkPacmanCollision(game);
     this.checkGhostHouseCollision(game);
+
+    // check wall collision
+    const fieldAhead = this.getFieldAhead(game, true);
+    if (fieldAhead.field === "🟦") {
+      console.warn(`${this.name}: fieldAhead ${JSON.stringify(fieldAhead)}`);
+      // this.directionWatcher.set(null);
+      // this.stop();
+    }
+    this.checkWallCollision(fieldAhead.field, false, ["🟦"]);
+    this.resetIsStuck();
   };
 
   /**
@@ -424,8 +422,8 @@ export abstract class Ghost extends Figure {
     // get target
     if (this.dead) {
       // go Home
-      targetX = this.startPosX / 30;
-      targetY = this.startPosY / 30;
+      targetX = this.startPosX / GRID_SIZE;
+      targetY = this.startPosY / GRID_SIZE;
     } else if (game.getGhostMode() === GhostMode.Scatter) {
       // Scatter Mode
       targetX = this.gridBaseX;
@@ -449,11 +447,15 @@ export abstract class Ghost extends Figure {
     };
     const orderedDirectionOptions = validDirectionOptions.toSorted(compare);
 
+    /**
+     * TODO: there are cases where there are multiple options with the exact same distance, 
+     * it would be cool to then randomly pick one of the two instead of always going for the same one 
+     * */ 
     let nextDirection = orderedDirectionOptions[0]?.relativeDirection;
 
     if (!nextDirection) {
       console.warn(
-        "No valid direction option! (possibly back at ghosthouse)",
+        `${this.name}: No valid direction option! (possibly back at ghosthouse)`,
         this.ghostHouse
       );
       this.directionWatcher.set(null);

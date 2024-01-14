@@ -1,4 +1,5 @@
 import { generateUID } from "../../utils/uuid";
+import { GRID_SIZE } from "../Game";
 import { highlightGridField } from "../render/render";
 
 export class Food {
@@ -21,12 +22,12 @@ export class Food {
     this.score = score;
     this.image = new Image();
     this.image.src = imageSrc;
-    this.posX = gridPosX * 30;
-    this.posY = gridPosY * 30;
+    this.posX = gridPosX * GRID_SIZE;
+    this.posY = gridPosY * GRID_SIZE;
   }
 
-  public getGridPosX = () => this.posX / 30;
-  public getGridPosY = () => this.posY / 30;
+  public getGridPosX = () => this.posX / GRID_SIZE;
+  public getGridPosY = () => this.posY / GRID_SIZE;
 
   public draw = (context: CanvasRenderingContext2D) => {
     console.log(

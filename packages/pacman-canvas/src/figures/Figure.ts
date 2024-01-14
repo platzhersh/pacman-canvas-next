@@ -1,4 +1,5 @@
-import { Game } from "../game/Game";
+import { GRID_SIZE, Game } from "../game/Game";
+import { MapTileType } from "../game/map/mapData";
 import { down, left, right, up } from "./directions";
 import { Direction, DirectionFieldAhead } from "./directions/Direction";
 import { DirectionWatcher } from "./directions/DirectionWatcher";
@@ -24,6 +25,9 @@ export abstract class Figure {
   protected speed: number = 0;
   protected angle1 = 0;
   protected angle2 = 0;
+
+  protected stuckX: number = 0;
+  protected stuckY: number = 0;
 
   protected dirX: number = 0;
   protected dirY: number = 0;
@@ -65,6 +69,82 @@ export abstract class Figure {
     };
   };
 
+  protected isStuck = () => {
+    return this.stuckX + this.stuckY > 0;
+  };
+  protected resetIsStuck = () => {
+    this.stuckX = 0;
+    this.stuckY = 0;
+  };
+
+  /**
+   * Reset to the closest grid position.
+   */
+  protected resetToGrid = () => {
+    if (this.stuckX === 1 && (this.posX % 2) * this.radius !== 0) {
+      this.posX -= this.speed;
+    }
+    if (this.stuckY === 1 && (this.posY % 2) * this.radius !== 0) {
+      this.posY -= this.speed;
+    }
+
+    if (this.stuckX === -1) {
+      this.posX += this.speed;
+    }
+    if (this.stuckY === -1) {
+      this.posY += this.speed;
+    }
+    console.log(
+      `${this.name} resetToGrid. inGrid: ${this.inGrid()} (${this.posX}, ${
+        this.posY
+      })`
+    );
+  };
+
+  /**
+   * make one step into direction
+   */
+  protected advancePosition = () => {
+    this.posX += this.speed * this.dirX;
+    this.posY += this.speed * this.dirY;
+  };
+
+  /**
+   * Checks if position might be out of canvas and re-adjust it.
+   * @param game
+   */
+  protected checkAndAdjustOutOfCanvas = (game: Game) => {
+    if (this.posX > game.getCanvasWidth() - this.radius) {
+      this.posX = this.posX - game.getCanvasWidth();
+    }
+    if (this.posX < 0 - this.radius) {
+      this.posX = game.getCanvasWidth() + this.posX;
+    }
+    if (this.posY > game.getCanvasHeight() - this.radius) {
+      this.posY = this.posY - game.getCanvasHeight();
+    }
+    if (this.posY < 0 - this.radius) {
+      this.posY = game.getCanvasHeight() + this.posY;
+    }
+  };
+
+  protected checkWallCollision = (
+    fieldAhead: MapTileType,
+    stopOnCollision: boolean = true,
+    wallTypes: MapTileType[] = ["🟦", "door"]
+  ) => {
+    if (wallTypes.includes(fieldAhead)) {
+      this.stuckX = this.dirX;
+      this.stuckY = this.dirY;
+      stopOnCollision && this.stop();
+
+      console.warn(`${this.name} stuck. ${this.stuckX}, ${this.stuckY}`);
+
+      // get out of the wall
+      this.resetToGrid();
+    }
+  };
+
   // TODO: difference to getFieldAhead is unclear
   protected getNextTile = (game: Game, nextDirection: Direction) => {
     //console.log("changeDirection to "+directionWatcher.get().name);
@@ -90,12 +170,27 @@ export abstract class Figure {
     throw Error("not implemented");
   };
 
+  protected validatePosition = () => {
+    // pos has to be dividable by speed
+    const diffX = this.posX % GRID_SIZE;
+    if (diffX % this.speed !== 0) {
+      console.warn(`${this.name} posX is not valid ${this.posX}`);
+    }
+    const diffY = this.posY % GRID_SIZE;
+    if (diffY % this.speed !== 0) {
+      console.warn(`${this.name} posY is not valid ${this.posY}`);
+    }
+  };
+
   /**
    *
    * @returns true if current position is aligned with grid
    */
-  public inGrid = () =>
-    this.posX % (2 * this.radius) === 0 && this.posY % (2 * this.radius) === 0;
+  public inGrid = () => {
+    const inGridX = this.posX % GRID_SIZE === 0;
+    const inGridY = this.posY % GRID_SIZE === 0;
+    return inGridX && inGridY;
+  };
 
   public getOppositeDirection = (): Direction => {
     if (this.direction.equals(up)) return down;
@@ -105,20 +200,13 @@ export abstract class Figure {
     throw Error("Invalid Direction");
   };
 
-  public move = (game: any) => {
+  public move = (game: Game) => {
+    this.validatePosition();
     if (!this.isStopped) {
-      this.posX += this.speed * this.dirX;
-      this.posY += this.speed * this.dirY;
+      this.advancePosition();
 
       // Check if out of canvas
-      if (this.posX >= game.width - this.radius)
-        this.posX = this.speed - this.radius;
-      if (this.posX <= 0 - this.radius)
-        this.posX = game.width - this.speed - this.radius;
-      if (this.posY >= game.height - this.radius)
-        this.posY = this.speed - this.radius;
-      if (this.posY <= 0 - this.radius)
-        this.posY = game.height - this.speed - this.radius;
+      this.checkAndAdjustOutOfCanvas(game);
     }
   };
 
@@ -144,10 +232,10 @@ export abstract class Figure {
   public getAngle2 = () => this.angle2;
 
   public getGridPosX = () => {
-    return (this.posX - (this.posX % 30)) / 30;
+    return (this.posX - (this.posX % GRID_SIZE)) / GRID_SIZE;
   };
   public getGridPosY = () => {
-    return (this.posY - (this.posY % 30)) / 30;
+    return (this.posY - (this.posY % GRID_SIZE)) / GRID_SIZE;
   };
   public setDirection = (dir: Direction) => {
     this.dirX = dir.getDirX();

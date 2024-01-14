@@ -1,6 +1,6 @@
 import { pinkySvgSrc } from "../../assets/img";
-import { Game } from "../../game/Game";
-import { PACMAN_RADIUS, Pacman } from "../Pacman";
+import { Game, PACMAN_RADIUS } from "../../game/Game";
+import { Pacman } from "../Pacman";
 import { right } from "../directions";
 import { GHOSTS, Ghost } from "./Ghost";
 

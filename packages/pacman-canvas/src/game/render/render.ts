@@ -1,6 +1,11 @@
 import { cherriesSvgSrc } from "../../assets/img/gastronomy";
-import { PACMAN_RADIUS } from "../../figures/Pacman";
-import { Game, PILL_SIZE, POWERPILL_SIZE } from "../Game";
+import {
+  GRID_SIZE,
+  Game,
+  PACMAN_RADIUS,
+  PILL_SIZE,
+  POWERPILL_SIZE,
+} from "../Game";
 import { Food } from "../food/Food";
 import { MapColumn } from "../map/mapData";
 
@@ -14,8 +19,8 @@ export const buildWall = (
   width = width * 2 - 1;
   height = height * 2 - 1;
   context.fillRect(
-    PACMAN_RADIUS / 2 + gridX * 2 * PACMAN_RADIUS,
-    PACMAN_RADIUS / 2 + gridY * 2 * PACMAN_RADIUS,
+    PACMAN_RADIUS / 2 + gridX * GRID_SIZE,
+    PACMAN_RADIUS / 2 + gridY * GRID_SIZE,
     width * PACMAN_RADIUS,
     height * PACMAN_RADIUS
   );
@@ -137,11 +142,14 @@ export const highlightGridField = (
   context.strokeStyle = color ?? "Yellow";
 
   context.beginPath();
-  context.moveTo(gridPosX * 30, gridPosY * 30);
-  context.lineTo(gridPosX * 30 + 30, gridPosY * 30);
-  context.lineTo(gridPosX * 30 + 30, gridPosY * 30 + 30);
-  context.lineTo(gridPosX * 30, gridPosY * 30 + 30);
-  context.lineTo(gridPosX * 30, gridPosY * 30);
+  context.moveTo(gridPosX * GRID_SIZE, gridPosY * GRID_SIZE);
+  context.lineTo(gridPosX * GRID_SIZE + GRID_SIZE, gridPosY * GRID_SIZE);
+  context.lineTo(
+    gridPosX * GRID_SIZE + GRID_SIZE,
+    gridPosY * GRID_SIZE + GRID_SIZE
+  );
+  context.lineTo(gridPosX * GRID_SIZE, gridPosY * GRID_SIZE + GRID_SIZE);
+  context.lineTo(gridPosX * GRID_SIZE, gridPosY * GRID_SIZE);
   context.closePath();
   context.stroke();
 };
