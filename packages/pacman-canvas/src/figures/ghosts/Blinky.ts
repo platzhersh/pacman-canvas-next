@@ -1,7 +1,7 @@
 import { blinkySvgSrc } from "../../assets/img";
 import { Game } from "../../game/Game";
 import { Pacman } from "../Pacman";
-import { left, up } from "../directions";
+import { up } from "../directions";
 import { GHOSTS, Ghost } from "./Ghost";
 
 export class Blinky extends Ghost {

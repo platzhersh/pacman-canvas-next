@@ -2,25 +2,27 @@
 
 import getGameInstance, { Game, helloPacman } from "@repo/pacman-canvas";
 import {
-    blinkySvgSrc,
-    clydeSvgSrc,
-    dazzled2SvgSrc,
-    dazzledSvgSrc,
-    deadSvgSrc,
-    inkySvgSrc,
-    pinkySvgSrc,
+  blinkySvgSrc,
+  clydeSvgSrc,
+  dazzled2SvgSrc,
+  dazzledSvgSrc,
+  deadSvgSrc,
+  inkySvgSrc,
+  pinkySvgSrc,
 } from "@repo/pacman-canvas/src/assets/img";
 import { cherriesSvgSrc } from "@repo/pacman-canvas/src/assets/img/gastronomy";
 import {
-    down,
-    left,
-    right,
-    up,
+  down,
+  left,
+  right,
+  up,
 } from "@repo/pacman-canvas/src/figures/directions";
 import {
-    GameStateChangeListener,
-    GameStateEvent,
+  GRID_SIZE,
+  GameStateChangeListener,
+  GameStateEvent
 } from "@repo/pacman-canvas/src/game/Game";
+import { FoodHandler } from "@repo/pacman-canvas/src/game/food/FoodHandler";
 import { animationLoop } from "@repo/pacman-canvas/src/game/render/animationLoop";
 import { useEffect, useRef, useState } from "react";
 import styles from "./gameCanvas.module.css";
@@ -31,6 +33,11 @@ export default function GameCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [canvasContext, setCanvasContext] =
     useState<CanvasRenderingContext2D | null>(null);
+
+    const canvasRef2 = useRef<HTMLCanvasElement>(null);
+    const [canvasContext2, setCanvasContext2] =
+      useState<CanvasRenderingContext2D | null>(null);
+  
 
   const game: Game = getGameInstance();
 
@@ -60,6 +67,13 @@ export default function GameCanvas() {
       setCanvasContext(canvasRef.current.getContext("2d"));
     }
 
+    if (canvasRef2.current) {
+      console.debug("canvasRef2.current", canvasRef2.current);
+      const context = canvasRef2.current.getContext("2d");
+      console.debug("context", context);
+      setCanvasContext2(canvasRef2.current.getContext("2d"));
+    }
+
     console.debug("canvasContext", canvasContext);
   }, []);
 
@@ -75,9 +89,32 @@ export default function GameCanvas() {
 
   //   const pacman = game.getPacman();
 
+  const foodHandler = new FoodHandler();
+
   return (
     <>
       <div style={{ background: "grey" }}>
+        <section>
+        <canvas
+              //   ref={(c) => c ? setCanvasContext(c.getContext('2d')) : null}
+              ref={canvasRef2}
+              style={{ background: "black" }}
+              id="myCanvas2"
+              width="30"
+              height="30"
+            >
+              <p>Canvas not supported</p>
+            </canvas>
+            <button onClick={() => {
+              if (canvasContext2){
+                console.log("draw food", foodHandler, canvasContext2);
+                canvasContext2.clearRect(0, 0, GRID_SIZE, GRID_SIZE);
+                foodHandler.draw(canvasContext2, 0, 0, GRID_SIZE, GRID_SIZE);
+              }}}>draw food</button>
+              <button onClick={() => foodHandler.shuffle()}>shuffle</button>
+              <button onClick={() => canvasContext2?.clearRect(0,0, GRID_SIZE, GRID_SIZE)}>clear</button>
+
+        </section>
         <section>
           <div>
             {helloPacman()} {game.getId()}
@@ -104,12 +141,8 @@ export default function GameCanvas() {
           {!gameStateSnapshotEvent && "no game events yet"}
           {gameStateSnapshotEvent && (
             <>
-              <span>level: {gameStateSnapshotEvent.payload.level}</span>&nbsp;
-              {/* <span>
-                direction: {game.getPacman().getDirection().getName()}
-              </span> */}
+              <span>level: {gameStateSnapshotEvent.payload.level}</span>
               &nbsp;
-              {/* <span>refreshRate: {gameStateSnapshot.ref}</span>&nbsp; */}
               <span>
                 started: {String(gameStateSnapshotEvent.payload.started)}
               </span>
@@ -126,8 +159,6 @@ export default function GameCanvas() {
           )}
         </section>
         <section>
-          {/* <img src={inkyBase64} alt="inkyBase64" /> */}
-          {/* {inkyBase64} */}
           <img
             onClick={() =>
               game.getGhosts().inky.toggleDirectionOptionsVisualizations()
