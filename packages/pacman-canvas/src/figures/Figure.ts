@@ -69,6 +69,10 @@ export abstract class Figure {
     };
   };
 
+  public setSpeed(value: number) {
+    this.speed = value;
+  }
+
   protected isStuck = () => {
     return this.stuckX + this.stuckY > 0;
   };
@@ -104,11 +108,17 @@ export abstract class Figure {
   /**
    * make one step into direction
    */
-  protected advancePosition = () => {
+  public advancePosition() {
     this.posX += this.speed * this.dirX;
     this.posY += this.speed * this.dirY;
-  };
+  }
 
+  /**
+   * Adjusts position if out of canvas
+   * @param position
+   * @param dimension
+   * @returns
+   */
   private adjustPosition = (position: number, dimension: number): number => {
     if (position > dimension - this.radius) {
       return position - dimension;
