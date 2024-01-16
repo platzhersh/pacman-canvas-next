@@ -1,4 +1,4 @@
-import { GRID_SIZE, Game } from "../game/Game";
+import { GRID_SIZE, Game, PACMAN_RADIUS } from "../game/Game";
 import { MapTileType } from "../game/map/mapData";
 import { down, left, right, up } from "./directions";
 import { Direction, DirectionFieldAhead } from "./directions/Direction";
@@ -33,7 +33,7 @@ export abstract class Figure {
   protected dirY: number = 0;
   protected direction: Direction = right;
 
-  protected radius: number = 0;
+  protected radius: number = PACMAN_RADIUS;
 
   protected isStopped: boolean = true;
   protected directionWatcher: DirectionWatcher = new DirectionWatcher();
@@ -68,6 +68,10 @@ export abstract class Figure {
       posY: gridAheadY,
     };
   };
+
+  public setSpeed(value: number) {
+    this.speed = value;
+  }
 
   protected isStuck = () => {
     return this.stuckX + this.stuckY > 0;
@@ -104,28 +108,34 @@ export abstract class Figure {
   /**
    * make one step into direction
    */
-  protected advancePosition = () => {
+  public advancePosition() {
     this.posX += this.speed * this.dirX;
     this.posY += this.speed * this.dirY;
+  }
+
+  /**
+   * Adjusts position if out of canvas
+   * @param position
+   * @param dimension
+   * @returns
+   */
+  private adjustPosition = (position: number, dimension: number): number => {
+    if (position > dimension - this.radius) {
+      return position - dimension;
+    }
+    if (position < 0 - this.radius) {
+      return dimension + position;
+    }
+    return position;
   };
 
   /**
    * Checks if position might be out of canvas and re-adjust it.
    * @param game
    */
-  protected checkAndAdjustOutOfCanvas = (game: Game) => {
-    if (this.posX > game.getCanvasWidth() - this.radius) {
-      this.posX = this.posX - game.getCanvasWidth();
-    }
-    if (this.posX < 0 - this.radius) {
-      this.posX = game.getCanvasWidth() + this.posX;
-    }
-    if (this.posY > game.getCanvasHeight() - this.radius) {
-      this.posY = this.posY - game.getCanvasHeight();
-    }
-    if (this.posY < 0 - this.radius) {
-      this.posY = game.getCanvasHeight() + this.posY;
-    }
+  public checkAndAdjustOutOfCanvas = (game: Game) => {
+    this.posX = this.adjustPosition(this.posX, game.getCanvasWidth());
+    this.posY = this.adjustPosition(this.posY, game.getCanvasHeight());
   };
 
   protected checkWallCollision = (
@@ -244,8 +254,8 @@ export abstract class Figure {
     this.angle2 = dir.getAngle2();
     this.direction = dir;
   };
-  public setPosition = (x: number, y: number) => {
-    this.posX = x;
-    this.posY = y;
+  public setPosition = (posX: number, posY: number) => {
+    this.posX = posX;
+    this.posY = posY;
   };
 }

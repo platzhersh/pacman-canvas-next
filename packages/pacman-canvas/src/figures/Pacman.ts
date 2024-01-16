@@ -1,6 +1,5 @@
 import {
   FRUIT_POINTS,
-  GRID_SIZE,
   Game,
   PACMAN_RADIUS,
   PILL_POINTS,
