@@ -1,4 +1,3 @@
-import { cherriesSvgSrc } from "../../assets/img/gastronomy";
 import {
   GRID_SIZE,
   Game,
@@ -6,7 +5,6 @@ import {
   PILL_SIZE,
   POWERPILL_SIZE,
 } from "../Game";
-import { Food } from "../food/Food";
 import { MapColumn } from "../map/mapData";
 
 export const buildWall = (
@@ -78,25 +76,15 @@ export const renderContent = (
           drawPill(game, context, column, dotPosY, POWERPILL_SIZE);
         }
         if (column.type === "🍒") {
-          // TODO: this doesn't work as supposed yet
-          context.fill();
-          context.closePath();
-          context.beginPath();
-          context.fillStyle = "red";
-          context.strokeStyle = "red";
-          drawPill(game, context, column, dotPosY, POWERPILL_SIZE);
-
           context.closePath();
           context.fill();
 
-          const cherry = new Food(
-            "cherries",
-            300,
-            cherriesSvgSrc,
-            column.col - 1,
-            dotPosY - 1
+          game.drawFood(
+            game.toPixelPos(column.col - 1),
+            game.toPixelPos(dotPosY - 1),
+            2 * PACMAN_RADIUS,
+            2 * PACMAN_RADIUS
           );
-          cherry.draw(context);
 
           context.beginPath();
           context.fillStyle = "White";

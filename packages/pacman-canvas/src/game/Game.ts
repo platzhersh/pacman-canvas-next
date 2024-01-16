@@ -9,6 +9,7 @@ import { generateUID } from "../utils/uuid";
 import { Score } from "./Score";
 import { Timer } from "./Timer";
 import { onKeyDown } from "./eventCallbacks/onKeyDown";
+import { FoodHandler } from "./food/FoodHandler";
 import { GridMap } from "./map/GridMap";
 import { MapTileType } from "./map/mapData";
 import { animationLoop } from "./render/animationLoop";
@@ -76,26 +77,29 @@ export class Game {
   private wallColor = "Blue";
 
   // global pill states
-  private pillSize = PILL_SIZE;
-  private powerpillSizeMin = 2;
-  private powerpillSizeMax = POWERPILL_SIZE;
-  private powerpillSizeCurrent = this.powerpillSizeMax;
-  private powerPillAnimationCounter = 0;
+  // private pillSize = PILL_SIZE;
+  // private powerpillSizeMin = 2;
+  // private powerpillSizeMax = POWERPILL_SIZE;
+  // private powerpillSizeCurrent = this.powerpillSizeMax;
+  // private powerPillAnimationCounter = 0;
 
   // TODO: vibrant power pills
-  public nextPowerPillSize = () => {
-    /*if (this.powerPillAnimationCounter === 3) {
-				this.powerPillAnimationCounter = 0;
-				this.powerpillSizeCurrent = this.powerpillSizeMin + this.powerpillSizeCurrent % (this.powerpillSizeMax-this.powerpillSizeMin);
-			} else {
-				this.powerPillAnimationCounter++;
-			}*/
-    return this.powerpillSizeCurrent;
-  };
+  // public nextPowerPillSize = () => {
+  //   /*if (this.powerPillAnimationCounter === 3) {
+  // 			this.powerPillAnimationCounter = 0;
+  // 			this.powerpillSizeCurrent = this.powerpillSizeMin + this.powerpillSizeCurrent % (this.powerpillSizeMax-this.powerpillSizeMin);
+  // 		} else {
+  // 			this.powerPillAnimationCounter++;
+  // 		}*/
+  //   return this.powerpillSizeCurrent;
+  // };
 
   // pacman
   private pacman = new Pacman();
   public getPacman = () => this.pacman;
+
+  // food (fruits & co)
+  private foodHandler = new FoodHandler();
 
   // global ghost states
   private ghosts: GhostRegistry;
@@ -178,6 +182,15 @@ export class Game {
     }
   };
 
+  public drawFood = (
+    posX: number,
+    posY: number,
+    width: number,
+    height: number
+  ) => {
+    this.foodHandler.draw(this.getCanvasContext2d(), posX, posY, width, height);
+  };
+
   public getCanvasWidth = (): number => {
     const width = this.canvasContext2d?.canvas.width;
     if (!width) throw Error("No canvas width");
@@ -221,7 +234,12 @@ export class Game {
     this.canvasContext2d = canvasContext2d;
     this.render();
   };
-  public getCanvasContext2d = () => this.canvasContext2d;
+  public getCanvasContext2d = () => {
+    if (!this.canvasContext2d) {
+      throw Error("No canvas context");
+    }
+    return this.canvasContext2d;
+  };
 
   public newGame = () => {
     const r = confirm("Are you sure you want to restart?");
