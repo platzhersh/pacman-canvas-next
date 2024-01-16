@@ -2,29 +2,28 @@
 
 import getGameInstance, { Game, helloPacman } from "@repo/pacman-canvas";
 import {
-  blinkySvgSrc,
-  clydeSvgSrc,
-  dazzled2SvgSrc,
-  dazzledSvgSrc,
-  deadSvgSrc,
-  inkySvgSrc,
-  pinkySvgSrc,
+    blinkySvgSrc,
+    clydeSvgSrc,
+    dazzled2SvgSrc,
+    dazzledSvgSrc,
+    deadSvgSrc,
+    inkySvgSrc,
+    pinkySvgSrc,
 } from "@repo/pacman-canvas/src/assets/img";
+import { cherriesSvgSrc } from "@repo/pacman-canvas/src/assets/img/gastronomy";
 import {
-  down,
-  left,
-  right,
-  up,
+    down,
+    left,
+    right,
+    up,
 } from "@repo/pacman-canvas/src/figures/directions";
 import {
-  GameStateChangeListener,
-  GameStateEvent,
+    GameStateChangeListener,
+    GameStateEvent,
 } from "@repo/pacman-canvas/src/game/Game";
 import { animationLoop } from "@repo/pacman-canvas/src/game/render/animationLoop";
 import { useEffect, useRef, useState } from "react";
 import styles from "./gameCanvas.module.css";
-import { cherriesSvgSrc } from "@repo/pacman-canvas/src/assets/img/gastronomy";
-import { FoodHandler } from "@repo/pacman-canvas/src/game/food/FoodHandler";
 
 export default function GameCanvas() {
   const [gameStateSnapshotEvent, setGameStateSnapshotEvent] =

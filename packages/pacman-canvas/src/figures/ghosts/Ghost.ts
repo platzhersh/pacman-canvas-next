@@ -448,9 +448,9 @@ export abstract class Ghost extends Figure {
     const orderedDirectionOptions = validDirectionOptions.toSorted(compare);
 
     /**
-     * TODO: there are cases where there are multiple options with the exact same distance, 
-     * it would be cool to then randomly pick one of the two instead of always going for the same one 
-     * */ 
+     * TODO: there are cases where there are multiple options with the exact same distance,
+     * it would be cool to then randomly pick one of the two instead of always going for the same one
+     * */
     let nextDirection = orderedDirectionOptions[0]?.relativeDirection;
 
     if (!nextDirection) {

@@ -1,4 +1,4 @@
-import { GRID_SIZE, Game } from "../game/Game";
+import { GRID_SIZE, Game, PACMAN_RADIUS } from "../game/Game";
 import { MapTileType } from "../game/map/mapData";
 import { down, left, right, up } from "./directions";
 import { Direction, DirectionFieldAhead } from "./directions/Direction";
@@ -33,7 +33,7 @@ export abstract class Figure {
   protected dirY: number = 0;
   protected direction: Direction = right;
 
-  protected radius: number = 0;
+  protected radius: number = PACMAN_RADIUS;
 
   protected isStopped: boolean = true;
   protected directionWatcher: DirectionWatcher = new DirectionWatcher();
@@ -113,7 +113,7 @@ export abstract class Figure {
    * Checks if position might be out of canvas and re-adjust it.
    * @param game
    */
-  protected checkAndAdjustOutOfCanvas = (game: Game) => {
+  public checkAndAdjustOutOfCanvas = (game: Game) => {
     if (this.posX > game.getCanvasWidth() - this.radius) {
       this.posX = this.posX - game.getCanvasWidth();
     }
