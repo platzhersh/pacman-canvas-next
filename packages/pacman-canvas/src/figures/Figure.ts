@@ -109,23 +109,23 @@ export abstract class Figure {
     this.posY += this.speed * this.dirY;
   };
 
+  private adjustPosition = (position: number, dimension: number): number => {
+    if (position > dimension - this.radius) {
+      return position - dimension;
+    }
+    if (position < 0 - this.radius) {
+      return dimension + position;
+    }
+    return position;
+  };
+
   /**
    * Checks if position might be out of canvas and re-adjust it.
    * @param game
    */
   public checkAndAdjustOutOfCanvas = (game: Game) => {
-    if (this.posX > game.getCanvasWidth() - this.radius) {
-      this.posX = this.posX - game.getCanvasWidth();
-    }
-    if (this.posX < 0 - this.radius) {
-      this.posX = game.getCanvasWidth() + this.posX;
-    }
-    if (this.posY > game.getCanvasHeight() - this.radius) {
-      this.posY = this.posY - game.getCanvasHeight();
-    }
-    if (this.posY < 0 - this.radius) {
-      this.posY = game.getCanvasHeight() + this.posY;
-    }
+    this.posX = this.adjustPosition(this.posX, game.getCanvasWidth());
+    this.posY = this.adjustPosition(this.posY, game.getCanvasHeight());
   };
 
   protected checkWallCollision = (
