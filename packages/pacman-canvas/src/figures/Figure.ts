@@ -254,8 +254,8 @@ export abstract class Figure {
     this.angle2 = dir.getAngle2();
     this.direction = dir;
   };
-  public setPosition = (x: number, y: number) => {
-    this.posX = x;
-    this.posY = y;
+  public setPosition = (posX: number, posY: number) => {
+    this.posX = posX;
+    this.posY = posY;
   };
 }

@@ -1,5 +1,5 @@
-import { PACMAN_RADIUS } from "../game/Game";
-import { Figure } from "./Figure";
+import { GRID_SIZE, PACMAN_RADIUS } from "../game/Game";
+import { Figure, isInRange } from "./Figure";
 import { down, left, right, up } from "./directions";
 
 class FigureImpl extends Figure {
@@ -9,6 +9,28 @@ class FigureImpl extends Figure {
     this.radius = PACMAN_RADIUS;
   }
 }
+
+describe("isInRange", () => {
+  test("should return true when x is equal to min", () => {
+    expect(isInRange(5, 5, 10)).toEqual(true);
+  });
+
+  test("should return true when x is equal to max", () => {
+    expect(isInRange(10, 5, 10)).toEqual(true);
+  });
+
+  test("should return true when x is between min and max", () => {
+    expect(isInRange(7, 5, 10)).toEqual(true);
+  });
+
+  test("should return false when x is less than min", () => {
+    expect(isInRange(4, 5, 10)).toEqual(false);
+  });
+
+  test("should return false when x is greater than max", () => {
+    expect(isInRange(11, 5, 10)).toEqual(false);
+  });
+});
 
 describe("Figure", () => {
   let game: any;
@@ -105,6 +127,28 @@ describe("Figure", () => {
 
       expect(figure.getPosY()).toBeGreaterThanOrEqual(0);
       expect(figure.getPosY()).toEqual(game.getCanvasHeight() + posY);
+    });
+  });
+
+  describe("inGrid", () => {
+    test("should return true when posX and posY are multiples of GRID_SIZE", () => {
+      figure.setPosition(GRID_SIZE * 2, GRID_SIZE * 3);
+      expect(figure.inGrid()).toEqual(true);
+    });
+
+    test("should return false when posX is not a multiple of GRID_SIZE", () => {
+      figure.setPosition(GRID_SIZE * 2 + 1, GRID_SIZE * 3);
+      expect(figure.inGrid()).toEqual(false);
+    });
+
+    test("should return false when posY is not a multiple of GRID_SIZE", () => {
+      figure.setPosition(GRID_SIZE * 2, GRID_SIZE * 3 + 1);
+      expect(figure.inGrid()).toEqual(false);
+    });
+
+    test("should return false when neither posX nor posY are multiples of GRID_SIZE", () => {
+      figure.setPosition(GRID_SIZE * 2 + 1, GRID_SIZE * 3 + 1);
+      expect(figure.inGrid()).toEqual(false);
     });
   });
 });
