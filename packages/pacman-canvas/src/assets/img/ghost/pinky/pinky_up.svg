@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="60"
+   height="60"
+   id="svg3209"
+   version="1.1"
+   inkscape:version="1.2.2 (b0a84865, 2022-12-01)"
+   sodipodi:docname="pinky_up.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <title
+     id="title3238">pinky</title>
+  <defs
+     id="defs3211" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="7.5399179"
+     inkscape:cx="22.28141"
+     inkscape:cy="28.448586"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-width="1378"
+     inkscape:window-height="713"
+     inkscape:window-x="46"
+     inkscape:window-y="33"
+     inkscape:window-maximized="0"
+     inkscape:showpageshadow="2"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1" />
+  <metadata
+     id="metadata3214">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>pinky</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-620.1475,-462.09155)">
+    <path
+       inkscape:label="#pinky"
+       style="fill:#ff00ff"
+       d="m 677.45803,519.86904 c 1.20261,-1.71697 1.55219,-4.9583 1.53689,-14.25 -0.0359,-21.77874 -2.19013,-29.87068 -9.77706,-36.72501 -5.18333,-4.68283 -10.07002,-6.27246 -19.24739,-6.26115 -6.37329,0.008 -8.45651,0.47101 -13.42172,2.98399 -11.10162,5.61871 -13.56334,12.02522 -14.22783,37.02721 -0.37412,14.07623 -0.26991,15.17032 1.60658,16.86853 2.62623,2.3767 5.53748,1.59732 10.77301,-2.8841 2.27268,-1.94533 4.53179,-3.53696 5.02024,-3.53696 0.48844,0 2.64574,1.8 4.79398,4 2.14824,2.2 4.66557,4 5.59406,4 0.9285,0 3.86642,-1.8 6.52873,-4 5.38287,-4.44815 6.50891,-4.75708 8.50477,-2.33328 1.68026,2.04055 8.53915,6.24833 9.63194,6.24833 0.4363,0 1.82761,0.0848 2.6838,-1.13756 z"
+       id="pinky"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="scsccccssssssss">
+      <title
+         id="title3046">pinky</title>
+    </path>
+    <g
+       id="g527">
+      <ellipse
+         transform="scale(-1,1)"
+         id="path3004"
+         style="fill:#ffffff;fill-opacity:1;stroke-width:1.06824"
+         cx="-640.73706"
+         cy="486.95041"
+         rx="10"
+         ry="9.6428566" />
+      <ellipse
+         transform="scale(-1,1)"
+         id="path3004-1"
+         style="fill:#ffffff;fill-opacity:1;stroke-width:1.06824"
+         cx="-658.95123"
+         cy="486.71954"
+         rx="10"
+         ry="9.6428566" />
+    </g>
+    <g
+       id="g523"
+       transform="translate(-2.1668029e-8,-1.9788233)">
+      <circle
+         transform="scale(-1,1)"
+         id="path3026"
+         style="fill:#0000ff;fill-opacity:1;stroke-width:1.72206"
+         cx="-658.57416"
+         cy="487.23834"
+         r="5" />
+      <circle
+         transform="scale(-1,1)"
+         id="path3026-7"
+         style="fill:#0000ff;fill-opacity:1;stroke-width:1.72206"
+         cx="-640.66656"
+         cy="487.20596"
+         r="5" />
+    </g>
+  </g>
+</svg>

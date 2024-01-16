@@ -48,4 +48,8 @@ export class Direction {
   public equals = (dir: Direction) => {
     return JSON.stringify(this) == JSON.stringify(dir);
   };
+
+  public dirEquals = (dirX: number, dirY: number) => {
+    return this.dirX == dirX && this.dirY == dirY;
+  };
 }

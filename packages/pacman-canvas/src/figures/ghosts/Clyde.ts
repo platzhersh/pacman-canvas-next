@@ -1,12 +1,26 @@
 import { clydeSvgSrc } from "../../assets/img";
+import {
+  clydeDownSvgSrc,
+  clydeLeftSvgSrc,
+  clydeRightSvgSrc,
+  clydeUpSvgSrc,
+} from "../../assets/img/ghost/clyde";
 import { Game } from "../../game/Game";
 import { Pacman } from "../Pacman";
 import { left } from "../directions";
 import { GHOSTS, Ghost } from "./Ghost";
+import { GhostImageSprite } from "./GhostImageSprite";
 
 export class Clyde extends Ghost {
   constructor(game: Game) {
-    super(game, GHOSTS.CLYDE, 10, 5, clydeSvgSrc, 2, 11);
+    const imageSprite = new GhostImageSprite(
+      clydeSvgSrc,
+      clydeLeftSvgSrc,
+      clydeRightSvgSrc,
+      clydeUpSvgSrc,
+      clydeDownSvgSrc
+    );
+    super(game, GHOSTS.CLYDE, 10, 5, imageSprite, 2, 11);
     this.setDirection(left);
   }
 
