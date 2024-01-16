@@ -65,20 +65,7 @@ export abstract class Ghost extends Figure {
     this.gridBaseX = gridBaseX;
     this.gridBaseY = gridBaseY;
     this.speed = game.getRegularGhostSpeed();
-    // this.images = JSON.parse(
-    //   '{"normal" : {' +
-    //     `"${GHOSTS.INKY}" : "0",` +
-    //     `"${GHOSTS.PINKY}" : "1",` +
-    //     `"${GHOSTS.BLINKY}" : "2",` +
-    //     `"${GHOSTS.CLYDE}" : "3"` +
-    //     "}," +
-    //     '"frightened1" : {' +
-    //     '"left" : "", "up": "", "right" : "", "down": ""},' +
-    //     '"frightened2" : {' +
-    //     '"left" : "", "up": "", "right" : "", "down": ""},' +
-    //     '"dead" : {' +
-    //     '"left" : "", "up": "", "right" : "", "down": ""}}'
-    // );
+
     this.image = new Image();
     this.image.src = imageSrc;
     this.dazzleImg = new Image();
@@ -90,6 +77,9 @@ export abstract class Ghost extends Figure {
     this.direction = right;
     this.radius = PACMAN_RADIUS;
   }
+
+  public getStartPosX = () => this.startPosX;
+  public getStartPosY = () => this.startPosY;
 
   public toggleDirectionOptionsVisualizations = () =>
     (this.visualizeDirectionOptions = !this.visualizeDirectionOptions);
@@ -191,6 +181,9 @@ export abstract class Ghost extends Figure {
     this.directionWatcher.set(null);
     this.undazzle(game);
   };
+
+  public isInGhostHouse = () => this.ghostHouse;
+  public isDead = () => this.dead;
 
   public die = (game: Game) => {
     if (!this.dead) {
@@ -464,6 +457,8 @@ export abstract class Ghost extends Figure {
 
     this.directionWatcher.set(nextDirection);
   };
+
+  public getDirectionWatcherValue = () => this.directionWatcher.get();
 
   public setRandomDirection = () => {
     const dir = Math.floor(Math.random() * 10 + 1) % 5;
