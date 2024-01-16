@@ -133,49 +133,10 @@ export abstract class Ghost extends Figure {
   };
 
   private drawImageSprite = (
-    context: CanvasRenderingContext2D,
-    beastModeTimer: number
+    sprite: GhostImageSprite,
+    context: CanvasRenderingContext2D
   ) => {
-    // dead
-    if (this.isDead()) {
-      this.deadImageSprite.draw(
-        context,
-        this.posX,
-        this.posY,
-        this.dirX,
-        this.dirY,
-        this.radius * 2,
-        this.radius * 2
-      );
-      return;
-    }
-    // dazzled
-    if (this.dazzled) {
-      if (beastModeTimer < 50 && beastModeTimer % 8 > 1) {
-        this.dazzled2ImageSprite.draw(
-          context,
-          this.posX,
-          this.posY,
-          this.dirX,
-          this.dirY,
-          2 * this.radius,
-          2 * this.radius
-        );
-      } else {
-        this.dazzledImageSprite.draw(
-          context,
-          this.posX,
-          this.posY,
-          this.dirX,
-          this.dirY,
-          2 * this.radius,
-          2 * this.radius
-        );
-      }
-      return;
-    }
-    // default
-    this.imageSprite.draw(
+    sprite.draw(
       context,
       this.posX,
       this.posY,
@@ -186,34 +147,58 @@ export abstract class Ghost extends Figure {
     );
   };
 
+  private drawImage = (
+    context: CanvasRenderingContext2D,
+    beastModeTimer: number
+  ) => {
+    // dead
+    if (this.isDead()) {
+      this.drawImageSprite(this.deadImageSprite, context);
+      return;
+    }
+    // dazzled
+    if (this.isDazzled()) {
+      if (beastModeTimer < 50 && beastModeTimer % 8 > 1) {
+        this.drawImageSprite(this.dazzled2ImageSprite, context);
+      } else {
+        this.drawImageSprite(this.dazzledImageSprite, context);
+      }
+      return;
+    }
+    // default
+    this.drawImageSprite(this.imageSprite, context);
+  };
+
+  private drawDebugInformation = (
+    game: Game,
+    context: CanvasRenderingContext2D
+  ) => {
+    const directionOptions = this.getValidDirectionOptions(game, 0, 0);
+    // higight all direction options
+    highlightGridFields(context, directionOptions);
+    // higight gridPos
+    highlightGridField(
+      context,
+      this.getGridPosX(),
+      this.getGridPosY(),
+      "magenta"
+    );
+    // chase mode target
+    const [tX, tY] = this.getChaseModeTarget(game, game.getPacman());
+    highlightGridField(context, tX, tY, "red");
+    // scatter mode target
+    highlightGridField(context, this.gridBaseX, this.gridBaseY, "blue");
+    // next tile
+    const fieldAhead = this.getFieldAhead(game, true);
+    highlightGridField(context, fieldAhead.posX, fieldAhead.posY, "limegreen");
+  };
+
   public draw = (game: Game, context: CanvasRenderingContext2D) => {
     const beastModeTimer = game.getPacman().getBeastModeTimer();
-    this.drawImageSprite(context, beastModeTimer);
+    this.drawImage(context, beastModeTimer);
 
     if (this.visualizeDirectionOptions) {
-      const directionOptions = this.getValidDirectionOptions(game, 0, 0);
-      // higight all direction options
-      highlightGridFields(context, directionOptions);
-      // higight gridPos
-      highlightGridField(
-        context,
-        this.getGridPosX(),
-        this.getGridPosY(),
-        "magenta"
-      );
-      // chase mode target
-      const [tX, tY] = this.getChaseModeTarget(game, game.getPacman());
-      highlightGridField(context, tX, tY, "red");
-      // scatter mode target
-      highlightGridField(context, this.gridBaseX, this.gridBaseY, "blue");
-      // next tile
-      const fieldAhead = this.getFieldAhead(game, true);
-      highlightGridField(
-        context,
-        fieldAhead.posX,
-        fieldAhead.posY,
-        "limegreen"
-      );
+      this.drawDebugInformation(game, context);
     }
   };
   public getCenterX = () => {
@@ -237,6 +222,7 @@ export abstract class Ghost extends Figure {
 
   public isInGhostHouse = () => this.ghostHouse;
   public isDead = () => this.dead;
+  public isDazzled = () => this.dazzled;
 
   public die = (game: Game) => {
     if (!this.dead) {
