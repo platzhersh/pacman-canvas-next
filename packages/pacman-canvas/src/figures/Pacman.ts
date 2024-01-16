@@ -13,13 +13,18 @@ import { Direction } from "./directions/Direction";
 import { DirectionWatcher } from "./directions/DirectionWatcher";
 
 const PACMAN_INITIAL_LIVES = 3;
+const BEASTMODE_TIME = 240;
+const MOUTH_SPEED = 0.07;
+const MOUTH_SPEED_DYING = 0.05;
+const ANGLE1_INITIAL = 0.25;
+const ANGLE2_INITIAL = 1.75;
 
 export class Pacman extends Figure {
   protected name = "pacman";
   protected speed = 5;
-  protected angle1 = 0.25;
-  protected angle2 = 1.75;
-  protected mouth = 1; /* Switches between 1 and -1, depending on mouth closing / opening */
+  protected angle1 = ANGLE1_INITIAL;
+  protected angle2 = ANGLE2_INITIAL;
+  protected mouthDir = 1; /* Switches between 1 and -1, depending on mouth closing / opening */
   protected lives = PACMAN_INITIAL_LIVES;
   protected frozen = false; // used to play die Animation
 
@@ -166,7 +171,7 @@ export class Pacman extends Figure {
   public getBeastModeTimer = () => this.beastModeTimer;
   public enableBeastMode = (game: Game) => {
     this.beastMode = true;
-    this.beastModeTimer = 240;
+    this.beastModeTimer = BEASTMODE_TIME;
     console.debug("Beast Mode activated! 💊🦍");
     game.dazzleGhosts();
   };
@@ -182,7 +187,6 @@ export class Pacman extends Figure {
     if (!this.frozen) {
       if (this.beastModeTimer > 0) {
         this.beastModeTimer--;
-        //console.log("Beast Mode: "+this.beastModeTimer);
       }
       if (this.beastModeTimer === 0 && this.beastMode)
         this.disableBeastMode(game);
@@ -200,9 +204,9 @@ export class Pacman extends Figure {
   public eat = () => {
     if (!this.frozen) {
       // TODO: what should this check??
-      if (this.dirX === 0 && this.dirY === 0) {
-        this.angle1 -= this.mouth * 0.07;
-        this.angle2 += this.mouth * 0.07;
+      if (this.hasNoDirection()) {
+        this.angle1 -= this.mouthDir * MOUTH_SPEED;
+        this.angle2 += this.mouthDir * MOUTH_SPEED;
 
         const limitMax1 = this.direction.getAngle1();
         const limitMax2 = this.direction.getAngle2();
@@ -210,13 +214,17 @@ export class Pacman extends Figure {
         const limitMin2 = this.direction.getAngle2() + 0.21;
 
         if (this.angle1 < limitMin1 || this.angle2 > limitMin2) {
-          this.mouth = -1;
+          this.mouthDir = -1;
         }
         if (this.angle1 >= limitMax1 || this.angle2 <= limitMax2) {
-          this.mouth = 1;
+          this.mouthDir = 1;
         }
       }
     }
+  };
+
+  public hasNoDirection = () => {
+    return this.dirX === 0 && this.dirY === 0;
   };
 
   public stop = () => {
@@ -235,11 +243,11 @@ export class Pacman extends Figure {
   };
 
   public dieAnimation = (game: Game) => {
-    this.angle1 += 0.05;
-    this.angle2 -= 0.05;
+    this.angle1 += MOUTH_SPEED_DYING;
+    this.angle2 -= MOUTH_SPEED_DYING;
     if (
-      this.angle1 >= this.direction.getAngle1() + 0.7 ||
-      this.angle2 <= this.direction.getAngle2() - 0.7
+      this.angle1 >= this.direction.getAngle1() + MOUTH_SPEED ||
+      this.angle2 <= this.direction.getAngle2() - MOUTH_SPEED
     ) {
       this.dieFinal(game);
     }

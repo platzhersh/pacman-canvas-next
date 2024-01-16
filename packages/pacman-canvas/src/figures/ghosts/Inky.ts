@@ -24,6 +24,15 @@ export class Inky extends Ghost {
     this.setDirection(up);
   }
 
+  // Inky starts after 30 pills and only from the third level on
+  protected checkStartingConditions = (game: Game) => {
+    if (game.getLevel() < 3 || game.getPillCount() > 104 - 30) {
+      this.stop();
+    } else {
+      this.start();
+    }
+  };
+
   protected getChaseModeTarget = (
     game: Game,
     pacman: Pacman

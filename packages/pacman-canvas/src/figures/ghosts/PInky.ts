@@ -24,6 +24,10 @@ export class Pinky extends Ghost {
     this.setDirection(right);
   }
 
+  protected checkStartingConditions = (game: Game) => {
+    if (this.isStopped) this.start();
+  };
+
   /**
    * target: 4 ahead and 4 left of pacman
    * @param game

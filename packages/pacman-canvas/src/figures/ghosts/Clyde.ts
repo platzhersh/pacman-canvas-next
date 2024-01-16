@@ -24,6 +24,15 @@ export class Clyde extends Ghost {
     this.setDirection(left);
   }
 
+  // Clyde does not start chasing before 2/3 of all pills are eaten and if level is < 4
+  protected checkStartingConditions = (game: Game) => {
+    if (game.getLevel() < 4 || game.getPillCount() > 104 / 3) {
+      this.stop();
+    } else {
+      this.start();
+    }
+  };
+
   /**
    * target: pacman, until pacman is closer than 5 grid fields, then back to scatter
    */

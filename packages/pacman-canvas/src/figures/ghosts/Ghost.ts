@@ -261,26 +261,13 @@ export abstract class Ghost extends Figure {
     }
   };
 
-  private checkGhostHouse = (game: Game) => {
-    // leave Ghost House
-    if (this.ghostHouse === true) {
-      // Clyde does not start chasing before 2/3 of all pills are eaten and if level is < 4
-      if (this.name === GHOSTS.CLYDE) {
-        if (game.getLevel() < 4 || game.getPillCount() > 104 / 3) {
-          this.stop();
-        } else {
-          this.start();
-        }
-      }
-      // Inky starts after 30 pills and only from the third level on
-      if (this.name === GHOSTS.INKY) {
-        if (game.getLevel() < 3 || game.getPillCount() > 104 - 30) {
-          this.stop();
-        } else {
-          this.start();
-        }
-      }
+  protected abstract checkStartingConditions: (game: Game) => void;
 
+  private checkGhostHouse = (game: Game) => {
+    if (this.ghostHouse === true) {
+      this.checkStartingConditions(game);
+
+      // leave Ghost House, lead ghosts in right direction
       if (this.getGridPosY() === 5 && this.inGrid()) {
         if (this.getGridPosX() === 7) {
           this.directionWatcher.set(right);
@@ -293,8 +280,9 @@ export abstract class Ghost extends Figure {
         }
       }
       if (
-        this.getGridPosY() === 4 &&
-        (this.getGridPosX() === 8 || this.getGridPosX() === 9) &&
+        game
+          .getGridMap()
+          .getTileType(this.getGridPosX(), this.getGridPosY()) === "door" &&
         this.inGrid()
       ) {
         console.debug(`🏰 ${this.name} leaving the ghosthouse`);

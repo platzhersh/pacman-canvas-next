@@ -24,6 +24,10 @@ export class Blinky extends Ghost {
     this.setDirection(up);
   }
 
+  protected checkStartingConditions = (game: Game) => {
+    if (this.isStopped) this.start();
+  };
+
   // target: go straight for pacman
   protected getChaseModeTarget = (
     _game: Game,
