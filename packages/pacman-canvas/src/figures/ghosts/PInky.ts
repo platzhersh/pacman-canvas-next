@@ -1,12 +1,26 @@
-import { pinkySvgSrc } from "../../assets/img";
+import {
+  pinkyDownSvgSrc,
+  pinkyLeftSvgSrc,
+  pinkyRightSvgSrc,
+  pinkySvgSrc,
+  pinkyUpSvgSrc,
+} from "../../assets/img/ghost/pinky";
 import { Game, PACMAN_RADIUS } from "../../game/Game";
 import { Pacman } from "../Pacman";
 import { right } from "../directions";
 import { GHOSTS, Ghost } from "./Ghost";
+import { GhostImageSprite } from "./GhostImageSprite";
 
 export class Pinky extends Ghost {
   constructor(game: Game) {
-    super(game, GHOSTS.PINKY, 7, 5, pinkySvgSrc, 2, 2);
+    const imageSprite = new GhostImageSprite(
+      pinkySvgSrc,
+      pinkyLeftSvgSrc,
+      pinkyRightSvgSrc,
+      pinkyUpSvgSrc,
+      pinkyDownSvgSrc
+    );
+    super(game, GHOSTS.PINKY, 7, 5, imageSprite, 2, 2);
     this.setDirection(right);
   }
 

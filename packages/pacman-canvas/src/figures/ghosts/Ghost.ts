@@ -1,4 +1,20 @@
-import { dazzled2SvgSrc, dazzledSvgSrc, deadSvgSrc } from "../../assets/img";
+import {
+  dazzled2DownSvgSrc,
+  dazzled2LeftSvgSrc,
+  dazzled2RightSvgSrc,
+  dazzled2SvgSrc,
+  dazzled2UpSvgSrc,
+  dazzledDownSvgSrc,
+  dazzledLeftSvgSrc,
+  dazzledRightSvgSrc,
+  dazzledSvgSrc,
+  dazzledUpSvgSrc,
+  deadDownSvgSrc,
+  deadLeftSvgSrc,
+  deadRightSvgSrc,
+  deadSvgSrc,
+  deadUpSvgSrc,
+} from "../../assets/img";
 import { GHOST_POINTS, GRID_SIZE, Game, PACMAN_RADIUS } from "../../game/Game";
 import { MapTileType } from "../../game/map/mapData";
 import {
@@ -9,6 +25,7 @@ import { Figure, isInRange } from "../Figure";
 import { Pacman } from "../Pacman";
 import { down, left, right, up } from "../directions";
 import { Direction, DirectionDistance } from "../directions/Direction";
+import { GhostImageSprite } from "./GhostImageSprite";
 
 export const GHOSTS = {
   INKY: "inky",
@@ -35,15 +52,15 @@ export abstract class Ghost extends Figure {
   private startPosY: number;
   protected gridBaseX: number;
   protected gridBaseY: number;
-  private image: HTMLImageElement;
+
+  private imageSprite: GhostImageSprite;
+  private deadImageSprite: GhostImageSprite;
+  private dazzledImageSprite: GhostImageSprite;
+  private dazzled2ImageSprite: GhostImageSprite;
 
   private ghostHouse: boolean = true;
   private dazzled: boolean = false;
   private dead: boolean = false;
-
-  private dazzleImg: HTMLImageElement;
-  private dazzleImg2: HTMLImageElement;
-  private deadImg: HTMLImageElement;
 
   protected visualizeDirectionOptions: boolean = false;
 
@@ -52,7 +69,7 @@ export abstract class Ghost extends Figure {
     name: string,
     gridPosX: number,
     gridPosY: number,
-    imageSrc: string,
+    imageSprite: GhostImageSprite,
     gridBaseX: number,
     gridBaseY: number
   ) {
@@ -66,14 +83,29 @@ export abstract class Ghost extends Figure {
     this.gridBaseY = gridBaseY;
     this.speed = game.getRegularGhostSpeed();
 
-    this.image = new Image();
-    this.image.src = imageSrc;
-    this.dazzleImg = new Image();
-    this.dazzleImg.src = dazzledSvgSrc; //"img/dazzled.svg";
-    this.dazzleImg2 = new Image();
-    this.dazzleImg2.src = dazzled2SvgSrc; //"img/dazzled2.svg";
-    this.deadImg = new Image();
-    this.deadImg.src = deadSvgSrc; // "img/dead.svg";
+    this.imageSprite = imageSprite;
+    this.deadImageSprite = new GhostImageSprite(
+      deadSvgSrc,
+      deadLeftSvgSrc,
+      deadRightSvgSrc,
+      deadUpSvgSrc,
+      deadDownSvgSrc
+    );
+    this.dazzledImageSprite = new GhostImageSprite(
+      dazzledSvgSrc,
+      dazzledLeftSvgSrc,
+      dazzledRightSvgSrc,
+      dazzledUpSvgSrc,
+      dazzledDownSvgSrc
+    );
+    this.dazzled2ImageSprite = new GhostImageSprite(
+      dazzled2SvgSrc,
+      dazzled2LeftSvgSrc,
+      dazzled2RightSvgSrc,
+      dazzled2UpSvgSrc,
+      dazzled2DownSvgSrc
+    );
+
     this.direction = right;
     this.radius = PACMAN_RADIUS;
   }
@@ -99,44 +131,64 @@ export abstract class Ghost extends Figure {
     if (this.posY > 0) this.posY = this.posY - (this.posY % this.speed);
     this.dazzled = false;
   };
-  public draw = (game: Game, context: CanvasRenderingContext2D) => {
-    const beastModeTimer = game.getPacman().getBeastModeTimer();
 
-    if (this.dead) {
-      context.drawImage(
-        this.deadImg,
+  private drawImageSprite = (
+    context: CanvasRenderingContext2D,
+    beastModeTimer: number
+  ) => {
+    // dead
+    if (this.isDead()) {
+      this.deadImageSprite.draw(
+        context,
         this.posX,
         this.posY,
-        2 * this.radius,
-        2 * this.radius
+        this.dirX,
+        this.dirY,
+        this.radius * 2,
+        this.radius * 2
       );
-    } else if (this.dazzled) {
+      return;
+    }
+    // dazzled
+    if (this.dazzled) {
       if (beastModeTimer < 50 && beastModeTimer % 8 > 1) {
-        context.drawImage(
-          this.dazzleImg2,
+        this.dazzled2ImageSprite.draw(
+          context,
           this.posX,
           this.posY,
+          this.dirX,
+          this.dirY,
           2 * this.radius,
           2 * this.radius
         );
       } else {
-        context.drawImage(
-          this.dazzleImg,
+        this.dazzledImageSprite.draw(
+          context,
           this.posX,
           this.posY,
+          this.dirX,
+          this.dirY,
           2 * this.radius,
           2 * this.radius
         );
       }
-    } else {
-      context.drawImage(
-        this.image,
-        this.posX,
-        this.posY,
-        2 * this.radius,
-        2 * this.radius
-      );
+      return;
     }
+    // default
+    this.imageSprite.draw(
+      context,
+      this.posX,
+      this.posY,
+      this.dirX,
+      this.dirY,
+      this.radius * 2,
+      this.radius * 2
+    );
+  };
+
+  public draw = (game: Game, context: CanvasRenderingContext2D) => {
+    const beastModeTimer = game.getPacman().getBeastModeTimer();
+    this.drawImageSprite(context, beastModeTimer);
 
     if (this.visualizeDirectionOptions) {
       const directionOptions = this.getValidDirectionOptions(game, 0, 0);
@@ -178,6 +230,7 @@ export abstract class Ghost extends Figure {
     this.ghostHouse = true;
     this.dirX = 0;
     this.dirY = 0;
+    this.direction = right;
     this.directionWatcher.set(null);
     this.undazzle(game);
   };

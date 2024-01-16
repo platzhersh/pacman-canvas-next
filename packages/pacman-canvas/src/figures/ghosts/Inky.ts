@@ -1,12 +1,26 @@
 import { inkySvgSrc } from "../../assets/img";
+import {
+  inkyLeftSvgSrc,
+  inkyRightSvgSrc,
+  inkyUpSvgSrc,
+  inkyDownSvgSrc,
+} from "../../assets/img/ghost/inky";
 import { Game } from "../../game/Game";
 import { Pacman } from "../Pacman";
 import { up } from "../directions";
 import { GHOSTS, Ghost } from "./Ghost";
+import { GhostImageSprite } from "./GhostImageSprite";
 
 export class Inky extends Ghost {
   constructor(game: Game) {
-    super(game, GHOSTS.INKY, 8, 5, inkySvgSrc, 13, 11);
+    const imageSprite = new GhostImageSprite(
+      inkySvgSrc,
+      inkyLeftSvgSrc,
+      inkyRightSvgSrc,
+      inkyUpSvgSrc,
+      inkyDownSvgSrc
+    );
+    super(game, GHOSTS.INKY, 8, 5, imageSprite, 13, 11);
     this.setDirection(up);
   }
 
