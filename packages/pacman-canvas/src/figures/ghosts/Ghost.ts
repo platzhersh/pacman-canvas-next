@@ -250,7 +250,7 @@ export abstract class Ghost extends Figure {
     //   nextDirection = this.directionWatcher.get();
     // }
     console.log(`${this.name} next direction ${nextDirection?.getName()}`);
-    if (nextDirection !== null && this.inGrid()) {
+    if (!this.isStopped && nextDirection !== null && this.inGrid()) {
       const nextTile = this.getNextTile(game, nextDirection);
       console.debug("checkNextTile: " + nextTile);
 

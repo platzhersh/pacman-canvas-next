@@ -12,6 +12,7 @@ import { right } from "./directions";
 import { Direction } from "./directions/Direction";
 import { DirectionWatcher } from "./directions/DirectionWatcher";
 
+const PACMAN_COLOR = "Yellow";
 const PACMAN_INITIAL_LIVES = 3;
 const BEASTMODE_TIME = 240;
 const MOUTH_SPEED = 0.07;
@@ -277,8 +278,8 @@ export class Pacman extends Figure {
 
   public draw = (context: CanvasRenderingContext2D) => {
     context.beginPath();
-    context.fillStyle = "Yellow";
-    context.strokeStyle = "Yellow";
+    context.fillStyle = PACMAN_COLOR;
+    context.strokeStyle = PACMAN_COLOR;
     context.arc(
       this.getPosX() + PACMAN_RADIUS,
       this.getPosY() + PACMAN_RADIUS,
