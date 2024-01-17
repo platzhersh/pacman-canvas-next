@@ -125,7 +125,7 @@ export abstract class Ghost extends Figure {
   };
   public undazzle = (game: Game) => {
     // only change speed if ghost is not "dead"
-    if (!this.dead) this.changeSpeed(game.getRegularGhostSpeed());
+    if (!this.isDead()) this.changeSpeed(game.getRegularGhostSpeed());
     // ensure ghost doesnt leave grid
     if (this.posX > 0) this.posX = this.posX - (this.posX % this.speed);
     if (this.posY > 0) this.posY = this.posY - (this.posY % this.speed);
@@ -209,7 +209,7 @@ export abstract class Ghost extends Figure {
   };
 
   public reset = (game: Game) => {
-    this.dead = false;
+    this.setDead(false);
     this.posX = this.startPosX;
     this.posY = this.startPosY;
     this.ghostHouse = true;
@@ -223,12 +223,12 @@ export abstract class Ghost extends Figure {
   public isInGhostHouse = () => this.ghostHouse;
   public isDead = () => this.dead;
   public isDazzled = () => this.dazzled;
-
+  public setDead = (value: boolean) => (this.dead = value);
   public die = (game: Game) => {
-    if (!this.dead) {
+    if (!this.isDead()) {
       game.addScore(GHOST_POINTS);
       //this.reset();
-      this.dead = true;
+      this.setDead(true);
       this.changeSpeed(game.getRegularGhostSpeed());
     }
   };
@@ -324,7 +324,7 @@ export abstract class Ghost extends Figure {
         this.getCenterY() + 10
       )
     ) {
-      if (!this.dazzled && !this.dead) {
+      if (!this.isDazzled() && !this.isDead()) {
         pacman.die(game);
       } else {
         this.die(game);
@@ -333,14 +333,11 @@ export abstract class Ghost extends Figure {
   };
 
   private checkGhostHouseCollision = (game: Game) => {
-    // if (this.gridBaseY === 5 && this.gridBaseX >= 7 && this.gridBaseX <= 10) {
-    //   console.log(`${}`);
-    // }
     /* Check Back to Home */
     if (
-      this.dead &&
-      this.getGridPosX() === this.startPosX / GRID_SIZE &&
-      this.getGridPosY() === this.startPosY / GRID_SIZE
+      this.isDead() &&
+      this.getPosX() === this.startPosX &&
+      this.getPosY() === this.startPosY
     ) {
       this.reset(game);
     }
@@ -413,7 +410,9 @@ export abstract class Ghost extends Figure {
     targetX: number,
     targetY: number
   ) => {
-    const blockedTileTypes: MapTileType[] = this.dead ? ["🟦"] : ["🟦", "door"];
+    const blockedTileTypes: MapTileType[] = this.isDead()
+      ? ["🟦"]
+      : ["🟦", "door"];
 
     return this.getDirectionOptions(game, targetX, targetY).filter(
       (dirOptiom) =>
@@ -440,7 +439,7 @@ export abstract class Ghost extends Figure {
     game.getMapContent(currentPosX, currentPosY);
 
     // get target
-    if (this.dead) {
+    if (this.isDead()) {
       // go Home
       targetX = this.startPosX / GRID_SIZE;
       targetY = this.startPosY / GRID_SIZE;
