@@ -19,46 +19,61 @@ import {
 } from "@repo/pacman-canvas/src/figures/directions";
 import {
   GRID_SIZE,
+  GameOverlayMessageEvent,
+  GameOverlayMessageListener,
   GameStateChangeListener,
-  GameStateEvent
+  GameStateEvent,
 } from "@repo/pacman-canvas/src/game/Game";
 import { FoodHandler } from "@repo/pacman-canvas/src/game/food/FoodHandler";
 import { animationLoop } from "@repo/pacman-canvas/src/game/render/animationLoop";
 import { useEffect, useRef, useState } from "react";
 import styles from "./gameCanvas.module.css";
 
+// as recommended on https://react.dev/learn/you-might-not-need-an-effect#initializing-the-application
+let didInit = false;
+
 export default function GameCanvas() {
   const [gameStateSnapshotEvent, setGameStateSnapshotEvent] =
     useState<GameStateEvent | null>(null);
+  const [overlayMessage, setOverlayMessage] = useState<GameOverlayMessageEvent>(
+    { title: "Pacman Canvas", text: "Click to start" }
+  );
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [canvasContext, setCanvasContext] =
     useState<CanvasRenderingContext2D | null>(null);
 
-    const canvasRef2 = useRef<HTMLCanvasElement>(null);
-    const [canvasContext2, setCanvasContext2] =
-      useState<CanvasRenderingContext2D | null>(null);
-  
+  const canvasRef2 = useRef<HTMLCanvasElement>(null);
+  const [canvasContext2, setCanvasContext2] =
+    useState<CanvasRenderingContext2D | null>(null);
 
   const game: Game = getGameInstance();
 
-  const onGameStateChange: GameStateChangeListener = (
-    event: GameStateEvent
-  ) => {
-    console.log(
-      "onGameStateChange",
-      event.eventName,
-      event.datetime,
-      event.payload
-    );
-    setGameStateSnapshotEvent(event);
-  };
+  if (!didInit) {
+    didInit = true;
 
-  game.registerGameStateChangeListener(onGameStateChange);
+    const onGameStateChange: GameStateChangeListener = (
+      event: GameStateEvent
+    ) => {
+      console.log(
+        "onGameStateChange",
+        event.eventName,
+        event.datetime,
+        event.payload
+      );
+      setGameStateSnapshotEvent(event);
+    };
 
+    game.registerGameStateChangeListener(onGameStateChange);
+
+    const onOverlayMessage: GameOverlayMessageListener = (
+      event: GameOverlayMessageEvent
+    ) => {
+      setOverlayMessage(event);
+    };
+
+    game.registerGameOverlayMessageListener(onOverlayMessage);
+  }
   useEffect(() => {
-    // Your jQuery code goes here
-    // Example: $('element').hide();
-    // game = new Game();
 
     if (canvasRef.current) {
       console.debug("canvasRef.current", canvasRef.current);
@@ -95,25 +110,35 @@ export default function GameCanvas() {
     <>
       <div style={{ background: "grey" }}>
         <section>
-        <canvas
-              //   ref={(c) => c ? setCanvasContext(c.getContext('2d')) : null}
-              ref={canvasRef2}
-              style={{ background: "black" }}
-              id="myCanvas2"
-              width="30"
-              height="30"
-            >
-              <p>Canvas not supported</p>
-            </canvas>
-            <button onClick={() => {
-              if (canvasContext2){
+          <canvas
+            //   ref={(c) => c ? setCanvasContext(c.getContext('2d')) : null}
+            ref={canvasRef2}
+            style={{ background: "black" }}
+            id="myCanvas2"
+            width="30"
+            height="30"
+          >
+            <p>Canvas not supported</p>
+          </canvas>
+          <button
+            onClick={() => {
+              if (canvasContext2) {
                 console.log("draw food", foodHandler, canvasContext2);
                 canvasContext2.clearRect(0, 0, GRID_SIZE, GRID_SIZE);
                 foodHandler.draw(canvasContext2, 0, 0, GRID_SIZE, GRID_SIZE);
-              }}}>draw food</button>
-              <button onClick={() => foodHandler.shuffle()}>shuffle</button>
-              <button onClick={() => canvasContext2?.clearRect(0,0, GRID_SIZE, GRID_SIZE)}>clear</button>
-
+              }
+            }}
+          >
+            draw food
+          </button>
+          <button onClick={() => foodHandler.shuffle()}>shuffle</button>
+          <button
+            onClick={() =>
+              canvasContext2?.clearRect(0, 0, GRID_SIZE, GRID_SIZE)
+            }
+          >
+            clear
+          </button>
         </section>
         <section>
           <div>
@@ -209,11 +234,12 @@ export default function GameCanvas() {
           <button onClick={() => game.pauseResume()}>Pause / Resume</button>
           <button
             onClick={() => game.newGame()}
-            disabled={!gameStateSnapshotEvent?.payload.started}
+            // disabled={!gameStateSnapshotEvent?.payload.started}
           >
             Restart Game
           </button>
           <button onClick={() => game.endGame()}>End Game</button>
+          <button onClick={() => game.nextLevel()}>Next Level</button>
         </section>
         <section>
           {/* Rendering options */}
@@ -240,9 +266,17 @@ export default function GameCanvas() {
               gameStateSnapshotEvent.payload.pause) && (
               <div id={styles["canvas-overlay-container"]}>
                 <div id={styles["canvas-overlay-content"]}>
-                  <div id={styles["title"]}>Pacman Canvas</div>
+                  <div id={styles["title"]}>{overlayMessage?.title}</div>
                   <div>
-                    <p id="text">Click to Play</p>
+                    <p id="text">
+                      {overlayMessage?.text}
+                      {overlayMessage.text2 ? (
+                        <>
+                          <br />
+                          {overlayMessage.text2}
+                        </>
+                      ) : null}
+                    </p>
                   </div>
                 </div>
               </div>
