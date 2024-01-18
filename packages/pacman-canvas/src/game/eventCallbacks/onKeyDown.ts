@@ -25,7 +25,6 @@ export const onKeyDown = (game: Game) => (evt: KeyboardEvent) => {
     case 68: // D pressed
       pacman.getDirectionWatcher().set(right);
       break;
-    case 82: // R pressed
     case 78: // N pressed
       game.setPause(true);
       game.newGame();

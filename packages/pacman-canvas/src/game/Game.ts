@@ -270,6 +270,10 @@ export class Game {
         this.level
       }, final: ${FINAL_LEVEL}`
     );
+    if (this.gameOver) {
+      console.warn("no next level, game over");
+      return;
+    }
     if (this.level === FINAL_LEVEL) {
       console.debug("next level, " + FINAL_LEVEL + ", end game");
       this.endGame(true);
