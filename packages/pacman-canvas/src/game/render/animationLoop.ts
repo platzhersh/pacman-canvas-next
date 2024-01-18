@@ -1,18 +1,16 @@
 import { Game } from "../Game";
 
 export const animationLoop = (game: Game) => () => {
-  if (game.isGameOver()) return;
+  if (game.isGameOver() || !game.isStarted()) return;
 
-  console.trace("animationLoop", game);
-
-  // const context = canvas.getContext("2d")!;
-  const pacman = game.getPacman();
-
+  console.debug("animationLoop", game);
   // render on Canvas
   game.render();
 
   // if (game.dieAnimation == 1) pacman.dieAnimation(game);
   if (!game.isPaused()) {
+    // const context = canvas.getContext("2d")!;
+    const pacman = game.getPacman();
     // Make changes before next loop
     pacman.move(game);
     pacman.eat();

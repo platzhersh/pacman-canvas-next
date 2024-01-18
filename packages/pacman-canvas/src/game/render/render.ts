@@ -50,7 +50,7 @@ export const renderContent = (
   // canvas_walls: HTMLCanvasElement
 ) => {
   const context = game.getCanvasContext2d();
-  console.trace("renderContent", context, game);
+  console.debug("renderContent", context, game);
 
   if (!context) {
     console.error("can't render, no context");

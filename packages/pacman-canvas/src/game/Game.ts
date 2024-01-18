@@ -23,6 +23,7 @@ import {
 // global constants
 export const GRID_SIZE = 30;
 export const PACMAN_RADIUS = GRID_SIZE / 2;
+const INITIAL_LEVEL = 0;
 const FINAL_LEVEL = 10;
 export const PILL_POINTS = 10;
 export const POWERPILL_POINTS = 50;
@@ -54,6 +55,17 @@ export type GameStateEvent = {
   eventName: string;
   payload: GameState;
 };
+
+export type GameOverlayMessageListener = (
+  event: GameOverlayMessageEvent
+) => any;
+
+export type GameOverlayMessageEvent = {
+  title: string;
+  text: string;
+  text2?: string;
+};
+
 export class Game {
   private gameId: string = generateUID();
   public getId = () => this.gameId;
@@ -71,7 +83,7 @@ export class Game {
   private gridMap: GridMap = new GridMap();
   private pillCount: number = 0; // number of pills
 
-  private level = 1;
+  private level = INITIAL_LEVEL;
 
   private canvasContext2d: CanvasRenderingContext2D | null = null;
   private wallColor = "Blue";
@@ -219,11 +231,13 @@ export class Game {
   public reset = () => {
     this.score.set(0);
     this.pacman.resetLives();
-    this.level = 1;
+    this.level = INITIAL_LEVEL;
 
-    this.pause = false;
+    this.pause = true;
     this.gameOver = false;
+    this.started = false;
 
+    this.pauseAndShowMessage("Pacman Canvas", "click to start");
     this.onGameStateChange("reset");
   };
 
@@ -246,7 +260,7 @@ export class Game {
     if (r) {
       console.log("new Game");
       this.init("NewGame");
-      this.forceResume();
+      // this.startGame();
     }
   };
 
@@ -265,7 +279,8 @@ export class Game {
       console.debug("🏁 Level " + this.level);
       this.pauseAndShowMessage(
         "Level " + this.level,
-        this.getLevelTitle() + "<br/>(Click to continue!)"
+        this.getLevelTitle(),
+        "(Click to continue!)"
       );
       this.init("NewLevel");
     }
@@ -313,10 +328,15 @@ export class Game {
     this.onGameStateChange("setPause");
   };
 
-  public pauseAndShowMessage = (title: string, text: string) => {
+  public pauseAndShowMessage = (
+    title: string,
+    text: string,
+    text2?: string
+  ) => {
     this.timer.stop();
     this.pause = true;
-    // this.showMessage(title, text);
+
+    this.onGameOverlayMessage(title, text, text2);
     this.onGameStateChange("PauseAndShowMessage");
   };
 
@@ -352,9 +372,12 @@ export class Game {
 
     this.pause = false;
     this.started = true;
+    if (this.level === 0) {
+      this.nextLevel();
+    }
     console.log("🚀 Game started!");
     console.debug("🏁 Level " + this.level);
-    this.onGameStateChange("forceStartAnimationLoop");
+    this.onGameStateChange("startGame");
 
     animationLoop(this)();
   };
@@ -398,11 +421,6 @@ export class Game {
     this.gridMap.resetMapData();
     this.pillCount = this.getPillCount();
 
-    // TODO: why are there 2 state checks?
-    if (state === "NewGame") {
-      this.timer.reset();
-      this.reset();
-    }
     this.pacman.reset();
 
     // this.drawHearts(this.pacman.getLives());
@@ -412,11 +430,19 @@ export class Game {
     this.ghostMode = GhostMode.Scatter; // 0 = Scatter, 1 = Chase
     this.ghostModeTimer = 200; // decrements each animationLoop execution
 
-    this.onGameStateChange(`Init${state}`);
-
     // initalize Ghosts, avoid memory flooding
     this.resetGhosts();
     this.startGhosts();
+
+    if (state === "NewGame") {
+      this.timer.reset();
+      this.reset();
+      if (this.canvasContext2d) {
+        this.render();
+      }
+    }
+
+    this.onGameStateChange(`Init${state}`);
   };
 
   public checkForLevelUp = () => {
@@ -429,8 +455,18 @@ export class Game {
     console.info(
       "❌ Game Over by " + (allLevelsCompleted ? "WIN 🏆" : "LOSS 💀")
     );
+    if (allLevelsCompleted) {
+      this.pauseAndShowMessage(
+        "You won! 🏆",
+        "Congratulations, you won the game!",
+        "Click to restart"
+      );
+    } else {
+      this.pauseAndShowMessage("Game Over 💀", `Score: ${this.score.get()}`);
+    }
     this.pause = true;
     this.gameOver = true;
+    this.started = false;
     this.onGameStateChange("EndGame");
   };
 
@@ -481,6 +517,24 @@ export class Game {
     listenerFn: GameStateChangeListener
   ) => {
     this.gameStateChangeListeners.push(listenerFn);
+  };
+
+  private gameOverlayMessageListeners: GameOverlayMessageListener[] = [];
+
+  public onGameOverlayMessage = (
+    title: string,
+    text: string,
+    text2?: string
+  ) => {
+    this.gameOverlayMessageListeners.forEach((listenerFn) =>
+      listenerFn({ title, text, text2 })
+    );
+  };
+
+  public registerGameOverlayMessageListener = (
+    listenerFn: GameOverlayMessageListener
+  ) => {
+    this.gameOverlayMessageListeners.push(listenerFn);
   };
 
   public registerKeyListener = () => {
