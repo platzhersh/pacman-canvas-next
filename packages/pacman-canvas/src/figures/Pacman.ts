@@ -8,7 +8,7 @@ import {
 import { Sound } from "../game/Sound";
 import { MapTileType } from "../game/map/mapData";
 import { Figure, isInRange } from "./Figure";
-import { right } from "./directions";
+import { ANGLE1_RIGHT, ANGLE2_RIGHT, ANGLE_DIFF, right } from "./directions";
 import { Direction } from "./directions/Direction";
 import { DirectionWatcher } from "./directions/DirectionWatcher";
 
@@ -16,15 +16,13 @@ const PACMAN_COLOR = "Yellow";
 const PACMAN_INITIAL_LIVES = 3;
 const BEASTMODE_TIME = 240;
 const MOUTH_SPEED = 0.07;
-const MOUTH_SPEED_DYING = 0.05;
-const ANGLE1_INITIAL = 0.25;
-const ANGLE2_INITIAL = 1.75;
+const MOUTH_SPEED_DYING = 0.025;
 
 export class Pacman extends Figure {
   protected name = "pacman";
   protected speed = 5;
-  protected angle1 = ANGLE1_INITIAL;
-  protected angle2 = ANGLE2_INITIAL;
+  protected angle1 = ANGLE1_RIGHT;
+  protected angle2 = ANGLE2_RIGHT;
   protected mouthDir = 1; /* Switches between 1 and -1, depending on mouth closing / opening */
   protected lives = PACMAN_INITIAL_LIVES;
   protected frozen = false; // used to play die Animation
@@ -43,6 +41,7 @@ export class Pacman extends Figure {
     this.dirY = right.getDirY();
   }
 
+  public isFrozen = () => this.frozen;
   public freeze = () => {
     this.frozen = true;
   };
@@ -119,7 +118,7 @@ export class Pacman extends Figure {
   };
 
   public checkCollisions = (game: Game) => {
-    if (this.stuckX === 0 && this.stuckY === 0 && !this.frozen) {
+    if (this.stuckX === 0 && this.stuckY === 0 && !this.isFrozen()) {
       // Get the Grid Position of Pac
       const gridX = this.getGridPosX();
       const gridY = this.getGridPosY();
@@ -185,7 +184,7 @@ export class Pacman extends Figure {
   public move = (game: Game) => {
     this.validatePosition();
 
-    if (!this.frozen) {
+    if (!this.isFrozen()) {
       if (this.beastModeTimer > 0) {
         this.beastModeTimer--;
       }
@@ -202,24 +201,25 @@ export class Pacman extends Figure {
     }
   };
 
+  /**
+   * mouth animation.
+   * only works if pacman is not frozen and has a direction (is moving)
+   */
   public eat = () => {
-    if (!this.frozen) {
-      // TODO: what should this check??
-      if (this.hasNoDirection()) {
-        this.angle1 -= this.mouthDir * MOUTH_SPEED;
-        this.angle2 += this.mouthDir * MOUTH_SPEED;
+    if (!this.isFrozen() && !this.hasNoDirection()) {
+      this.angle1 -= this.mouthDir * MOUTH_SPEED;
+      this.angle2 += this.mouthDir * MOUTH_SPEED;
 
-        const limitMax1 = this.direction.getAngle1();
-        const limitMax2 = this.direction.getAngle2();
-        const limitMin1 = this.direction.getAngle1() - 0.21;
-        const limitMin2 = this.direction.getAngle2() + 0.21;
+      const limitMax1 = this.direction.getAngle1();
+      const limitMax2 = this.direction.getAngle2();
+      const limitMin1 = this.direction.getAngle1() - 0.21;
+      const limitMin2 = this.direction.getAngle2() + 0.21;
 
-        if (this.angle1 < limitMin1 || this.angle2 > limitMin2) {
-          this.mouthDir = -1;
-        }
-        if (this.angle1 >= limitMax1 || this.angle2 <= limitMax2) {
-          this.mouthDir = 1;
-        }
+      if (this.angle1 < limitMin1 || this.angle2 > limitMin2) {
+        this.mouthDir = -1;
+      }
+      if (this.angle1 >= limitMax1 || this.angle2 <= limitMax2) {
+        this.mouthDir = 1;
       }
     }
   };
@@ -247,8 +247,8 @@ export class Pacman extends Figure {
     this.angle1 += MOUTH_SPEED_DYING;
     this.angle2 -= MOUTH_SPEED_DYING;
     if (
-      this.angle1 >= this.direction.getAngle1() + MOUTH_SPEED ||
-      this.angle2 <= this.direction.getAngle2() - MOUTH_SPEED
+      this.angle1 >= this.direction.getAngle1() + ANGLE_DIFF ||
+      this.angle2 <= this.direction.getAngle2() - ANGLE_DIFF
     ) {
       this.dieFinal(game);
     }
