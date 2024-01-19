@@ -402,11 +402,13 @@ export class Game {
   };
 
   public pauseResume = () => {
+    // if (this.gameOver) {
+    //   console.warn("Cannot pause / resume. GameOver set to true.");
+    //   return;
+    // }
     if (this.gameOver) {
-      console.warn("Cannot pause / resume. GameOver set to true.");
-      return;
-    }
-    if (!this.started) {
+      this.newGame();
+    } else if (!this.started) {
       this.startGame();
     } else if (this.pause) {
       this.forceResume();
@@ -466,7 +468,11 @@ export class Game {
         "Click to restart"
       );
     } else {
-      this.pauseAndShowMessage("Game Over 💀", `Score: ${this.score.get()}`);
+      this.pauseAndShowMessage(
+        "Game Over 💀",
+        `Score: ${this.score.get()}`,
+        "click to restart"
+      );
     }
     this.pause = true;
     this.gameOver = true;

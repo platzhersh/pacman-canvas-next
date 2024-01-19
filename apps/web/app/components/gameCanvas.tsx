@@ -258,7 +258,7 @@ export default function GameCanvas() {
           <div
             id={styles["canvas-container"]}
             onClick={() => {
-              if (!game.isGameOver()) game.pauseResume();
+              game.pauseResume();
             }}
           >
             {/* <button onClick={() => pacman.} */}
