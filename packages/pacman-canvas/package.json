@@ -1,5 +1,5 @@
 {
-  "name": "@repo/pacman-canvas",
+  "name": "@platzh1rsch/pacman-canvas",
   "main": "src/index.ts",
   "author": {
     "name": "platzh1rsch",
