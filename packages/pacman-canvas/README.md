@@ -1,1 +1,76 @@
 # Pacman Canvas
+
+Basically https://pacman.platzh1rsch.ch/ as a npm package for simple integration into your website.
+
+## Get started
+
+![simple setup](./src/assets/screenshots/simple-setup-react.png)
+
+### React Example
+
+```jsx
+import getGameInstance, { Game } from "@repo/pacman-canvas";
+import { useEffect, useRef, useState } from "react";
+import styles from "./gameCanvas.module.css";
+
+
+export default function GameCanvasSimple() {
+  
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [canvasContext, setCanvasContext] =
+    useState<CanvasRenderingContext2D | null>(null);
+
+
+  const game: Game = getGameInstance();
+  
+  useEffect(() => {
+    if (canvasRef.current) {
+      setCanvasContext(canvasRef.current.getContext("2d"));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (game && canvasContext) {
+      game.setCanvasContext2d(canvasContext);
+    }
+  }, [canvasContext]);
+
+  return (
+    <>
+      <div>
+        <section>
+          {/* Game controls */}
+          <button onClick={() => game.pauseResume()}>Pause / Resume</button>
+          <button
+            onClick={() => game.newGame()}
+            // disabled={!gameStateSnapshotEvent?.payload.started}
+          >
+            Restart Game
+          </button>
+          <button onClick={() => game.endGame()}>End Game</button>
+        </section>
+        
+        <section>
+          <div
+            id={styles["canvas-container"]}
+            onClick={() => {
+              game.pauseResume();
+            }}
+          >
+            <canvas
+              ref={canvasRef}
+              style={{ background: "black" }}
+              id="myCanvas"
+              width="540"
+              height="390"
+            >
+              <p>Canvas not supported</p>
+            </canvas>
+          </div>
+        </section>
+      </div>
+    </>
+  );
+}
+
+``````
