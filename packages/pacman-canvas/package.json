@@ -1,5 +1,6 @@
 {
   "name": "@platzh1rsch/pacman-canvas",
+  "version": "0.0.1",
   "main": "src/index.ts",
   "author": {
     "name": "platzh1rsch",
