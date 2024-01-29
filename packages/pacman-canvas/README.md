@@ -4,7 +4,7 @@ Basically https://pacman.platzh1rsch.ch/ as a npm package for simple integration
 
 ## Get started
 
-![simple setup](./src/assets/screenshots/simple-setup-react.png)
+![simple setup](./img/simple-setup-react.png)
 
 ### React Example
 
