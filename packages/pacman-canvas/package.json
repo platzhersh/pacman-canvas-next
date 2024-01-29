@@ -1,21 +1,30 @@
 {
   "name": "@platzh1rsch/pacman-canvas",
-  "version": "0.0.1",
-  "main": "src/index.ts",
+  "version": "0.0.4",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "author": {
     "name": "platzh1rsch",
     "url": "https://platzh1rsch.ch/"
   },
   "description": "A Pacman game written in TypeScript using Canvas",
-  "types": "src/index.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "tsc",
-    "test": "vitest"
+    "clean": "rimraf dist",
+    "copy-files": "copyfiles -s -f \"src/assets/img/gastronomy/*.svg\" dist/assets/img/gastronomy && copyfiles -s -f \"src/assets/img/ghost/blinky/*.svg\" dist/assets/img/ghost/blinky && copyfiles -s -f \"src/assets/img/ghost/clyde/*.svg\" dist/assets/img/ghost/clyde && copyfiles -s -f \"src/assets/img/ghost/dazzled/*.svg\" dist/assets/img/ghost/dazzled && copyfiles -s -f \"src/assets/img/ghost/dazzled2/*.svg\" dist/assets/img/ghost/dazzled2 && copyfiles -s -f \"src/assets/img/ghost/dead/*.svg\" dist/assets/img/ghost/dead && copyfiles -s -f \"src/assets/img/ghost/inky/*.svg\" dist/assets/img/ghost/inky && copyfiles -s -f \"src/assets/img/ghost/pinky/*.svg\" dist/assets/img/ghost/pinky",
+    "build": "pnpm clean && tsc --noEmit false && pnpm copy-files",
+    "prepack": "pnpm build",
+    "test": "vitest",
+    "publish:npm": "npm publish --access public"
   },
   "dependencies": {
     "canvas": "^2.11.2",
+    "copyfiles": "^2.4.1",
     "jquery": "^3.7.1",
     "react": "^18.2.0",
+    "rimraf": "^5.0.5",
     "typescript": "latest"
   },
   "devDependencies": {
