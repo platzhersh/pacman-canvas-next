@@ -1,6 +1,11 @@
 {
   "name": "@repo/pacman-canvas",
   "main": "src/index.ts",
+  "author": {
+    "name": "platzh1rsch",
+    "url": "https://platzh1rsch.ch/"
+  },
+  "description": "A Pacman game written in TypeScript using Canvas",
   "types": "src/index.ts",
   "scripts": {
     "build": "tsc",
