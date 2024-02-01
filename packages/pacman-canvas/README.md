@@ -6,12 +6,13 @@ Basically https://pacman.platzh1rsch.ch/ as a npm package for simple integration
 
 ## Get started
 
-![simple setup](./img/simple-setup-react.png)
+![simple setup](https://raw.githubusercontent.com/platzhersh/pacman-canvas-next/2e36ce9bf42585e62fcf0161f73602beb7d01930/packages/pacman-canvas/img/simple-setup-react.png)
 
 ### React Example
 
 ```jsx
-import getGameInstance, { Game } from "@repo/pacman-canvas";
+import type { Game } from "@platzh1rsch/pacman-canvas";
+import { getGameInstance } from "@platzh1rsch/pacman-canvas";
 import { useEffect, useRef, useState } from "react";
 import styles from "./gameCanvas.module.css";
 
@@ -45,7 +46,6 @@ export default function GameCanvasSimple() {
           <button onClick={() => game.pauseResume()}>Pause / Resume</button>
           <button
             onClick={() => game.newGame()}
-            // disabled={!gameStateSnapshotEvent?.payload.started}
           >
             Restart Game
           </button>
