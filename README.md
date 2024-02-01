@@ -1,6 +1,6 @@
 # Pacman Canvas Next
 
-[![npm version](https://badgen.net/npm/v/@platzh1rsch%2Fpacman-canvas)](https://www.npmjs.com/package/@platzh1rsch/pacman-canvas)
+[![npm version](https://badgen.net/npm/v/@platzh1rsch/pacman-canvas)](https://www.npmjs.com/package/@platzh1rsch/pacman-canvas)
 
 ℹ️ Read `packages/pacman-canvas/README.md` for more information.
 
