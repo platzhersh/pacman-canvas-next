@@ -1,5 +1,8 @@
 {
     "compilerOptions": {
+      "target": "ESNext",
+      "lib": ["ESNext", "ESNext.Array", "DOM", "DOM.Iterable"],
+      "types": ["vite/client", "node"],
       "esModuleInterop": true,
       "forceConsistentCasingInFileNames": true,
       "isolatedModules": true,
@@ -9,7 +12,14 @@
       "skipLibCheck": true,
       "noEmit": true,
       "strict": true,
-      "lib": ["ESNext.Array", "DOM"]
+      "outDir": "dist",
+      "declaration": true,
+      "declarationMap": true,
+      "baseUrl": "./",
+      "paths": {
+        "~/*": ["dist/*"]
+      }
     },
-    "exclude": ["node_modules"]
-  }
+    "exclude": ["node_modules", "**/*.spec.ts"],
+    "include": ["./src"],
+}

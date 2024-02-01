@@ -1,11 +1,11 @@
-import inkySVG from "./inky.svg";
-import inkyLeftSVG from "./inky_left.svg";
-import inkyRightSVG from "./inky_right.svg";
-import inkyUpSVG from "./inky_up.svg";
-import inkyDownSVG from "./inky_down.svg";
+import inkySVG from "./inky.svg?url";
+import inkyLeftSVG from "./inky_left.svg?url";
+import inkyRightSVG from "./inky_right.svg?url";
+import inkyUpSVG from "./inky_up.svg?url";
+import inkyDownSVG from "./inky_down.svg?url";
 
-export const inkySvgSrc = inkySVG.src;
-export const inkyLeftSvgSrc = inkyLeftSVG.src;
-export const inkyRightSvgSrc = inkyRightSVG.src;
-export const inkyUpSvgSrc = inkyUpSVG.src;
-export const inkyDownSvgSrc = inkyDownSVG.src;
+export const inkySvgSrc = inkySVG;
+export const inkyLeftSvgSrc = inkyLeftSVG;
+export const inkyRightSvgSrc = inkyRightSVG;
+export const inkyUpSvgSrc = inkyUpSVG;
+export const inkyDownSvgSrc = inkyDownSVG;

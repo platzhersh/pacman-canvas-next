@@ -1,11 +1,11 @@
-import deadSVG from "./dead.svg";
-import deadLeftSVG from "./dead_left.svg";
-import deadRightSVG from "./dead_right.svg";
-import deadUpSVG from "./dead_up.svg";
-import deadDownSVG from "./dead_down.svg";
+import deadSVG from "./dead.svg?url";
+import deadLeftSVG from "./dead_left.svg?url";
+import deadRightSVG from "./dead_right.svg?url";
+import deadUpSVG from "./dead_up.svg?url";
+import deadDownSVG from "./dead_down.svg?url";
 
-export const deadSvgSrc = deadSVG.src;
-export const deadLeftSvgSrc = deadLeftSVG.src;
-export const deadRightSvgSrc = deadRightSVG.src;
-export const deadUpSvgSrc = deadUpSVG.src;
-export const deadDownSvgSrc = deadDownSVG.src;
+export const deadSvgSrc = deadSVG;
+export const deadLeftSvgSrc = deadLeftSVG;
+export const deadRightSvgSrc = deadRightSVG;
+export const deadUpSvgSrc = deadUpSVG;
+export const deadDownSvgSrc = deadDownSVG;

@@ -1,26 +1,56 @@
 {
-  "name": "@repo/pacman-canvas",
-  "main": "src/index.ts",
+  "name": "@platzh1rsch/pacman-canvas",
+  "version": "0.0.8",
+  "type": "module",
+  "main": "dist/main.js",
+  "types": "dist/main.d.ts",
   "author": {
     "name": "platzh1rsch",
     "url": "https://platzh1rsch.ch/"
   },
   "description": "A Pacman game written in TypeScript using Canvas",
-  "types": "src/index.ts",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/platzhersh/pacman-canvas-next"
+  },
+  "homepage": "https://github.com/platzhersh/pacman-canvas-next",
+  "keywords": [
+    "pacman",
+    "typescript",
+    "canvas",
+    "game"
+  ],
+  "files": [
+    "dist",
+    "img"
+  ],
   "scripts": {
-    "build": "tsc",
-    "test": "vitest"
+    "dev": "vite dev",
+    "clean": "rimraf dist",
+    "copy-files": "copyfiles -s -f \"src/assets/img/gastronomy/*.svg\" dist/assets/img/gastronomy && copyfiles -s -f \"src/assets/img/ghost/blinky/*.svg\" dist/assets/img/ghost/blinky && copyfiles -s -f \"src/assets/img/ghost/clyde/*.svg\" dist/assets/img/ghost/clyde && copyfiles -s -f \"src/assets/img/ghost/dazzled/*.svg\" dist/assets/img/ghost/dazzled && copyfiles -s -f \"src/assets/img/ghost/dazzled2/*.svg\" dist/assets/img/ghost/dazzled2 && copyfiles -s -f \"src/assets/img/ghost/dead/*.svg\" dist/assets/img/ghost/dead && copyfiles -s -f \"src/assets/img/ghost/inky/*.svg\" dist/assets/img/ghost/inky && copyfiles -s -f \"src/assets/img/ghost/pinky/*.svg\" dist/assets/img/ghost/pinky",
+    "build": "pnpm clean && tsc --noEmit false && vite build && pnpm copy-files",
+    "build:watch": "pnpm clean && tsc && vite build --watch",
+    "prepack": "pnpm build",
+    "test": "vitest",
+    "publish:npm": "npm publish --access public"
   },
   "dependencies": {
     "canvas": "^2.11.2",
-    "jquery": "^3.7.1",
-    "react": "^18.2.0",
-    "typescript": "latest"
+    "react": "^18.2.0"
   },
   "devDependencies": {
+    "@rollup/plugin-typescript": "^11.1.6",
     "@types/jest": "^29.5.11",
     "@types/jquery": "^3.5.29",
+    "copyfiles": "^2.4.1",
+    "rimraf": "^5.0.5",
+    "rollup-plugin-typescript-paths": "^1.5.0",
+    "tslib": "^2.4.0",
+    "typescript": "latest",
     "unplugin-swc": "^1.4.4",
+    "vite": "^5.0.12",
+    "vite-plugin-static-copy": "^1.0.1",
     "vitest": "^1.2.0"
   }
 }
