@@ -8,6 +8,17 @@
     "url": "https://platzh1rsch.ch/"
   },
   "description": "A Pacman game written in TypeScript using Canvas",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/platzhersh/pacman-canvas-next"},
+  "homepage": "https://github.com/platzhersh/pacman-canvas-next",
+  "keywords": [
+    "pacman",
+    "typescript",
+    "canvas",
+    "game"
+  ],
   "files": [
     "dist", "img"
   ],
