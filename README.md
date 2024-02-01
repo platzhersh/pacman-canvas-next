@@ -1,10 +1,13 @@
 # Pacman Canvas Next
 
-[![npm version](https://badge.fury.io/js/@platzh1rsch%2Fpacman-canvas.svg)](https://badge.fury.io/js/@platzh1rsch%2Fpacman-canvas)
+[![npm version](https://badgen.net/npm/v/@platzh1rsch%2Fpacman-canvas)](https://www.npmjs.com/package/@platzh1rsch/pacman-canvas)
+
+ℹ️ Read `packages/pacman-canvas/README.md` for more information.
 
 Next generation of https://github.com/platzhersh/pacman-canvas.
 
 Fruit SVGs from https://www.svgrepo.com/collection/gastronomy-set/
+
 
 ## Get started
 
