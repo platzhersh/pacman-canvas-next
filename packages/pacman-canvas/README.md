@@ -1,6 +1,6 @@
 # Pacman Canvas
 
-[![npm version](https://badge.fury.io/js/@platzh1rsch%2Fpacman-canvas.svg)](https://badge.fury.io/js/@platzh1rsch%2Fpacman-canvas)
+[![npm version](https://badgen.net/npm/v/@platzh1rsch%2Fpacman-canvas)](https://www.npmjs.com/package/@platzh1rsch/pacman-canvas)
 
 Basically https://pacman.platzh1rsch.ch/ as a npm package for simple integration into your website.
 
