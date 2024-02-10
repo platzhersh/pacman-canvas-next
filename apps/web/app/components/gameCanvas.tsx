@@ -1,6 +1,6 @@
 "use client";
 
-import getGameInstance, { Game, helloPacman } from "@repo/pacman-canvas";
+import getGameInstance, { Game, helloPacman } from "@platzh1rsch/pacman-canvas/lib/main";
 import {
   blinkySvgSrc,
   clydeSvgSrc,
@@ -9,23 +9,23 @@ import {
   deadSvgSrc,
   inkySvgSrc,
   pinkySvgSrc,
-} from "@repo/pacman-canvas/src/assets/img";
-import { cherriesSvgSrc } from "@repo/pacman-canvas/src/assets/img/gastronomy";
+} from "@platzh1rsch/pacman-canvas/lib/assets/img";
+import { cherriesSvgSrc } from "@platzh1rsch/pacman-canvas/lib/assets/img/gastronomy";
 import {
   down,
   left,
   right,
   up,
-} from "@repo/pacman-canvas/src/figures/directions";
+} from "@platzh1rsch/pacman-canvas/lib/figures/directions";
 import {
   GRID_SIZE,
   GameOverlayMessageEvent,
   GameOverlayMessageListener,
   GameStateChangeListener,
   GameStateEvent,
-} from "@repo/pacman-canvas/src/game/Game";
-import { FoodHandler } from "@repo/pacman-canvas/src/game/food/FoodHandler";
-import { animationLoop } from "@repo/pacman-canvas/src/game/render/animationLoop";
+} from "@platzh1rsch/pacman-canvas/lib/game/Game";
+import { FoodHandler } from "@platzh1rsch/pacman-canvas/lib/game/food/FoodHandler";
+import { animationLoop } from "@platzh1rsch/pacman-canvas/lib/game/render/animationLoop";
 import { useEffect, useRef, useState } from "react";
 import styles from "./gameCanvas.module.css";
 
@@ -54,7 +54,7 @@ export default function GameCanvas() {
     const onGameStateChange: GameStateChangeListener = (
       event: GameStateEvent
     ) => {
-      console.log(
+      Logger.info(
         "onGameStateChange",
         event.eventName,
         event.datetime,
@@ -76,20 +76,20 @@ export default function GameCanvas() {
   useEffect(() => {
 
     if (canvasRef.current) {
-      console.debug("canvasRef.current", canvasRef.current);
+      Logger.debug("canvasRef.current", canvasRef.current);
       const context = canvasRef.current.getContext("2d");
-      console.debug("context", context);
+      Logger.debug("context", context);
       setCanvasContext(canvasRef.current.getContext("2d"));
     }
 
     if (canvasRef2.current) {
-      console.debug("canvasRef2.current", canvasRef2.current);
+      Logger.debug("canvasRef2.current", canvasRef2.current);
       const context = canvasRef2.current.getContext("2d");
-      console.debug("context", context);
+      Logger.debug("context", context);
       setCanvasContext2(canvasRef2.current.getContext("2d"));
     }
 
-    console.debug("canvasContext", canvasContext);
+    Logger.debug("canvasContext", canvasContext);
   }, []);
 
   useEffect(() => {
@@ -99,7 +99,7 @@ export default function GameCanvas() {
   }, [canvasContext]);
 
   useEffect(() => {
-    console.debug("gameStateSnapshot changed");
+    Logger.debug("gameStateSnapshot changed");
   }, [gameStateSnapshotEvent]);
 
   //   const pacman = game.getPacman();
@@ -123,7 +123,7 @@ export default function GameCanvas() {
           <button
             onClick={() => {
               if (canvasContext2) {
-                console.log("draw food", foodHandler, canvasContext2);
+                Logger.info("draw food", foodHandler, canvasContext2);
                 canvasContext2.clearRect(0, 0, GRID_SIZE, GRID_SIZE);
                 foodHandler.draw(canvasContext2, 0, 0, GRID_SIZE, GRID_SIZE);
               }

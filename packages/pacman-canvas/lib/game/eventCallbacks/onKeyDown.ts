@@ -1,3 +1,4 @@
+import Logger from "js-logger";
 import { down, left, right, up } from "../../figures/directions";
 import { Game } from "../Game";
 
@@ -38,7 +39,7 @@ export const onKeyDown = (game: Game) => (evt: KeyboardEvent) => {
       game.showContent("game-content");
       break;
     case 32: // SPACE pressed -> pause / resume Game
-      console.debug("SPACE pressed");
+      Logger.debug("SPACE pressed");
       evt.preventDefault();
       game.pauseResume();
       break;
