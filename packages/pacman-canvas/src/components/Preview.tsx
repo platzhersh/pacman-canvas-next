@@ -14,9 +14,11 @@ const Preview = () => {
   };
 
   return <>
+  <div style={{textAlign: "center"}}>
   <h1>Pacman Canvas Preview</h1>
   <button onClick={() => toggleDebug()}>Toggle Debug</button> (debug: {debug.toString()})
   <button onClick={() => setShowDirectionControls(!showDirectionControls)}>Toggle Direction Controls</button> (show: {showDirectionControls.toString()})
+  </div>
   <PacmanCanvas debug={debug} showDirectionControls={showDirectionControls}/>
   </>;
 }
