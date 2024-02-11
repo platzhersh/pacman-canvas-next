@@ -12,7 +12,7 @@
 
 /* ---------------- */
 
-body {
+/* body {
   background-color: #000;
   color: white;
 }
@@ -20,21 +20,12 @@ body,
 html {
   font-size: 15px;
   background: url("/lib/assets/img/bg-pattern-black.png") repeat;
-}
+} */
 
 #canvas-container {
   position: relative;
   cursor: pointer;
   font-family: "Press Start 2P", cursive;
-}
-.content,
-h1,
-h2,
-h3,
-p,
-div {
-  font-family: "Press Start 2P", cursive;
-  font-weight: normal;
 }
 
 .main {
@@ -46,6 +37,17 @@ div {
   background: rgba(0, 0, 0, 0.4);
   padding: 60px 0;
 }
+
+.main, .content,
+.main h1,
+.main  h2,
+.main  h3,
+.main  p,
+.main  div {
+    font-family: "Press Start 2P", cursive;
+    font-weight: normal;
+  }
+
 .content {
   width: 100%;
   max-width: 540px;

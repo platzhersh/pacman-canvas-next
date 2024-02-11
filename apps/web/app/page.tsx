@@ -2,6 +2,7 @@ import { Code } from "@repo/ui/code";
 import Image from "next/image";
 import GameCanvas from "./components/gameCanvas";
 import styles from "./page.module.css";
+import { PacmanCanvas } from "@platzh1rsch/pacman-canvas/lib/components";
 
 
 export default function Page(): JSX.Element {
@@ -32,7 +33,9 @@ export default function Page(): JSX.Element {
         </div>
       </div>
 
-      <GameCanvas />
+      {/* <GameCanvas /> */}
+
+      <PacmanCanvas />
 
     </main>
   );

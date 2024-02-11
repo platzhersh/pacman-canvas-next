@@ -204,52 +204,6 @@ importers:
         specifier: ^1.2.0
         version: 1.2.0
 
-  packages/pacman-canvas-react:
-    dependencies:
-      canvas:
-        specifier: ^2.11.2
-        version: 2.11.2
-      react:
-        specifier: ^18.2.0
-        version: 18.2.0
-    devDependencies:
-      '@rollup/plugin-typescript':
-        specifier: ^11.1.6
-        version: 11.1.6(tslib@2.6.2)(typescript@5.3.3)
-      '@types/jest':
-        specifier: ^29.5.11
-        version: 29.5.11
-      '@types/jquery':
-        specifier: ^3.5.29
-        version: 3.5.29
-      copyfiles:
-        specifier: ^2.4.1
-        version: 2.4.1
-      rimraf:
-        specifier: ^5.0.5
-        version: 5.0.5
-      rollup-plugin-typescript-paths:
-        specifier: ^1.5.0
-        version: 1.5.0(typescript@5.3.3)
-      tslib:
-        specifier: ^2.4.0
-        version: 2.6.2
-      typescript:
-        specifier: latest
-        version: 5.3.3
-      unplugin-swc:
-        specifier: ^1.4.4
-        version: 1.4.4(@swc/core@1.3.102)
-      vite:
-        specifier: ^5.0.12
-        version: 5.0.12
-      vite-plugin-static-copy:
-        specifier: ^1.0.1
-        version: 1.0.1(vite@5.0.12)
-      vitest:
-        specifier: ^1.2.0
-        version: 1.2.0
-
   packages/typescript-config: {}
 
   packages/ui:

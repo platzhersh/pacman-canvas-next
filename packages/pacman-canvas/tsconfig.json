@@ -3,7 +3,7 @@
       "jsx": "react",
       "target": "ESNext",
       "lib": ["ESNext", "ESNext.Array", "DOM", "DOM.Iterable"],
-      "types": ["vite/client", "node"],
+      "types": ["vite/client"],
       "esModuleInterop": true,
       "forceConsistentCasingInFileNames": true,
       "isolatedModules": true,

@@ -18,16 +18,16 @@ import {
   up,
 } from "@platzh1rsch/pacman-canvas/lib/figures/directions";
 import {
-  GRID_SIZE,
   GameOverlayMessageEvent,
   GameOverlayMessageListener,
   GameStateChangeListener,
   GameStateEvent,
-} from "@platzh1rsch/pacman-canvas/lib/game/Game";
+} from "@platzh1rsch/pacman-canvas/lib/game/GameEvent";
 import { FoodHandler } from "@platzh1rsch/pacman-canvas/lib/game/food/FoodHandler";
 import { animationLoop } from "@platzh1rsch/pacman-canvas/lib/game/render/animationLoop";
 import { useEffect, useRef, useState } from "react";
 import styles from "./gameCanvas.module.css";
+import { GRID_SIZE } from "@platzh1rsch/pacman-canvas/lib/game/Game";
 
 // as recommended on https://react.dev/learn/you-might-not-need-an-effect#initializing-the-application
 let didInit = false;
@@ -54,7 +54,7 @@ export default function GameCanvas() {
     const onGameStateChange: GameStateChangeListener = (
       event: GameStateEvent
     ) => {
-      Logger.info(
+      console.info(
         "onGameStateChange",
         event.eventName,
         event.datetime,
@@ -76,30 +76,31 @@ export default function GameCanvas() {
   useEffect(() => {
 
     if (canvasRef.current) {
-      Logger.debug("canvasRef.current", canvasRef.current);
+      console.debug("canvasRef.current", canvasRef.current);
       const context = canvasRef.current.getContext("2d");
-      Logger.debug("context", context);
+      console.debug("context", context);
       setCanvasContext(canvasRef.current.getContext("2d"));
     }
 
     if (canvasRef2.current) {
-      Logger.debug("canvasRef2.current", canvasRef2.current);
+      console.debug("canvasRef2.current", canvasRef2.current);
       const context = canvasRef2.current.getContext("2d");
-      Logger.debug("context", context);
+      console.debug("context", context);
       setCanvasContext2(canvasRef2.current.getContext("2d"));
     }
 
-    Logger.debug("canvasContext", canvasContext);
+    console.debug("canvasContext", canvasContext);
   }, []);
 
   useEffect(() => {
     if (game && canvasContext) {
       game.setCanvasContext2d(canvasContext);
+      game.setup()
     }
   }, [canvasContext]);
 
   useEffect(() => {
-    Logger.debug("gameStateSnapshot changed");
+    console.debug("gameStateSnapshot changed");
   }, [gameStateSnapshotEvent]);
 
   //   const pacman = game.getPacman();
@@ -123,7 +124,7 @@ export default function GameCanvas() {
           <button
             onClick={() => {
               if (canvasContext2) {
-                Logger.info("draw food", foodHandler, canvasContext2);
+                console.info("draw food", foodHandler, canvasContext2);
                 canvasContext2.clearRect(0, 0, GRID_SIZE, GRID_SIZE);
                 foodHandler.draw(canvasContext2, 0, 0, GRID_SIZE, GRID_SIZE);
               }
