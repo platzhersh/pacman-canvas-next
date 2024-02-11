@@ -28,7 +28,7 @@
   "scripts": {
     "dev": "vite",
     "clean": "rimraf dist",
-    "copy-files": "copyfiles -s -f \"src/assets/img/gastronomy/*.svg\" dist/assets/img/gastronomy && copyfiles -s -f \"src/assets/img/ghost/blinky/*.svg\" dist/assets/img/ghost/blinky && copyfiles -s -f \"src/assets/img/ghost/clyde/*.svg\" dist/assets/img/ghost/clyde && copyfiles -s -f \"src/assets/img/ghost/dazzled/*.svg\" dist/assets/img/ghost/dazzled && copyfiles -s -f \"src/assets/img/ghost/dazzled2/*.svg\" dist/assets/img/ghost/dazzled2 && copyfiles -s -f \"src/assets/img/ghost/dead/*.svg\" dist/assets/img/ghost/dead && copyfiles -s -f \"src/assets/img/ghost/inky/*.svg\" dist/assets/img/ghost/inky && copyfiles -s -f \"src/assets/img/ghost/pinky/*.svg\" dist/assets/img/ghost/pinky",
+    "copy-files": "copyfiles -s -f \"lib/assets/img/gastronomy/*.svg\" dist/lib/assets/img/gastronomy && copyfiles -s -f \"lib/assets/img/ghost/blinky/*.svg\" dist/lib/assets/img/ghost/blinky && copyfiles -s -f \"lib/assets/img/ghost/clyde/*.svg\" dist/lib/assets/img/ghost/clyde && copyfiles -s -f \"lib/assets/img/ghost/dazzled/*.svg\" dist/lib/assets/img/ghost/dazzled && copyfiles -s -f \"lib/assets/img/ghost/dazzled2/*.svg\" dist/lib/assets/img/ghost/dazzled2 && copyfiles -s -f \"lib/assets/img/ghost/dead/*.svg\" dist/lib/assets/img/ghost/dead && copyfiles -s -f \"lib/assets/img/ghost/inky/*.svg\" dist/lib/assets/img/ghost/inky && copyfiles -s -f \"lib/assets/img/ghost/pinky/*.svg\" dist/lib/assets/img/ghost/pinky && copyfiles -s -f \"lib/assets/fonts/*\" dist/lib/assets/fonts",
     "build": "pnpm clean && tsc --p ./tsconfig-build.json --noEmit false && vite build && pnpm copy-files",
     "build:watch": "pnpm clean && tsc && vite build --watch",
     "prepack": "pnpm build",
