@@ -1,9 +1,10 @@
+import Logger from "js-logger";
 import { Game } from "../Game";
 
 export const animationLoop = (game: Game) => () => {
   if (game.isGameOver() || !game.isStarted()) return;
 
-  console.debug("animationLoop", game);
+  Logger.debug("animationLoop", game);
   // render on Canvas
   game.render();
 

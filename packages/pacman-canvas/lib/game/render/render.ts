@@ -1,3 +1,4 @@
+import Logger from "js-logger";
 import {
   GRID_SIZE,
   Game,
@@ -50,10 +51,10 @@ export const renderContent = (
   // canvas_walls: HTMLCanvasElement
 ) => {
   const context = game.getCanvasContext2d();
-  console.debug("renderContent", context, game);
+  Logger.debug("renderContent", context, game);
 
   if (!context) {
-    console.error("can't render, no context");
+    Logger.error("can't render, no context");
     return;
   }
 
@@ -151,7 +152,7 @@ export const renderGrid = (
   const context = game.getCanvasContext2d();
 
   if (!context) {
-    console.error("can't render, no context");
+    Logger.error("can't render, no context");
     return;
   }
 

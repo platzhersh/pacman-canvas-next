@@ -10,8 +10,11 @@
 	
 -------------------------------------------------------------------*/
 
+import Logger from "js-logger";
 import { Game } from "./game/Game";
 import { getGameInstance } from "./game/main";
+
+Logger.useDefaults();
 
 export const helloPacman = () => {
   return "Hello Pacman";

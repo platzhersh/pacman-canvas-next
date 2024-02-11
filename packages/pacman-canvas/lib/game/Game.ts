@@ -1,3 +1,4 @@
+import Logger from "js-logger";
 import { Pacman } from "../figures/Pacman";
 import { Direction } from "../figures/directions/Direction";
 import { Blinky } from "../figures/ghosts/Blinky";
@@ -19,6 +20,14 @@ import {
   renderContent,
   renderGrid,
 } from "./render/render";
+import { Subject } from "rxjs";
+import {
+  GameStateEvent,
+  GameOverlayMessageEvent,
+  GameState,
+  GameStateChangeListener,
+  GameOverlayMessageListener,
+} from "./GameEvent";
 
 // global constants
 export const GRID_SIZE = 30;
@@ -35,36 +44,6 @@ export const PILL_SIZE = 3;
 export const POWERPILL_SIZE = 6;
 
 type GameInitMode = "NewGame" | "NewLevel";
-
-export type GameStateChangeListener = (event: GameStateEvent) => any;
-
-export type GameState = {
-  gameId: string;
-  started: boolean;
-  pause: boolean;
-  gameOver: boolean;
-  score: number;
-  pillCount: number;
-  level: number;
-  lives: number;
-  ghostMode: GhostMode;
-};
-
-export type GameStateEvent = {
-  datetime: Date;
-  eventName: string;
-  payload: GameState;
-};
-
-export type GameOverlayMessageListener = (
-  event: GameOverlayMessageEvent
-) => any;
-
-export type GameOverlayMessageEvent = {
-  title: string;
-  text: string;
-  text2?: string;
-};
 
 export class Game {
   private gameId: string = generateUID();
@@ -120,6 +99,11 @@ export class Game {
   private ghostMode: GhostMode = GhostMode.Scatter; // 0 = Scatter, 1 = Chase
   private ghostModeTimer = 200; // decrements each animationLoop execution
 
+  // rxjs event emitters
+  public gameEvents: Subject<GameStateEvent> = new Subject<GameStateEvent>();
+  public gameOverlayMessages: Subject<GameOverlayMessageEvent> =
+    new Subject<GameOverlayMessageEvent>();
+
   constructor(canvasContext2d?: CanvasRenderingContext2D) {
     if (canvasContext2d) this.canvasContext2d = canvasContext2d;
     this.ghosts = {
@@ -128,9 +112,12 @@ export class Game {
       clyde: new Clyde(this),
       blinky: new Blinky(this),
     };
-    this.init("NewGame");
     this.registerKeyListener();
   }
+
+  public setup = () => {
+    this.init("NewGame");
+  };
 
   /* Game Functions */
   public toggleGridVisibility = () => (this.showGrid = !this.showGrid);
@@ -149,7 +136,7 @@ export class Game {
     Object.values(this.ghosts).forEach((g) => g.move(this));
 
   public startGhostFrightened = () => {
-    console.debug("ghost frigthened 👻");
+    Logger.debug("ghost frigthened 👻");
     this.ghostFrightened = true;
     this.ghostFrightenedTimer = 240;
     this.dazzleGhosts();
@@ -244,7 +231,7 @@ export class Game {
   public getRefreshRate = () => this.refreshRate;
 
   public setCanvasContext2d = (canvasContext2d: CanvasRenderingContext2D) => {
-    console.debug("set canvas context");
+    Logger.debug("set canvas context");
     this.canvasContext2d = canvasContext2d;
     this.render();
   };
@@ -258,29 +245,29 @@ export class Game {
   public newGame = () => {
     const r = confirm("Are you sure you want to restart?");
     if (r) {
-      console.log("new Game");
+      Logger.info("new Game");
       this.init("NewGame");
       // this.startGame();
     }
   };
 
   public nextLevel = () => {
-    console.debug(
+    Logger.debug(
       `nextLevel: ${this.level + 1} current: ${
         this.level
       }, final: ${FINAL_LEVEL}`
     );
     if (this.gameOver) {
-      console.warn("no next level, game over");
+      Logger.warn("no next level, game over");
       return;
     }
     if (this.level === FINAL_LEVEL) {
-      console.debug("next level, " + FINAL_LEVEL + ", end game");
+      Logger.debug("next level, " + FINAL_LEVEL + ", end game");
       this.endGame(true);
       //   this.showHighscoreForm();
     } else {
       this.level++;
-      console.debug("🏁 Level " + this.level);
+      Logger.debug("🏁 Level " + this.level);
       this.pauseAndShowMessage(
         "Level " + this.level,
         this.getLevelTitle(),
@@ -352,7 +339,7 @@ export class Game {
       maxLevelPointsPills + maxLevelPointsPowerpills + maxLevelPointsGhosts;
 
     const scoreIsValid = this.score.get() / this.level <= maxLevelPoints;
-    console.debug(
+    Logger.debug(
       "validate score. score: " + this.score.get() + ", level: " + this.level,
       scoreIsValid
     );
@@ -379,8 +366,8 @@ export class Game {
     if (this.level === 0) {
       this.nextLevel();
     }
-    console.log("🚀 Game started!");
-    console.debug("🏁 Level " + this.level);
+    Logger.info("🚀 Game started!");
+    Logger.debug("🏁 Level " + this.level);
     this.onGameStateChange("startGame");
 
     animationLoop(this)();
@@ -402,10 +389,6 @@ export class Game {
   };
 
   public pauseResume = () => {
-    // if (this.gameOver) {
-    //   console.warn("Cannot pause / resume. GameOver set to true.");
-    //   return;
-    // }
     if (this.gameOver) {
       this.newGame();
     } else if (!this.started) {
@@ -421,7 +404,7 @@ export class Game {
   public decrementPillCount = () => this.pillCount--;
 
   public init = (state: GameInitMode) => {
-    console.debug("init game " + state);
+    Logger.debug("init game " + state);
 
     // get Level Map
     this.gridMap.resetMapData();
@@ -458,7 +441,7 @@ export class Game {
   };
 
   public endGame = (allLevelsCompleted = false) => {
-    console.info(
+    Logger.info(
       "❌ Game Over by " + (allLevelsCompleted ? "WIN 🏆" : "LOSS 💀")
     );
     if (allLevelsCompleted) {
@@ -514,8 +497,10 @@ export class Game {
   };
 
   public onGameStateChange = (eventName: string) => {
-    console.log("onGameStateChange", eventName);
+    Logger.info("onGameStateChange", eventName);
     const payload = this.getGameStateSnapshot();
+
+    this.gameEvents.next({ eventName, datetime: new Date(), payload });
     this.gameStateChangeListeners.forEach((listenerFn) =>
       listenerFn({ eventName, datetime: new Date(), payload })
     );
@@ -526,6 +511,7 @@ export class Game {
   public registerGameStateChangeListener = (
     listenerFn: GameStateChangeListener
   ) => {
+    Logger.debug("registerGameStateChangeListener", listenerFn);
     this.gameStateChangeListeners.push(listenerFn);
   };
 
@@ -536,6 +522,7 @@ export class Game {
     text: string,
     text2?: string
   ) => {
+    this.gameOverlayMessages.next({ title, text, text2 });
     this.gameOverlayMessageListeners.forEach((listenerFn) =>
       listenerFn({ title, text, text2 })
     );
@@ -555,7 +542,7 @@ export class Game {
     const context = this.getCanvasContext2d();
 
     if (!context) {
-      console.error("can't render, no context");
+      Logger.error("can't render, no context");
       return;
     }
 

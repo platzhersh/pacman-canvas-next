@@ -1,3 +1,4 @@
+import Logger from "js-logger";
 import { GRID_SIZE, Game, PACMAN_RADIUS } from "../game/Game";
 import { MapTileType } from "../game/map/mapData";
 import { down, left, right, up } from "./directions";
@@ -98,7 +99,7 @@ export abstract class Figure {
     if (this.stuckY === -1) {
       this.posY += this.speed;
     }
-    console.log(
+    Logger.info(
       `${this.name} resetToGrid. inGrid: ${this.inGrid()} (${this.posX}, ${
         this.posY
       })`
@@ -148,7 +149,7 @@ export abstract class Figure {
       this.stuckY = this.dirY;
       stopOnCollision && this.stop();
 
-      console.warn(`${this.name} stuck. ${this.stuckX}, ${this.stuckY}`);
+      Logger.warn(`${this.name} stuck. ${this.stuckX}, ${this.stuckY}`);
 
       // get out of the wall
       this.resetToGrid();
@@ -157,11 +158,11 @@ export abstract class Figure {
 
   // TODO: difference to getFieldAhead is unclear
   protected getNextTile = (game: Game, nextDirection: Direction) => {
-    //console.log("changeDirection to "+directionWatcher.get().name);
+    //Logger.info("changeDirection to "+directionWatcher.get().name);
 
     // check if possible to change direction without getting stuck
-    console.debug("x: " + this.getGridPosX() + " + " + nextDirection.getDirX());
-    console.debug("y: " + this.getGridPosY() + " + " + nextDirection.getDirY());
+    Logger.debug("x: " + this.getGridPosX() + " + " + nextDirection.getDirX());
+    Logger.debug("y: " + this.getGridPosY() + " + " + nextDirection.getDirY());
     let x = this.getGridPosX() + (nextDirection.getDirX() ?? 0);
     let y = this.getGridPosY() + (nextDirection.getDirY() ?? 0);
     if (x <= -1) x = game.getCanvasWidth() / (this.radius * 2) - 1;
@@ -169,8 +170,8 @@ export abstract class Figure {
     if (y <= -1) x = game.getCanvasHeight() / (this.radius * 2) - 1;
     if (y >= game.getCanvasHeight() / (this.radius * 2)) y = 0;
 
-    console.debug("x: " + x);
-    console.debug("y: " + y);
+    Logger.debug("x: " + x);
+    Logger.debug("y: " + y);
 
     return game.getGridMap().getTileType(x, y);
   };
@@ -184,11 +185,11 @@ export abstract class Figure {
     // pos has to be dividable by speed
     const diffX = this.posX % GRID_SIZE;
     if (diffX % this.speed !== 0) {
-      console.warn(`${this.name} posX is not valid ${this.posX}`);
+      Logger.warn(`${this.name} posX is not valid ${this.posX}`);
     }
     const diffY = this.posY % GRID_SIZE;
     if (diffY % this.speed !== 0) {
-      console.warn(`${this.name} posY is not valid ${this.posY}`);
+      Logger.warn(`${this.name} posY is not valid ${this.posY}`);
     }
   };
 
@@ -221,7 +222,7 @@ export abstract class Figure {
   };
 
   public stop = () => {
-    console.log(
+    Logger.info(
       `${this.name} stopped at ${this.posX}, ${
         this.posY
       } / ${this.getGridPosX()}, ${this.getGridPosY()} (inGrid: ${this.inGrid()}, direction: ${this.direction.getName()})`
