@@ -8,6 +8,8 @@ Next generation of https://github.com/platzhersh/pacman-canvas.
 
 Fruit SVGs from https://www.svgrepo.com/collection/gastronomy-set/
 
+Demo: https://codesandbox.io/p/sandbox/pacman-canvas-next-8szpqf
+
 ## apps
 
 - `web`: contains an example usage of `packages/pacman-canvas` in a Next.js app
