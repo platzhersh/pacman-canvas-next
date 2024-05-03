@@ -1,3 +1,4 @@
+import Logger from "js-logger";
 import {
   FRUIT_POINTS,
   Game,
@@ -64,7 +65,7 @@ export class Pacman extends Figure {
     let gridY = this.getGridPosY();
 
     if (field === "⚪️" || field === "💊" || field === "🍒") {
-      //console.log("Pill found at ("+gridX+"/"+gridY+"). Pacman at ("+this.posX+"/"+this.posY+")");
+      //Logger.info("Pill found at ("+gridX+"/"+gridY+"). Pacman at ("+this.posX+"/"+this.posY+")");
       if (
         (this.dirX === 1 &&
           isInRange(
@@ -145,8 +146,7 @@ export class Pacman extends Figure {
   public checkDirectionChange = (game: Game) => {
     const nextDirection = this.directionWatcher.get();
     if (nextDirection !== null) {
-      console.groupCollapsed("checkDirectionChange");
-      console.debug(`next Direction: ${nextDirection.getName()}`);
+      Logger.debug(`next Direction: ${nextDirection.getName()}`);
 
       if (this.stuckX === 1 && nextDirection === right)
         this.directionWatcher.set(null);
@@ -157,7 +157,7 @@ export class Pacman extends Figure {
         // only allow direction changes inside the grid
         if (this.inGrid()) {
           const nextTile = this.getNextTile(game, nextDirection);
-          console.debug("checkNextTile: " + nextTile);
+          Logger.debug("checkNextTile: " + nextTile);
 
           if (nextTile !== "🟦") {
             this.setDirection(nextDirection);
@@ -165,19 +165,18 @@ export class Pacman extends Figure {
           }
         }
       }
-      console.groupEnd();
     }
   };
   public getBeastModeTimer = () => this.beastModeTimer;
   public enableBeastMode = (game: Game) => {
     this.beastMode = true;
     this.beastModeTimer = BEASTMODE_TIME;
-    console.debug("Beast Mode activated! 💊🦍");
+    Logger.debug("Beast Mode activated! 💊🦍");
     game.dazzleGhosts();
   };
   public disableBeastMode = (game: Game) => {
     this.beastMode = false;
-    console.debug("Beast Mode is over! 🐹");
+    Logger.debug("Beast Mode is over! 🐹");
     game.undazzleGhosts();
   };
 
@@ -240,7 +239,7 @@ export class Pacman extends Figure {
     this.setDirection(right);
     this.stop();
     this.resetIsStuck();
-    //console.log("reset pacman");
+    //Logger.info("reset pacman");
   };
 
   public dieAnimation = (game: Game) => {
@@ -268,7 +267,7 @@ export class Pacman extends Figure {
     this.reset();
     game.resetGhosts();
     this.decrementLives();
-    console.log("pacman died, lives remaining:", this.lives);
+    Logger.info("pacman died, lives remaining:", this.lives);
     if (this.lives <= 0) {
       game.endGame();
       //   game.showHighscoreForm();

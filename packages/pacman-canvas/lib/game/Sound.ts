@@ -1,3 +1,4 @@
+import Logger from "js-logger";
 import { Game } from "./Game";
 
 export const Sound = {
@@ -6,7 +7,7 @@ export const Sound = {
       let audio = document.getElementById(sound);
       audio !== null
         ? (audio as any).play()
-        : console.warn(sound + " not found");
+        : Logger.warn(sound + " not found");
     }
   },
 };

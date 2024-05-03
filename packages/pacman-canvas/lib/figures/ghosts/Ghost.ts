@@ -1,3 +1,4 @@
+import Logger from "js-logger";
 import {
   dazzled2DownSvgSrc,
   dazzled2LeftSvgSrc,
@@ -249,10 +250,10 @@ export abstract class Ghost extends Figure {
     //   this.setNextDirection(game);
     //   nextDirection = this.directionWatcher.get();
     // }
-    console.log(`${this.name} next direction ${nextDirection?.getName()}`);
+    Logger.info(`${this.name} next direction ${nextDirection?.getName()}`);
     if (!this.isStopped && nextDirection !== null && this.inGrid()) {
       const nextTile = this.getNextTile(game, nextDirection);
-      console.debug("checkNextTile: " + nextTile);
+      Logger.debug("checkNextTile: " + nextTile);
 
       if (nextTile !== "🟦") {
         this.setDirection(nextDirection);
@@ -285,7 +286,7 @@ export abstract class Ghost extends Figure {
           .getTileType(this.getGridPosX(), this.getGridPosY()) === "door" &&
         this.inGrid()
       ) {
-        console.debug(`🏰 ${this.name} leaving the ghosthouse`);
+        Logger.debug(`🏰 ${this.name} leaving the ghosthouse`);
         this.ghostHouse = false;
       }
     }
@@ -350,7 +351,7 @@ export abstract class Ghost extends Figure {
     // check wall collision
     const fieldAhead = this.getFieldAhead(game, true);
     if (fieldAhead.field === "🟦") {
-      console.warn(`${this.name}: fieldAhead ${JSON.stringify(fieldAhead)}`);
+      Logger.info(`${this.name}: fieldAhead ${JSON.stringify(fieldAhead)}`);
       // this.directionWatcher.set(null);
       // this.stop();
     }
@@ -473,7 +474,7 @@ export abstract class Ghost extends Figure {
     let nextDirection = orderedDirectionOptions[0]?.relativeDirection;
 
     if (!nextDirection) {
-      console.warn(
+      Logger.warn(
         `${this.name}: No valid direction option! (possibly back at ghosthouse)`,
         this.ghostHouse
       );
@@ -510,7 +511,7 @@ export abstract class Ghost extends Figure {
   };
 
   public reverseDirection = () => {
-    console.debug(
+    Logger.debug(
       "reverseDirection: " +
         this.direction.getName() +
         " to " +

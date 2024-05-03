@@ -10,13 +10,17 @@
 	
 -------------------------------------------------------------------*/
 
+import Logger from "js-logger";
 import { Game } from "./game/Game";
 import { getGameInstance } from "./game/main";
+import { PacmanCanvas } from "./components";
+
+Logger.useDefaults();
 
 export const helloPacman = () => {
   return "Hello Pacman";
 };
 
-export { Game, getGameInstance };
+export { Game, getGameInstance, PacmanCanvas };
 
 export default getGameInstance;

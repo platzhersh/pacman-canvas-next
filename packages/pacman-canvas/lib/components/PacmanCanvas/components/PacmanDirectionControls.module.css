@@ -1,0 +1,41 @@
+/* Links */
+.main a, .main a:link, .main a:active, .main a:visited {
+    padding: 5px;
+	background: #c80a0a;
+    color: rgb(255, 255, 255);
+}
+/* * { box-shadow: none !important; } */
+
+/* ---------- Controls ------------------------*/
+
+.controls { text-align: center; margin-top: 15px; color: rgb(255, 255, 255);
+}
+.controls-section { 
+	height: auto; 
+	width: 47%; 
+	display: inline-block; 
+	margin: 0;
+	text-align: left;
+	}
+
+.controls-right .controlButton { position: relative; right: -65%; }
+
+.controlButton {
+    outline: none;
+	box-shadow: none !important;
+    color: rgb(255, 255, 255);
+    display: inline-block;
+	width: 90px;
+	height: 90px;
+	margin: 5px;
+	background: none repeat scroll 0% 0% #C80A0A;
+	line-height: 70px;
+	border-radius: 50%;
+	font-weight: bold;
+	font-size: 60px;
+	cursor: pointer;
+    border: none;
+}
+.controlButton:hover, .controlButton:active {
+	background: #c00202;
+}

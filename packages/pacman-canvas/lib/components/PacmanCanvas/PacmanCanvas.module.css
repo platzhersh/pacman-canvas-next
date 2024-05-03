@@ -1,0 +1,68 @@
+/* Google Web Fonts */
+@font-face {
+  font-family: "Press Start 2P";
+  font-style: normal;
+  font-weight: 400;
+  src: url("/lib/assets/fonts/PressStart2Play.eot");
+  src:
+    url("/lib//assets/fonts/PressStart2Play.eot?iefix") format("eot"),
+    url("/lib//assets/fonts/PressStart2Play.woff") format("woff"),
+    url("/lib//assets/fonts/PressStart2Play.ttf") format("truetype");
+}
+
+/* ---------------- */
+
+/* body {
+  background-color: #000;
+  color: white;
+}
+body,
+html {
+  font-size: 15px;
+  background: url("/lib/assets/img/bg-pattern-black.png") repeat;
+} */
+
+#canvas-container {
+  position: relative;
+  cursor: pointer;
+  font-family: "Press Start 2P", cursive;
+}
+
+.main {
+  width: 100%;
+  max-width: 660px;
+  margin: 10px auto;
+  position: static;
+  left: auto;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 60px 0;
+}
+
+.main, .content,
+.main h1,
+.main  h2,
+.main  h3,
+.main  p,
+.main  div {
+    font-family: "Press Start 2P", cursive;
+    font-weight: normal;
+  }
+
+.content {
+  width: 100%;
+  max-width: 540px;
+  text-align: left;
+  margin: 0;
+}
+.container {
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+.wrapper {
+  padding: 0;
+}
+.game {
+  max-width: 540px;
+  margin: auto;
+}

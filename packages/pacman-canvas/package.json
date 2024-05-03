@@ -26,24 +26,36 @@
     "img"
   ],
   "scripts": {
-    "dev": "vite dev",
+    "dev": "vite",
     "clean": "rimraf dist",
-    "copy-files": "copyfiles -s -f \"src/assets/img/gastronomy/*.svg\" dist/assets/img/gastronomy && copyfiles -s -f \"src/assets/img/ghost/blinky/*.svg\" dist/assets/img/ghost/blinky && copyfiles -s -f \"src/assets/img/ghost/clyde/*.svg\" dist/assets/img/ghost/clyde && copyfiles -s -f \"src/assets/img/ghost/dazzled/*.svg\" dist/assets/img/ghost/dazzled && copyfiles -s -f \"src/assets/img/ghost/dazzled2/*.svg\" dist/assets/img/ghost/dazzled2 && copyfiles -s -f \"src/assets/img/ghost/dead/*.svg\" dist/assets/img/ghost/dead && copyfiles -s -f \"src/assets/img/ghost/inky/*.svg\" dist/assets/img/ghost/inky && copyfiles -s -f \"src/assets/img/ghost/pinky/*.svg\" dist/assets/img/ghost/pinky",
-    "build": "pnpm clean && tsc --noEmit false && vite build && pnpm copy-files",
+    "copy-files": "copyfiles -s -f \"lib/assets/img/gastronomy/*.svg\" dist/lib/assets/img/gastronomy && copyfiles -s -f \"lib/assets/img/ghost/blinky/*.svg\" dist/lib/assets/img/ghost/blinky && copyfiles -s -f \"lib/assets/img/ghost/clyde/*.svg\" dist/lib/assets/img/ghost/clyde && copyfiles -s -f \"lib/assets/img/ghost/dazzled/*.svg\" dist/lib/assets/img/ghost/dazzled && copyfiles -s -f \"lib/assets/img/ghost/dazzled2/*.svg\" dist/lib/assets/img/ghost/dazzled2 && copyfiles -s -f \"lib/assets/img/ghost/dead/*.svg\" dist/lib/assets/img/ghost/dead && copyfiles -s -f \"lib/assets/img/ghost/inky/*.svg\" dist/lib/assets/img/ghost/inky && copyfiles -s -f \"lib/assets/img/ghost/pinky/*.svg\" dist/lib/assets/img/ghost/pinky && copyfiles -s -f \"lib/assets/fonts/*\" dist/lib/assets/fonts",
+    "build": "pnpm clean && tsc --p ./tsconfig-build.json --noEmit false && vite build && pnpm copy-files",
     "build:watch": "pnpm clean && tsc && vite build --watch",
     "prepack": "pnpm build",
     "test": "vitest",
     "publish:npm": "npm publish --access public"
   },
+  "peerDependencies": {
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  },
   "dependencies": {
     "canvas": "^2.11.2",
-    "react": "^18.2.0"
+    "js-logger": "^1.6.1",
+    "react-error-boundary": "^4.0.12",
+    "rxjs": "^7.8.1",
+    "use-deep-compare-effect": "^1.8.1"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.1.6",
     "@types/jest": "^29.5.11",
     "@types/jquery": "^3.5.29",
+    "@types/react": "^18.2.46",
+    "@types/react-dom": "^18.2.18",
+    "@vitejs/plugin-react": "^4.2.1",
     "copyfiles": "^2.4.1",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
     "rimraf": "^5.0.5",
     "rollup-plugin-typescript-paths": "^1.5.0",
     "tslib": "^2.4.0",

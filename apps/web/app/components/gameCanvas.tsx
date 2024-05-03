@@ -1,6 +1,6 @@
 "use client";
 
-import getGameInstance, { Game, helloPacman } from "@repo/pacman-canvas";
+import getGameInstance, { Game, helloPacman } from "@platzh1rsch/pacman-canvas/lib/main";
 import {
   blinkySvgSrc,
   clydeSvgSrc,
@@ -9,25 +9,25 @@ import {
   deadSvgSrc,
   inkySvgSrc,
   pinkySvgSrc,
-} from "@repo/pacman-canvas/src/assets/img";
-import { cherriesSvgSrc } from "@repo/pacman-canvas/src/assets/img/gastronomy";
+} from "@platzh1rsch/pacman-canvas/lib/assets/img";
+import { cherriesSvgSrc } from "@platzh1rsch/pacman-canvas/lib/assets/img/gastronomy";
 import {
   down,
   left,
   right,
   up,
-} from "@repo/pacman-canvas/src/figures/directions";
+} from "@platzh1rsch/pacman-canvas/lib/figures/directions";
 import {
-  GRID_SIZE,
   GameOverlayMessageEvent,
   GameOverlayMessageListener,
   GameStateChangeListener,
   GameStateEvent,
-} from "@repo/pacman-canvas/src/game/Game";
-import { FoodHandler } from "@repo/pacman-canvas/src/game/food/FoodHandler";
-import { animationLoop } from "@repo/pacman-canvas/src/game/render/animationLoop";
+} from "@platzh1rsch/pacman-canvas/lib/game/GameEvent";
+import { FoodHandler } from "@platzh1rsch/pacman-canvas/lib/game/food/FoodHandler";
+import { animationLoop } from "@platzh1rsch/pacman-canvas/lib/game/render/animationLoop";
 import { useEffect, useRef, useState } from "react";
 import styles from "./gameCanvas.module.css";
+import { GRID_SIZE } from "@platzh1rsch/pacman-canvas/lib/game/Game";
 
 // as recommended on https://react.dev/learn/you-might-not-need-an-effect#initializing-the-application
 let didInit = false;
@@ -54,7 +54,7 @@ export default function GameCanvas() {
     const onGameStateChange: GameStateChangeListener = (
       event: GameStateEvent
     ) => {
-      console.log(
+      console.info(
         "onGameStateChange",
         event.eventName,
         event.datetime,
@@ -95,6 +95,7 @@ export default function GameCanvas() {
   useEffect(() => {
     if (game && canvasContext) {
       game.setCanvasContext2d(canvasContext);
+      game.setup()
     }
   }, [canvasContext]);
 
@@ -123,7 +124,7 @@ export default function GameCanvas() {
           <button
             onClick={() => {
               if (canvasContext2) {
-                console.log("draw food", foodHandler, canvasContext2);
+                console.info("draw food", foodHandler, canvasContext2);
                 canvasContext2.clearRect(0, 0, GRID_SIZE, GRID_SIZE);
                 foodHandler.draw(canvasContext2, 0, 0, GRID_SIZE, GRID_SIZE);
               }
